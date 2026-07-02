@@ -1,0 +1,38 @@
+---
+name: orchestrator
+description: Orchestrator for planning and parallel delegation. Use when work is multi-step, ambiguous, cross-cutting, or has independent pieces that benefit from GPT-5.5 planning plus GPT-5.4 High subagents; also use when the user asks to coordinate, split, or supervise subagents.
+---
+
+# Orchestrator
+
+Use GPT-5.5 High for planning and coordination. Use GPT-5.5 Extra High when the task is broad, high-risk, architecture-heavy, or likely to fail from a shallow plan.
+
+## Loop
+
+1. Build the plan first: identify workstreams, dependencies, merge criteria, and the smallest verification that proves the work. Complete this step when every delegated piece has a clear boundary.
+2. Delegate clean subtasks: start a GPT-5.4 High subagent for each independent, bounded, checkable piece. Do not delegate ownership of the plan.
+3. Run independent pieces in parallel. Keep serial or judgment-heavy work local until its prerequisites are clear.
+4. Review every return before merging it. Check claims against source, diffs, logs, tests, or artifacts.
+5. If a return is wrong or under-scoped, rewrite the brief and run another subagent. Patch it yourself only when the fix is trivial.
+6. Integrate reviewed results, run the smallest relevant verification, and report what was delegated, accepted, retried, or kept local.
+
+## Delegation Gate
+
+Delegate only when the subtask has:
+
+- One outcome.
+- Small enough context to brief cleanly.
+- No hidden dependency on another active subtask.
+- A result you can review without trusting the subagent.
+
+Keep the work local when it is trivial, requires continuous judgment, touches live systems, or the plan is not stable enough to brief.
+
+## Subagent Brief
+
+Give each subagent:
+
+- Goal: the concrete outcome.
+- Context: relevant files, commands, constraints, and user intent.
+- Boundaries: what not to change, decide, or assume.
+- Return: the exact artifact to bring back, such as findings, a patch, command output, or a recommendation.
+- Stop condition: when to ask back instead of guessing.

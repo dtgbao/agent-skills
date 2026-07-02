@@ -1,0 +1,26 @@
+---
+name: react-best-practices
+description: React architecture reference. Use when implementing, refactoring, or reviewing React TypeScript code that touches component composition, feature/shared boundaries, scoped state/providers, API/data hooks, React 19 refs/context, or behavior-focused tests.
+---
+
+# React Best Practices
+
+Reusable React rules for modern TypeScript apps. Prefer the app's existing patterns first, then use these rules to keep components small, state scoped, data boundaries plain, composition flexible, and tests focused on behavior.
+
+## Routing
+
+Read only the rows that match the current change. Read helper source only when
+copying or adapting that helper.
+
+| Branch                                          | Reference                                                                                    |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Feature/shared placement                        | `references/boundaries-feature-shared-split.md`                                              |
+| Boolean or mode props                           | `references/architecture-avoid-boolean-props.md`, `references/patterns-explicit-variants.md` |
+| UI parts sharing state/actions                  | `references/composition-compound-components.md`                                              |
+| Provider scope or state ownership               | `references/state-scope-providers-to-owners.md`                                              |
+| API functions, loaders, query hooks             | `references/data-plain-api-functions.md`                                                     |
+| Reused gestures, keyboard behavior, motion glue | `references/composition-shared-interaction-primitives.md`                                    |
+| Render props for static slots                   | `references/patterns-children-over-render-props.md`                                          |
+| React 19 refs or context reads                  | `references/react19-no-forwardref.md`                                                        |
+| Unit test setup or API mocks                    | `references/setup-vitest.md`, `references/setup-msw-api.md`                                  |
+| Behavior-focused tests                          | `references/tests-boundary-behavior.md`                                                      |

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Orchestrator"
+  short_description: "Plan with GPT-5.5 and delegate clean subtasks"
+  default_prompt: "Use $orchestrator to plan this work and coordinate subagents."

@@ -1,0 +1,11 @@
+interface:
+  display_name: Web Search
+  short_description: Search latest technical docs and return structured Markdown summaries
+  icon: assets/icon.png
+policy:
+  products:
+    - chatgpt
+    - codex
+    - api
+    - atlas
+  allow_implicit_invocation: true

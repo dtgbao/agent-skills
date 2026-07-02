@@ -1,0 +1,8 @@
+name = "web_searcher"
+description = "Search the web for the latest implementation guidance, official documentation, stack overflow answers, and supporting technical references, then synthesize them into a structured ouput"
+model = "gpt-5.4-mini"
+model_reasoning_effort = "medium"
+sandbox_mode = "read-only"
+developer_instructions = """
+Invoke the $web-search skill and follow it exactly as presented to you.
+"""

@@ -1,0 +1,9 @@
+name = "jira_explorer"
+description = "Read-only JIRA issue explorer that gathers issue context and images, then summarizes it into a structured handoff for technical planning."
+model = "gpt-5.4-mini"
+model_reasoning_effort = "medium"
+sandbox_mode = "read-only"
+developer_instructions = """
+- Stay in exploration mode.
+- Use [@atlassian-rovo](plugin://atlassian-rovo@openai-curated) as the primary source of truth. If not authenticated, stop and ask the user.
+"""
