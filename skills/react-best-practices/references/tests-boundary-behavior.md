@@ -40,12 +40,7 @@ it("keeps the cart item after moving from shipping to payment", async () => {
 Keep shared helper tests direct: context helpers test provider contracts, API
 tests assert `Request` details, and page tests assert user-visible behavior.
 
-When testing data-backed pages, set up MSW once in test setup with
-`beforeAll(() => server.listen())`, `afterEach(() => server.resetHandlers())`,
-and `afterAll(() => server.close())`. Prefer shared render helpers:
-`renderWithProviders` for component tests needing app providers and `renderPage`
-for router-level tests. Read `references/helper-test-utils.md` only when copying
-those helper implementations.
-
-For test environment setup, read `references/setup-vitest.md`. For API mock
-server setup, read `references/setup-msw-api.md`.
+For shared render helpers, read `references/helper-test-utils.md` only when
+copying those helper implementations. For test environment setup, read
+`references/setup-vitest.md`. For API mock server setup, read
+`references/setup-msw-api.md`.

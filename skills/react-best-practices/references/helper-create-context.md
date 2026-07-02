@@ -21,7 +21,10 @@ export default function createContext<TContextHook extends (...args: any[]) => u
 
   function useContext() {
     const context = use(Context);
-    return context!;
+    if (context === undefined) {
+      throw new Error("useContext must be used within Provider");
+    }
+    return context;
   }
 
   function Provider({ children, ...contextHookProps }: ProviderProps<TContextHook>) {

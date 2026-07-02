@@ -8,7 +8,7 @@ server in `tests/mocks/api` and start it from `tests/setup.ts`.
 ```txt
 tests/mocks/api/
   index.ts        # creates and exports the server
-  dogs.ts         # domain handlers and test helpers
+  orders.ts       # domain handlers and test helpers
 ```
 
 Use one handler file per API domain. Export test helpers beside the handlers
@@ -19,9 +19,9 @@ when tests need to inspect or change mock state.
 ```ts
 // tests/mocks/api/index.ts
 import { setupServer } from "msw/node";
-import { dogHandlers } from "./dogs";
+import { orderHandlers } from "./orders";
 
-const handlers = [...dogHandlers];
+const handlers = [...orderHandlers];
 
 export const server = setupServer(...handlers);
 ```
@@ -29,35 +29,34 @@ export const server = setupServer(...handlers);
 ## Domain Handlers
 
 ```ts
-// tests/mocks/api/dogs.ts
+// tests/mocks/api/orders.ts
 import { http, HttpResponse } from "msw";
 
-let voteRequests: Array<{ image_id: string; sub_id: string; value: number }> = [];
+let createOrderRequests: Array<{ productId: string; quantity: number }> = [];
 
-export function resetDogApiState() {
-  voteRequests = [];
+export function resetOrderApiState() {
+  createOrderRequests = [];
 }
 
-export function getVoteRequests() {
-  return voteRequests;
+export function getCreateOrderRequests() {
+  return createOrderRequests;
 }
 
-export const dogHandlers = [
-  http.get("*/breeds", () => HttpResponse.json([])),
-  http.post("*/votes", async ({ request }) => {
+export const orderHandlers = [
+  http.get("*/products", () => HttpResponse.json([])),
+  http.post("*/orders", async ({ request }) => {
     const body = (await request.json()) as {
-      image_id: string;
-      sub_id: string;
-      value: number;
+      productId: string;
+      quantity: number;
     };
-    voteRequests.push(body);
+    createOrderRequests.push(body);
 
-    return HttpResponse.json({ message: "SUCCESS" }, { status: 201 });
+    return HttpResponse.json({ id: "order-1" }, { status: 201 });
   }),
 ];
 ```
 
-Use wildcard origins such as `"*/breeds"` when tests should not care which base
+Use wildcard origins such as `"*/products"` when tests should not care which base
 URL the app reads from environment variables.
 
 ## Lifecycle

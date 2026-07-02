@@ -6,8 +6,7 @@ Keep setup in three places: Vite/Vitest config, `tests/setup.ts`, and
 
 ## `vite.config.ts`
 
-Put test configuration under `test`. In this repo, `vite-plus` reads the same
-shape as Vitest:
+Put test configuration under `test`:
 
 ```ts
 test: {
@@ -36,14 +35,7 @@ Load DOM matchers and global test fixtures once:
 ```ts
 import "@testing-library/jest-dom/vitest";
 
-import { server } from "@tests/mocks/api";
-
-vi.stubEnv("VITE_PUBLIC_THE_DOG_API_BASE_URL", "https://api.thedogapi.com/v1");
-vi.stubEnv("VITE_PUBLIC_THE_DOG_API_KEY", "test-dog-api-key");
-
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
+vi.stubEnv("VITE_API_BASE_URL", "https://example.test");
 ```
 
 Put browser polyfills here only when many tests need them. Put one-off mocks in
@@ -58,7 +50,7 @@ Extend the app config, include tests and source, and add Vitest globals:
   "extends": "./tsconfig.app.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.test.tsbuildinfo",
-    "types": ["vite-plus/client", "vitest/globals"]
+    "types": ["vite/client", "vitest/globals"]
   },
   "include": ["tests", "src"]
 }

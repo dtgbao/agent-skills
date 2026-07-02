@@ -9,7 +9,7 @@ tags: composition, props, architecture
 
 Don't add boolean props like `isThread`, `isEditing`, `isDMThread` to customize
 component behavior. Each boolean doubles possible states and creates
-unmaintainable conditional logic. Use composition instead.
+unmaintainable conditional logic. Use explicit variants or composition instead.
 
 **Incorrect (boolean props create exponential complexity):**
 
@@ -39,7 +39,7 @@ function Composer({
 }
 ```
 
-**Correct (composition eliminates conditionals):**
+**Correct (explicit variants compose the pieces they need):**
 
 ```tsx
 const Composer = Object.assign(ComposerFrame, {
@@ -99,5 +99,5 @@ function EditComposer() {
 }
 ```
 
-Each variant is explicit about what it renders. Share internals without sharing
-a single monolithic parent.
+Each variant is explicit about what it renders. If variants share state or
+actions across named child parts, use `composition-compound-components.md`.

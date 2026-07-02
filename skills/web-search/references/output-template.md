@@ -52,7 +52,7 @@ describe('sum', () => {
 
 ## Source links
 1. [Official docs](URL) — canonical setup guidance
-2. [Stack Overflow thread](URL) — practical fix for a common setup issue
+2. [Community thread](URL) — practical fix for a common setup issue
 
 ## Last updated / recency note
 - Official docs page references Nuxt v4 APIs.

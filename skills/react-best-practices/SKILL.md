@@ -5,7 +5,7 @@ description: React architecture reference. Use when implementing, refactoring, o
 
 # React Best Practices
 
-Reusable React rules for modern TypeScript apps. Prefer the app's existing patterns first, then use these rules to keep components small, state scoped, data boundaries plain, composition flexible, and tests focused on behavior.
+Reusable React rules for modern TypeScript apps. Treat existing app patterns as context: keep them when they align with these rules, and use the smallest corrective change when they do not.
 
 ## Routing
 
@@ -15,8 +15,8 @@ copying or adapting that helper.
 | Branch                                          | Reference                                                                                    |
 | ----------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | Feature/shared placement                        | `references/boundaries-feature-shared-split.md`                                              |
-| Boolean or mode props                           | `references/architecture-avoid-boolean-props.md`, `references/patterns-explicit-variants.md` |
-| UI parts sharing state/actions                  | `references/composition-compound-components.md`                                              |
+| Boolean or mode props                           | `references/architecture-avoid-boolean-props.md`                                             |
+| Shared UI surface composition                   | `references/composition-compound-components.md`                                              |
 | Provider scope or state ownership               | `references/state-scope-providers-to-owners.md`                                              |
 | API functions, loaders, query hooks             | `references/data-plain-api-functions.md`                                                     |
 | Reused gestures, keyboard behavior, motion glue | `references/composition-shared-interaction-primitives.md`                                    |

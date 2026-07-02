@@ -84,7 +84,7 @@ function ShippingPage() {
 Prefer explicit actions such as `setAddress`, `nextStep`, or `addItem`. Add a
 generic state setter only when multiple call sites need full-state replacement.
 
-When a project needs reusable provider wiring, consider these helper shapes:
+When copying or adapting reusable provider wiring, read
 `references/helper-create-context.md` for hook-backed providers and
 `references/helper-create-store-context.md` for scoped Zustand stores.
 
