@@ -12,16 +12,16 @@ Reusable React rules for modern TypeScript apps. Treat existing app patterns as 
 Read only the rows that match the current change. Read helper source only when
 copying or adapting that helper.
 
-| Branch                                          | Reference                                                                                    |
-| ----------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Feature/shared placement                        | `references/boundaries-feature-shared-split.md`                                              |
-| Boolean or mode props                           | `references/architecture-avoid-boolean-props.md`                                             |
-| Shared UI surface composition                   | `references/composition-compound-components.md`                                              |
-| Provider scope or state ownership               | `references/state-scope-providers-to-owners.md`                                              |
-| API functions, loaders, query hooks             | `references/data-plain-api-functions.md`                                                     |
-| Reused gestures, keyboard behavior, motion glue | `references/composition-shared-interaction-primitives.md`                                    |
-| Render props for static slots                   | `references/patterns-children-over-render-props.md`                                          |
-| React 19 refs or context reads                  | `references/react19-no-forwardref.md`                                                        |
-| Unit test setup or API mocks                    | `references/setup-vitest.md`, `references/setup-msw-api.md`                                  |
-| Clean React unit tests                          | `references/tests-clean-react-unit-tests.md`                                                  |
-| Behavior-focused tests                          | `references/tests-boundary-behavior.md`                                                      |
+| Branch                                          | Reference                                                   |
+| ----------------------------------------------- | ----------------------------------------------------------- |
+| Feature/shared placement                        | `references/boundaries-feature-shared-split.md`             |
+| Boolean or mode props                           | `references/architecture-avoid-boolean-props.md`            |
+| Shared UI surface composition                   | `references/composition-compound-components.md`             |
+| Provider scope or state ownership               | `references/state-scope-providers-to-owners.md`             |
+| API functions, loaders, query hooks             | `references/data-plain-api-functions.md`                    |
+| Reused gestures, keyboard behavior, motion glue | `references/composition-shared-interaction-primitives.md`   |
+| Render props for static slots                   | `references/patterns-children-over-render-props.md`         |
+| React 19 refs or context reads                  | `references/react19-no-forwardref.md`                       |
+| Unit test setup or API mocks                    | `references/setup-vitest.md`, `references/setup-msw-api.md` |
+| Clean React unit tests                          | `references/tests-clean-react-unit-tests.md`                |
+| Behavior-focused tests                          | `references/tests-boundary-behavior.md`                     |
