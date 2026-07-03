@@ -1,3 +1,10 @@
+---
+title: Scoped Store Context Helper
+impact: MEDIUM
+impactDescription: keeps one store instance per provider when copied
+tags: helper, state, zustand, context
+---
+
 # Scoped Store Context Helper
 
 Copy this shape when a feature needs one Zustand store instance per provider.

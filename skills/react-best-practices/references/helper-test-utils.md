@@ -1,3 +1,10 @@
+---
+title: React Test Render Helpers
+impact: MEDIUM
+impactDescription: keeps provider and router test setup consistent when copied
+tags: helper, testing, react-testing-library, router
+---
+
 # React Test Render Helpers
 
 Copy this shape when tests need shared app providers or router-level rendering.

@@ -1,6 +1,6 @@
 ---
 title: Use Compound Components for Complex Surfaces
-impact: HIGH
+impact: CRITICAL
 impactDescription: shares state without prop drilling or boolean prop sprawl
 tags: composition, components, context, architecture
 ---

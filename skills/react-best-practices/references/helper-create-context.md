@@ -1,3 +1,10 @@
+---
+title: Hook-Backed Context Helper
+impact: MEDIUM
+impactDescription: standardizes provider and consumer hook contracts when copied
+tags: helper, context, composition
+---
+
 # Hook-Backed Context Helper
 
 Copy this shape when a feature needs a generated provider plus consumer hook.

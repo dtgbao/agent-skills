@@ -1,3 +1,10 @@
+---
+title: Setup MSW API Mocks
+impact: MEDIUM
+impactDescription: gives data-backed tests realistic network boundaries
+tags: setup, testing, msw, api
+---
+
 # Setup MSW API Mocks
 
 Use this when adding a mock API server for data-backed React tests. Keep the

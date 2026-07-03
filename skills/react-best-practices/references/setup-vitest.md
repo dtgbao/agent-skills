@@ -1,3 +1,10 @@
+---
+title: Setup Vitest for React Tests
+impact: MEDIUM
+impactDescription: keeps React test environment setup predictable
+tags: setup, testing, vitest
+---
+
 # Setup Vitest for React Tests
 
 Use this when adding or checking project-level Vitest setup for React tests.
