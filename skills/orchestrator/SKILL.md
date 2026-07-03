@@ -9,9 +9,9 @@ Use the strongest available reasoning model for broad, high-risk, architecture-h
 
 ## Worker Gate
 
-Before planning, check for `.codex/agents/worker.toml` in the active workspace. If it is missing, stop and ask the user to create it from `skills/orchestrator/assets/template-work-subagent.md`; ask which `model` and `model_reasoning_effort` they want. Complete this gate only when the file exists.
+Before planning, check for `worker.toml` in the active workspace at `.codex/agents/worker.toml`, then in the user root at `~/.codex/agents/worker.toml`. If neither exists, stop and ask the user whether to place it at workspace or root level, then ask which `model` and `model_reasoning_effort` they want. Point them to `skills/orchestrator/assets/template-work-subagent.md`. Complete this gate only when one file exists.
 
-Use the configured `worker` subagent for delegation. Do not hard-code its model or reasoning effort in briefs; `.codex/agents/worker.toml` owns that choice.
+Use the configured `worker` subagent for delegation. Do not hard-code its model or reasoning effort in briefs; the worker file owns that choice.
 
 ## Loop
 

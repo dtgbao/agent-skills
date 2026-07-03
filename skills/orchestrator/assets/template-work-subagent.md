@@ -1,6 +1,6 @@
 # Worker Subagent Template
 
-Copy this into `.codex/agents/worker.toml`, then replace the placeholders.
+Copy this into either `.codex/agents/worker.toml` or `~/.codex/agents/worker.toml`, then replace the placeholders.
 
 ```toml
 name = "worker"
