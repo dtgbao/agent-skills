@@ -5,18 +5,21 @@ description: Use when work is multi-step, ambiguous, cross-cutting, or has indep
 
 # Orchestrator
 
-Use the strongest available reasoning model for broad, high-risk, architecture-heavy, or shallow-plan-sensitive work.
+Use subagents for bounded workstreams only after the user approves the plan.
 
-## Worker Gate
+## Model Choice
 
-Before planning, check for `worker.toml` in the active workspace at `.codex/agents/worker.toml`, then in the user root at `~/.codex/agents/worker.toml`. If neither exists, stop and ask the user whether to place it at workspace or root level, then ask which `model` and `model_reasoning_effort` they want. Point them to `skills/orchestrator/assets/template-work-subagent.md`. Complete this gate only when one file exists.
+Choose the subagent model and reasoning while planning. Allowed choices:
 
-Use the configured `worker` subagent for delegation. Do not hard-code its model or reasoning effort in briefs; the worker file owns that choice.
+- GPT-5.4 Low/Medium/High
+- GPT-5.5 Low/Medium
+
+Use the cheapest choice that can do the work under review. Intelligence is how hard a problem can be handed off unsupervised. Taste covers UI/UX, code quality, API design, and copy. Raise reasoning for ambiguity, risk, broad search, or weak review signals; choose GPT-5.5 when taste matters.
 
 ## Loop
 
-1. Build the plan first: identify workstreams, dependencies, merge criteria, and the smallest verification that proves the work. Complete this step when every delegated piece has a clear boundary.
-2. Delegate clean subtasks: start a `worker` subagent for each independent, bounded, checkable piece. Complete this step when every brief passes the Delegation Gate.
+1. Build the plan first: identify workstreams, dependencies, merge criteria, the smallest verification that proves the work, and the subagent model/reasoning for each delegated piece. Complete this step when every delegated piece has a clear boundary and the user has approved the plan.
+2. Delegate clean subtasks: start a subagent with the chosen model/reasoning for each independent, bounded, checkable piece. Complete this step when every brief passes the Delegation Gate.
 3. Run independent pieces in parallel. Keep serial or judgment-heavy work local until its prerequisites are clear. Complete this step when every active subtask has returned or is explicitly blocked.
 4. Review every return before merging it. Check claims against source, diffs, logs, tests, or artifacts. Complete this step when every accepted result has evidence you verified.
 5. If a return is wrong or under-scoped, rewrite the brief and run another subagent. Patch it yourself only when the fix is trivial. Complete this step when each rejected result is retried, fixed locally, or excluded.
