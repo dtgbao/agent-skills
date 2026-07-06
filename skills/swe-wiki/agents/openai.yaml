@@ -1,0 +1,4 @@
+interface:
+  display_name: "SWE Wiki"
+  short_description: "Maintain a searchable software engineering wiki"
+  default_prompt: "Use $swe-wiki to ingest, query, or lint my software engineering wiki."
