@@ -20,39 +20,39 @@ import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { routes } from "@/app/router/routes";
 
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            retry: false,
-            refetchOnWindowFocus: false,
-            refetchOnReconnect: false,
-          },
-          mutations: {
-            retry: false,
-          },
-        },
-      }),
-  );
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+	const [queryClient] = useState(
+		() =>
+			new QueryClient({
+				defaultOptions: {
+					queries: {
+						retry: false,
+						refetchOnWindowFocus: false,
+						refetchOnReconnect: false,
+					},
+					mutations: {
+						retry: false,
+					},
+				},
+			}),
+	);
+	return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
 
 export const renderWithProviders = (ui: ReactElement, options?: Omit<RenderOptions, "wrapper">) =>
-  render(ui, { wrapper: AllTheProviders, ...options });
+	render(ui, { wrapper: AllTheProviders, ...options });
 
 export const renderPage = (initialEntry = "/", options?: Omit<RenderOptions, "wrapper">) => {
-  const router = createMemoryRouter(routes, {
-    initialEntries: [initialEntry],
-  });
-  const result = render(<RouterProvider router={router} />, {
-    wrapper: AllTheProviders,
-    ...options,
-  });
+	const router = createMemoryRouter(routes, {
+		initialEntries: [initialEntry],
+	});
+	const result = render(<RouterProvider router={router} />, {
+		wrapper: AllTheProviders,
+		...options,
+	});
 
-  return {
-    ...result,
-    router,
-  };
+	return {
+		...result,
+		router,
+	};
 };
 ```

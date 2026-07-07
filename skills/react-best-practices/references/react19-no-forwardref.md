@@ -9,15 +9,13 @@ tags: react19, refs, context, hooks
 
 > **React 19+ only.** Skip this if you're on React 18 or earlier.
 
-In React 19, `ref` is now a regular prop, so no `forwardRef` wrapper is needed
-for new components. Prefer `use(Context)` in React 19 code, especially when
-conditional reads help.
+In React 19, `ref` is now a regular prop, so no `forwardRef` wrapper is needed for new components. Prefer `use(Context)` in React 19 code, especially when conditional reads help.
 
 **Incorrect (forwardRef in React 19):**
 
 ```tsx
 const ComposerInput = forwardRef<TextInput, Props>((props, ref) => {
-  return <TextInput ref={ref} {...props} />;
+	return <TextInput ref={ref} {...props} />;
 });
 ```
 
@@ -25,7 +23,7 @@ const ComposerInput = forwardRef<TextInput, Props>((props, ref) => {
 
 ```tsx
 function ComposerInput({ ref, ...props }: Props & { ref?: React.Ref<TextInput> }) {
-  return <TextInput ref={ref} {...props} />;
+	return <TextInput ref={ref} {...props} />;
 }
 ```
 

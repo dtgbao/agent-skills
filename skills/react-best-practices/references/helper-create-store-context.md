@@ -25,7 +25,7 @@ type ProviderProps<TCreateStore extends StoreCreator> = {
 	: { initialValue?: Parameters<TCreateStore>[0] });
 
 export default function createStoreContext<TCreateStore extends StoreCreator>(
-	createStore: TCreateStore
+	createStore: TCreateStore,
 ) {
 	type Store = ExtractState<ReturnType<TCreateStore>>;
 	const Context = createContext<ReturnType<TCreateStore> | null>(null);
@@ -43,7 +43,7 @@ export default function createStoreContext<TCreateStore extends StoreCreator>(
 			() =>
 				(initialValue === undefined
 					? createStore()
-					: createStore(initialValue)) as ReturnType<TCreateStore>
+					: createStore(initialValue)) as ReturnType<TCreateStore>,
 		);
 		return <Context value={store}>{children}</Context>;
 	}

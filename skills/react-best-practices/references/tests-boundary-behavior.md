@@ -7,9 +7,10 @@ tags: testing, vitest, msw, react-testing-library
 
 ## Test Boundary Behavior
 
-Write tests against observable behavior at the smallest useful boundary. Use the
-real router and network mocks for pages when routing or data loading matters.
-Use local mocks only for focused primitives such as animation or browser APIs.
+- Write tests against observable behavior at the smallest useful boundary.
+- Use the real router and network mocks for pages when routing or data loading matters.
+- Use local mocks only for focused primitives such as animation or browser APIs.
+- Keep shared helper tests direct: context helpers test provider contracts, API tests assert `Request` details, and page tests assert user-visible behavior.
 
 **Incorrect:**
 
@@ -26,21 +27,17 @@ it("renders checkout", () => {
 
 ```ts
 it("keeps the cart item after moving from shipping to payment", async () => {
-  const user = userEvent.setup();
+	const user = userEvent.setup();
+	renderPage("/checkout/shipping");
 
-  renderPage("/checkout/shipping");
-  await user.type(screen.getByLabelText("Address"), "1 Main St");
-  await user.click(screen.getByRole("button", { name: "Continue" }));
+	await user.type(screen.getByLabelText("Address"), "1 Main St");
+	await user.click(screen.getByRole("button", { name: "Continue" }));
 
-  expect(await screen.findByRole("heading", { name: "Payment" })).toBeInTheDocument();
-  expect(screen.getByText("1 Main St")).toBeInTheDocument();
+	expect(await screen.findByRole("heading", { name: "Payment" })).toBeInTheDocument();
+	expect(screen.getByText("1 Main St")).toBeInTheDocument();
 });
 ```
 
-Keep shared helper tests direct: context helpers test provider contracts, API
-tests assert `Request` details, and page tests assert user-visible behavior.
-
-For shared render helpers, read `references/helper-test-utils.md` only when
-copying those helper implementations. For test environment setup, read
-`references/setup-vitest.md`. For API mock server setup, read
-`references/setup-msw-api.md`.
+- For shared render helpers, read `references/helper-test-utils.md` only when copying those helper implementations.
+- For test environment setup, read `references/setup-vitest.md`.
+- For API mock server setup, read `references/setup-msw-api.md`.

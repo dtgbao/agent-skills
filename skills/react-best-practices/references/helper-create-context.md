@@ -21,7 +21,7 @@ type ProviderProps<TContextHook extends (...args: any[]) => unknown> =
 		: NonNullable<Parameters<TContextHook>[0]> & { children: ReactNode };
 
 export default function createContext<TContextHook extends (...args: any[]) => unknown>(
-	contextHook: TContextHook
+	contextHook: TContextHook,
 ) {
 	type ContextType = ReturnType<TContextHook>;
 	const Context = createReactContext<ContextType | null>(null);
@@ -39,8 +39,8 @@ export default function createContext<TContextHook extends (...args: any[]) => u
 			Object.keys(contextHookProps).length === 0
 				? (contextHook as () => ContextType)()
 				: (contextHook as (props: NonNullable<Parameters<TContextHook>[0]>) => ContextType)(
-						contextHookProps as NonNullable<Parameters<TContextHook>[0]>
-				  );
+						contextHookProps as NonNullable<Parameters<TContextHook>[0]>,
+					);
 
 		return <Context value={value}>{children}</Context>;
 	}
