@@ -11,10 +11,11 @@ Use subagents for bounded workstreams only after the user approves the plan.
 
 Choose the subagent model and reasoning while planning. Allowed choices:
 
-- GPT-5.4 Low/Medium/High
-- GPT-5.5 Low/Medium
+- GPT-5.6 Sol Light/Medium/High
+- GPT-5.6 Terra Medium/High
+- GPT-5.6 Luna High
 
-Use the cheapest choice that can do the work under review. Intelligence is how hard a problem can be handed off unsupervised. Taste covers UI/UX, code quality, API design, and copy. Raise reasoning for ambiguity, risk, broad search, or weak review signals; choose GPT-5.5 when taste matters.
+Use the cheapest choice that can do the work under review. Intelligence is how hard a problem can be handed off unsupervised. Taste covers UI/UX, code quality, API design, and copy. Raise reasoning for ambiguity, risk, broad search, or weak review signals; choose GPT-5.6 Sol when taste matters.
 
 ## Loop
 
