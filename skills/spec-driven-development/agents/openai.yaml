@@ -1,0 +1,4 @@
+interface:
+  display_name: "Spec-Driven Development"
+  short_description: "Turn ideas and bugs into executable specs"
+  default_prompt: "Use $spec-driven-development to turn this feature or bug into a reviewed spec and verified implementation."

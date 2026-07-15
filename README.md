@@ -6,12 +6,13 @@ This repo is a source tree for reusable instruction bundles. Each skill lives in
 
 ## Included skills
 
-| Skill                  | Purpose                                                                              |
-| ---------------------- | ------------------------------------------------------------------------------------ |
-| `orchestrator`         | Plan multi-step work and delegate clean, reviewable subtasks.                        |
-| `prd-to-plan`          | Turn a PRD or spec into an implementation plan grounded in the codebase.             |
-| `react-best-practices` | Reusable React/TypeScript architecture guidance plus focused reference docs.         |
-| `web-search`           | Structured, recency-aware technical web research with source-backed Markdown output. |
+| Skill                     | Purpose                                                                              |
+| ------------------------- | ------------------------------------------------------------------------------------ |
+| `orchestrator`            | Plan multi-step work and delegate clean, reviewable subtasks.                        |
+| `prd-to-plan`             | Turn a PRD or spec into an implementation plan grounded in the codebase.             |
+| `react-best-practices`    | Reusable React/TypeScript architecture guidance plus focused reference docs.         |
+| `spec-driven-development` | Turn features and complex bugs into reviewed specs and verified implementation.      |
+| `web-search`              | Structured, recency-aware technical web research with source-backed Markdown output. |
 
 ## Agent presets
 
