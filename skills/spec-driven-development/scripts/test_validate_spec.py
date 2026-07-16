@@ -266,6 +266,17 @@ Text.
             self.assertIn(order, content)
         self.assertIn("Request approval only after validation passes", content)
 
+    def test_skill_requires_workflow_choice_before_scaffolding(self) -> None:
+        content = SKILL.read_text(encoding="utf-8")
+        choice = content.index("## Choose Workflow Before Creating Files")
+        scaffold = content.index("## Start or Resume a Spec")
+        self.assertLess(choice, scaffold)
+        self.assertIn("Requirements-First, Design-First, and Quick Plan", content)
+        self.assertIn("State the recommendation and one-sentence reason", content)
+        self.assertIn("Wait for the user's choice before calling the initializer", content)
+        self.assertIn("--artifact <artifact>", content)
+        self.assertIn("create only the artifact for the current phase", content)
+
 
 if __name__ == "__main__":
     unittest.main()

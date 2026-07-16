@@ -7,36 +7,33 @@ description: Spec-driven development for feature ideas, design-led work, and com
 
 Turn an idea, technical direction, or defect into reviewed artifacts, then implement the approved tasks with traceable verification.
 
+## Choose Workflow Before Creating Files
+
+For every new feature spec, present Requirements-First, Design-First, and Quick Plan. State the recommendation and one-sentence reason, then ask the user to choose:
+
+| Workflow | Recommend when |
+| --- | --- |
+| Requirements-First | User behavior, scope, or acceptance boundaries should lead; use this by default. |
+| Design-First | Existing architecture, a fixed stack, or strict technical constraints should lead. |
+| Quick Plan | The work is well understood and the user wants all artifacts without intermediate approvals. |
+
+For a defect, present Bugfix and Quick Plan, recommending Bugfix for complex, critical, or regression-prone behavior. Wait for the user's choice before calling the initializer, creating a spec directory, or drafting any artifact.
+
 ## Start or Resume a Spec
 
-Work from the repository root and read its agent instructions before writing artifacts.
-
-For a new spec, create the scaffold:
+Work from the repository root and read its agent instructions before writing artifacts. After the user chooses a workflow, create only the artifact for the current phase:
 
 ```bash
 python <skill-directory>/scripts/init_spec.py <slug> \
   --title "<human title>" \
-  --kind feature
+  --artifact <artifact>
 ```
 
-Use `--kind bugfix` to create `bugfix.md` instead of `requirements.md`. Use `--spec-root <path>` only when the repository explicitly overrides `docs/specs`.
+Use `requirements`, `bugfix`, `design`, or `tasks` as the artifact. Run the initializer again only when the workflow reaches the next phase; it creates the spec directory when needed and refuses to overwrite an existing artifact. Use `--spec-root <path>` only when the repository explicitly overrides `docs/specs`.
 
-For an existing spec, read every present artifact under `docs/specs/<slug>/` before editing it. Preserve approved decisions and edit the existing files; the initializer refuses to overwrite them.
+For an existing spec, read every present artifact under `docs/specs/<slug>/` before editing it. Preserve approved decisions and edit the existing files.
 
-Replace every scaffold placeholder before presenting an artifact for approval.
-
-## Route the Workflow
-
-Honor an explicitly requested workflow. Otherwise use the first matching row:
-
-| Signal                                                                               | Workflow           |
-| ------------------------------------------------------------------------------------ | ------------------ |
-| Complex, critical, or regression-prone defect                                        | Bugfix             |
-| Existing architecture, fixed stack, or strict technical constraints lead the request | Design-First       |
-| Well-understood work explicitly asks for one-pass planning                           | Quick Plan         |
-| All other feature work                                                               | Requirements-First |
-
-Keep one focused capability or defect per spec. Create another spec when work can evolve independently.
+Replace every scaffold placeholder before presenting an artifact for approval. Keep one focused capability or defect per spec; create another spec when work can evolve independently.
 
 ## Apply Shared Standards
 
@@ -91,7 +88,7 @@ Stop when validation fails. Repair the artifact and rerun the validator before c
 
 ## Quick Plan
 
-Ask all material questions about scope, constraints, edge cases, and success criteria before generation. Then fill all three feature artifacts in one pass without intermediate approval gates.
+Ask all material questions about scope, constraints, edge cases, and success criteria before generation. Then create, fill, and validate each artifact sequentially in workflow order without intermediate approval gates. Do not pre-create downstream artifacts.
 
 Cross-check that requirements are testable, design covers every requirement, tasks cover the design, all three dependency views agree, and dependencies are acyclic. Present the completed set together. Begin implementation only when the original request authorizes it or the user subsequently approves it.
 
