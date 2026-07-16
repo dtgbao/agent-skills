@@ -7,9 +7,15 @@ description: Spec-driven development for feature ideas, design-led work, and com
 
 Turn an idea, technical direction, or defect into reviewed artifacts, then implement the approved tasks with traceable verification.
 
+## Brainstorm Feature Ideas Before Choosing a Workflow
+
+For every new feature spec, read [brainstorming](references/brainstorming.md) before presenting workflow choices. Explore the repository, confirm one focused scope, clarify intent one question at a time, compare two or three approaches, and obtain approval for a concise decision brief.
+
+Complete this preflight only when the brief states the goal, success criteria, boundaries, constraints, and chosen approach clearly enough to recommend a workflow. For a defect, begin with the Bugfix workflow choice and evidence flow; reproduction and behavioral boundaries provide its discovery process.
+
 ## Choose Workflow Before Creating Files
 
-For every new feature spec, present Requirements-First, Design-First, and Quick Plan. State the recommendation and one-sentence reason, then ask the user to choose:
+After the feature preflight, present Requirements-First, Design-First, and Quick Plan. State the recommendation and one-sentence reason, then ask the user to choose:
 
 | Workflow | Recommend when |
 | --- | --- |
@@ -34,6 +40,14 @@ Use `requirements`, `bugfix`, `design`, or `tasks` as the artifact. Run the init
 For an existing spec, read every present artifact under `docs/specs/<slug>/` before editing it. Preserve approved decisions and edit the existing files.
 
 Replace every scaffold placeholder before presenting an artifact for approval. Keep one focused capability or defect per spec; create another spec when work can evolve independently.
+
+## Load Phase References
+
+- Before drafting or revising `design.md` or `tasks.md`, read [design and task planning](references/design-and-task-planning.md). Apply its repository mapping, interface, task-sizing, dependency, and self-review guidance to the relevant artifact.
+- Before drafting or revising `tasks.md`, also read [test-driven development](references/test-driven-development.md). Give every behavior task a complete ordered RED, Verify RED, GREEN, Verify GREEN, and REFACTOR cycle.
+- When planned tests introduce mocks, test utilities, or production interfaces used only by tests, also read [testing anti-patterns](references/testing-anti-patterns.md) before finalizing the design or tasks.
+
+Use `[TDD Exception]` only for throwaway exploration, generated output, configuration-only work, or another case the user explicitly approves. Record the reason, approval, and exact check in the task. In Quick Plan, obtain that approval while resolving material questions before generating `tasks.md`.
 
 ## Apply Shared Standards
 
@@ -65,25 +79,27 @@ Use these phase gates:
 
 Stop when validation fails. Repair the artifact and rerun the validator before continuing. Request approval only after validation passes. When an upstream artifact changes, validate it and every changed downstream artifact in workflow order.
 
+For `tasks.md`, validation requires each numbered required or optional task to use one accepted form: an ordered TDD cycle, an approved `[TDD Exception]` with Reason, Approval, and Check entries, or a `Checkpoint` with Check and Expected entries.
+
 ## Requirements-First
 
 1. Fill `requirements.md` from the user intent. Include only glossary terms reused by the spec, numbered user stories, and measurable EARS acceptance criteria. Complete the phase when every requested behavior and boundary is represented, every criterion is testable, analysis findings are resolved, and the user explicitly approves the artifact.
-2. Explore the relevant code and fill `design.md`. Account for every acceptance criterion across architecture, interfaces, data, failure handling, and tests. Complete the phase when every requirement is traceable to a concrete design decision and the user explicitly approves the artifact.
-3. Fill `tasks.md` from the approved design. Represent the same acyclic dependencies as JSON execution waves, an ASCII dependency tree, and a task-to-dependencies table. Keep tasks discrete and verifiable, and reference every requirement from at least one required task. Complete the phase when all three dependency views agree, the plan covers implementation and validation, and the user explicitly approves it.
+2. Explore the relevant code and fill `design.md` using the design-planning reference. Account for every acceptance criterion across architecture, interfaces, data, failure handling, and tests. Complete the phase when every requirement is traceable to a concrete design decision and the user explicitly approves the artifact.
+3. Fill `tasks.md` from the approved design using the task-planning and TDD references. Represent the same acyclic dependencies as JSON execution waves, an ASCII dependency tree, and a task-to-dependencies table. Keep tasks discrete and verifiable, give every behavior task its complete TDD cycle, and reference every requirement from at least one required task. Complete the phase when all three dependency views agree, every task uses an accepted form, the plan covers implementation and validation, and the user explicitly approves it.
 4. Continue with **Implement Approved Tasks**.
 
 ## Design-First
 
-1. Explore the codebase and fill `design.md` from the supplied architecture or constraints. State interfaces, data flow, non-functional constraints, risks, and validation strategy. Complete the phase when the design is feasible and the user explicitly approves it.
+1. Explore the codebase and fill `design.md` from the supplied architecture or constraints using the design-planning reference. State interfaces, data flow, non-functional constraints, risks, and validation strategy. Complete the phase when the design is feasible and the user explicitly approves it.
 2. Derive `requirements.md` from the approved design, then review it for missing user value and edge behavior. Synchronize requirement identifiers back into `design.md`. Complete the phase when requirements remain feasible, the two artifacts agree, and the user explicitly approves them.
-3. Fill `tasks.md` with synchronized JSON waves, an ASCII dependency tree, and a task-to-dependencies table. Prove complete requirement coverage and acyclic dependencies, then obtain explicit approval.
+3. Fill `tasks.md` using the task-planning and TDD references, with synchronized JSON waves, an ASCII dependency tree, and a task-to-dependencies table. Prove complete requirement coverage, accepted task forms, and acyclic dependencies, then obtain explicit approval.
 4. Continue with **Implement Approved Tasks**.
 
 ## Bugfix
 
 1. Reproduce or otherwise establish evidence for the defect. Fill `bugfix.md` with reproduction evidence, current behavior, expected behavior, unchanged behavior, constraints, and regression boundaries. Complete the phase when the behavioral change is unambiguous and the user explicitly approves it.
-2. Trace every relevant caller and investigate the root cause. Fill `design.md` with the evidence-backed root cause, smallest shared fix, affected components, failure handling, and regression strategy. Complete the phase when the fix preserves every unchanged behavior and the user explicitly approves it.
-3. Fill `tasks.md` with synchronized JSON waves, an ASCII dependency tree, and a task-to-dependencies table. Include a check that fails on the original defect, passes after the fix, and protects unchanged behavior. Complete the phase when every expected and unchanged behavior is referenced and the user explicitly approves it.
+2. Trace every relevant caller and investigate the root cause. Fill `design.md` using the design-planning reference, with the evidence-backed root cause, smallest shared fix, affected components, failure handling, and regression strategy. Complete the phase when the fix preserves every unchanged behavior and the user explicitly approves it.
+3. Fill `tasks.md` using the task-planning and TDD references, with synchronized JSON waves, an ASCII dependency tree, and a task-to-dependencies table. Make the first behavior task reproduce the original defect in RED, pass after GREEN, and protect unchanged behavior through related verification. Complete the phase when every expected and unchanged behavior is referenced, every task uses an accepted form, and the user explicitly approves it.
 4. Continue with **Implement Approved Tasks**.
 
 ## Quick Plan
@@ -108,6 +124,6 @@ Preserve completed task evidence. Reopen a task only when the changed artifact i
 
 1. Read the approved artifacts and repository instructions. Select incomplete required tasks whose dependencies are satisfied; include a requested task's incomplete prerequisites.
 2. Execute dependency waves sequentially. Run tasks within one wave concurrently only when they do not share files, mutable state, or unresolved decisions. Keep starred optional tasks incomplete unless the user requests them.
-3. For each task, implement the smallest design-compliant change and run its stated check. Mark its checkbox `[x]` only after the check passes; otherwise leave it incomplete and report the evidence.
+3. For each behavior task, execute RED, Verify RED, GREEN, Verify GREEN, and REFACTOR in order, preserving the observed failure and passing evidence. For an approved exception or checkpoint, run its stated check and confirm the expected result. Mark the checkbox `[x]` only after the complete task form passes; otherwise leave it incomplete and report the evidence.
 4. After each wave, run the smallest integration check that covers its combined changes. Synchronize artifacts if implementation reveals a material requirement or design correction, and obtain approval again when user intent changes.
 5. Complete the spec only when every required task is checked, the final repository checks pass, and the implementation still matches the approved requirements or bugfix boundaries.

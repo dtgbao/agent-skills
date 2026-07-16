@@ -34,6 +34,38 @@ class ValidateSpecTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stderr, "")
 
+    def tasks_document(self, task_body: str) -> str:
+        return f"""# Implementation Plan: Example
+
+## Overview
+
+Implement the approved behavior in dependency order.
+
+## Task Dependency Graph
+
+```json
+{{"waves": [{{"wave": 1, "tasks": [1, 2, 3]}}]}}
+```
+
+```text
+1
+2
+3
+```
+
+| Task | Depends On |
+| ---- | ---------- |
+| 1    | —          |
+
+## Tasks
+
+{task_body}
+
+## Notes
+
+Track verification evidence with each task.
+"""
+
     def test_templates_are_valid_and_correctness_properties_is_optional(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -228,6 +260,98 @@ Text.
 
         self.assertEqual(result.returncode, 1)
         self.assertIn("[tasks/missing-dependency-table]", result.stderr)
+
+    def test_tasks_accept_tdd_exception_checkpoint_and_optional_cycles(self) -> None:
+        content = self.tasks_document(
+            """- [ ] 1. Add observable behavior
+  - **RED:** Add a focused failing test.
+  - **Verify RED:** Run `pytest tests/test_behavior.py -v`; expect the behavior assertion to fail.
+  - **GREEN:** Implement only the behavior required by the failing test.
+  - **Verify GREEN:** Run `pytest tests/test_behavior.py -v`; expect it to pass.
+  - **REFACTOR:** Remove duplication and rerun `pytest tests/test_behavior.py -v`.
+
+- [ ]\\* 2. Optional observable behavior
+  - **RED:** Add the optional behavior test.
+  - **Verify RED:** Run `pytest tests/test_optional.py -v`; expect the assertion to fail.
+  - **GREEN:** Implement the optional behavior.
+  - **Verify GREEN:** Run `pytest tests/test_optional.py -v`; expect it to pass.
+  - **REFACTOR:** Keep the implementation focused and rerun the test.
+
+- [ ] 3. Checkpoint — integrated behavior
+  - **Check:** Run `pytest -q`.
+  - **Expected:** The complete suite passes without warnings.
+"""
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            path = self.write(Path(directory), "tasks.md", content)
+            self.assert_valid(path)
+
+    def test_tdd_exception_requires_reason_approval_and_check(self) -> None:
+        content = self.tasks_document(
+            """- [ ] 1. [TDD Exception] Regenerate checked-in fixtures
+  - **Reason:** The output is generated from the approved schema.
+  - **Check:** Run `python scripts/generate.py --check`.
+"""
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            path = self.write(Path(directory), "tasks.md", content)
+            result = self.run_validator(path)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("[tasks/incomplete-tdd-exception]", result.stderr)
+        self.assertIn("Reason, Approval, and Check", result.stderr)
+
+    def test_complete_tdd_exception_is_valid(self) -> None:
+        content = self.tasks_document(
+            """- [ ] 1. [TDD Exception] Regenerate checked-in fixtures
+  - **Reason:** The output is generated from the approved schema, so test-first does not apply.
+  - **Approval:** The user explicitly approved this exception during task planning.
+  - **Check:** Run `python scripts/generate.py --check`; expect no diff.
+"""
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            path = self.write(Path(directory), "tasks.md", content)
+            self.assert_valid(path)
+
+    def test_checkpoint_requires_check_and_expected_result(self) -> None:
+        content = self.tasks_document(
+            """- [ ] 1. Checkpoint — integrated behavior
+  - **Check:** Run `pytest -q`.
+"""
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            path = self.write(Path(directory), "tasks.md", content)
+            result = self.run_validator(path)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("[tasks/missing-checkpoint-verification]", result.stderr)
+        self.assertIn("Check and Expected", result.stderr)
+
+    def test_behavior_task_requires_complete_ordered_tdd_cycle(self) -> None:
+        cases = {
+            "missing-phase": """- [ ] 1. Add observable behavior
+  - **RED:** Add a focused failing test.
+  - **GREEN:** Implement the behavior.
+  - **Verify GREEN:** Run the focused test and expect it to pass.
+  - **REFACTOR:** Remove duplication and rerun the test.
+""",
+            "misordered-phases": """- [ ] 1. Add observable behavior
+  - **RED:** Add a focused failing test.
+  - **GREEN:** Implement the behavior.
+  - **Verify RED:** Run the focused test and expect it to fail.
+  - **Verify GREEN:** Run the focused test and expect it to pass.
+  - **REFACTOR:** Remove duplication and rerun the test.
+""",
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for label, task_body in cases.items():
+                with self.subTest(label=label):
+                    path = self.write(root, "tasks.md", self.tasks_document(task_body))
+                    result = self.run_validator(path)
+                    self.assertEqual(result.returncode, 1)
+                    self.assertIn("[tasks/incomplete-tdd-cycle]", result.stderr)
+                    self.assertIn("RED, Verify RED, GREEN, Verify GREEN, and REFACTOR", result.stderr)
 
     def test_missing_task_dependency_graph_uses_kiro_compatible_code(self) -> None:
         content = (TEMPLATES / "tasks.md").read_text(encoding="utf-8").replace(

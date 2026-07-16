@@ -1,174 +1,179 @@
----
-name: writing-plans
-description: Use when you have a spec or requirements for a multi-step task, before touching code
----
+# Design and Task Planning
 
-# Writing Plans
+Use this reference while writing `design.md` or `tasks.md`. Ground both artifacts in the repository and approved upstream decisions so an engineer with little local context can implement the work without inventing architecture, interfaces, or verification steps.
 
-## Overview
+## Contents
 
-Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch for each task, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD. Frequent commits.
+- [Shared Gate](#shared-gate)
+- [Writing `design.md`](#writing-designmd)
+- [Writing `tasks.md`](#writing-tasksmd)
 
-Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.
+## Shared Gate
 
-**Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
+Confirm the spec covers one focused capability or defect. When independent subsystems remain bundled together, return to scope clarification and split them before planning. Each resulting spec must produce useful, testable behavior on its own.
 
-**Context:** If working in an isolated worktree, it should have been created via the `superpowers:using-git-worktrees` skill at execution time.
+Inspect the affected code, tests, configuration, and repository instructions before naming paths, symbols, dependencies, or commands. Follow established patterns unless an approved decision explicitly changes them.
 
-**Save plans to:** `docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md`
-- (User preferences for plan location override this default)
+## Writing `design.md`
 
-## Scope Check
+### Map the Repository
 
-If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
+Identify the files or modules that own the affected behavior before choosing components:
 
-## File Structure
+- Record which existing units change and what responsibility each retains.
+- Name new units only when they create a clear boundary or independently testable responsibility.
+- Keep files that change together near each other when repository conventions allow it.
+- Prefer focused files over large units that combine unrelated responsibilities.
+- Include a targeted split when an affected file has become an obstacle to the approved change; leave unrelated restructuring outside the design.
 
-Before defining tasks, map out which files will be created or modified and what each one is responsible for. This is where decomposition decisions get locked in.
+The repository map is design evidence, not a speculative file inventory. Every listed location must contribute to an approved requirement, bugfix boundary, or validation need.
 
-- Design units with clear boundaries and well-defined interfaces. Each file should have one clear responsibility.
-- You reason best about code you can hold in context at once, and your edits are more reliable when files are focused. Prefer smaller, focused files over large ones that do too much.
-- Files that change together should live together. Split by responsibility, not by technical layer.
-- In existing codebases, follow established patterns. If the codebase uses large files, don't unilaterally restructure - but if a file you're modifying has grown unwieldy, including a split in the plan is reasonable.
+### Define Boundaries and Interfaces
 
-This structure informs the task decomposition. Each task should produce self-contained changes that make sense independently.
+For each component, state:
 
-## Task Right-Sizing
+- Its responsibility and collaborators
+- Its repository location
+- The public API, schema, command, event, or internal contract it consumes and produces
+- Relevant parameter, return, field, and error types
+- Ownership of state, resources, transactions, and lifecycle
+- The requirement or bugfix identifiers it validates
 
-A task is the smallest unit that carries its own test cycle and is worth a
-fresh reviewer's gate. When drawing task boundaries: fold setup,
-configuration, scaffolding, and documentation steps into the task whose
-deliverable needs them; split only where a reviewer could meaningfully
-reject one task while approving its neighbor. Each task ends with an
-independently testable deliverable.
+A component boundary is ready when a reader can explain what it does, how to use it, and what it depends on without reading its internals. Keep naming and types consistent across components and later tasks.
 
-## Bite-Sized Task Granularity
+### Explain Behavior and Failure Handling
 
-**Each step is one action (2-5 minutes):**
-- "Write the failing test" - step
-- "Run it to make sure it fails" - step
-- "Implement the minimal code to make the test pass" - step
-- "Run the tests and make sure they pass" - step
-- "Commit" - step
+Describe control flow and data flow from entry point through dependencies. Cover concurrency, retries, partial failure, recovery, compatibility, and observability only where they materially apply. Preserve unchanged bugfix behavior explicitly.
 
-## Plan Document Header
+Use diagrams for relationships or state transitions that are materially clearer visually. Keep straightforward sequences in prose.
 
-**Every plan MUST start with this header:**
+### Design the Testing Strategy
+
+Map each important behavior and correctness property to the smallest useful test layer:
+
+- Unit tests for focused logic and contracts
+- Integration tests for boundaries, persistence, APIs, or events
+- End-to-end tests for critical journeys
+- Regression tests for reproduced defects and unchanged behavior
+
+Prefer real behavior over mock interactions. Identify seams that make test-first implementation practical without adding production APIs solely for tests.
+
+### Review the Design
+
+Before approval:
+
+1. **Coverage:** Every requirement or bugfix boundary maps to a concrete design decision and validation strategy.
+2. **Repository fit:** Paths, interfaces, dependencies, and commands come from inspected code.
+3. **Consistency:** Component names, types, and data flow agree throughout the artifact.
+4. **Failure behavior:** Important errors and recovery paths have explicit handling.
+5. **Scope:** Every component serves the focused spec.
+6. **Placeholder scan:** Replace every placeholder, `TBD`, `TODO`, vague instruction, and unresolved choice.
+
+Resolve each finding inline before validation and user approval.
+
+## Writing `tasks.md`
+
+Start from approved, synchronized upstream artifacts. Lock the file and interface structure before decomposing tasks so neighboring tasks agree on paths, symbols, and contracts.
+
+### Right-Size Tasks
+
+A task is the smallest unit that carries its own verification cycle and merits an independent review gate.
+
+- Fold setup, configuration, scaffolding, generated artifacts, and documentation into the behavior task that needs them.
+- Split tasks where one outcome could be accepted while another is rejected.
+- End every task with an independently observable result.
+- Keep a complete test cycle within the same behavior task as its production change.
+- Use a checkpoint only for integration evidence across completed behavior tasks.
+
+Within a behavior task, keep each action small and ordered:
+
+1. Write one focused failing test.
+2. Run it and confirm the expected failure.
+3. Implement the minimum behavior that makes it pass.
+4. Run the focused and relevant regression tests.
+5. Refactor while tests remain green.
+
+### Record Exact Implementation Context
+
+Each task must give its implementer enough information to act without rediscovery:
+
+- Exact files to create, modify, and test
+- Existing symbols or interfaces it consumes
+- New or changed signatures, schemas, events, or commands it produces
+- The behavior boundary and requirement or bugfix identifiers it covers
+- Exact verification commands and expected failure or success output
+- Required setup or fixtures owned by the task
+
+Include concise signatures, schemas, assertions, or pseudocode when they prevent ambiguity. Keep the design artifact as the source of truth for architecture; avoid duplicating full implementations that would drift before execution.
+
+### Preserve Dependency Clarity
+
+Represent the same acyclic dependencies three ways:
+
+- JSON execution waves
+- An ASCII dependency tree
+- A task-to-dependencies table
+
+Every task identifier must appear consistently. A task may enter a wave only after every dependency appears in an earlier wave. Tasks in one wave must be safe to execute concurrently without shared files, mutable state, or unresolved interface decisions.
+
+### Use One Accepted Task Form
+
+Use the scaffolded structure for every required and optional task.
+
+**Behavior task**
 
 ```markdown
-# [Feature Name] Implementation Plan
-
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
-
-**Goal:** [One sentence describing what this builds]
-
-**Architecture:** [2-3 sentences about approach]
-
-**Tech Stack:** [Key technologies/libraries]
-
-## Global Constraints
-
-[The spec's project-wide requirements — version floors, dependency limits,
-naming and copy rules, platform requirements — one line each, with exact
-values copied verbatim from the spec. Every task's requirements implicitly
-include this section.]
-
----
+- [ ] 1. <Observable outcome>
+  - **RED:** <Focused test and behavior>
+  - **Verify RED:** Run `<command>`; expect <failure caused by missing behavior>.
+  - **GREEN:** <Smallest implementation boundary>
+  - **Verify GREEN:** Run `<command>`; expect <success and relevant regressions to remain green>.
+  - **REFACTOR:** <Cleanup or explicit no-cleanup decision>, then rerun `<command>`.
+  - _Requirements: <identifiers> or Bugfix: <identifiers>_
 ```
 
-## Task Structure
+**Approved TDD exception**
 
-````markdown
-### Task N: [Component Name]
-
-**Files:**
-- Create: `exact/path/to/file.py`
-- Modify: `exact/path/to/existing.py:123-145`
-- Test: `tests/exact/path/to/test.py`
-
-**Interfaces:**
-- Consumes: [what this task uses from earlier tasks — exact signatures]
-- Produces: [what later tasks rely on — exact function names, parameter
-  and return types. A task's implementer sees only their own task; this
-  block is how they learn the names and types neighboring tasks use.]
-
-- [ ] **Step 1: Write the failing test**
-
-```python
-def test_specific_behavior():
-    result = function(input)
-    assert result == expected
+```markdown
+- [ ] 2. [TDD Exception] <Outcome>
+  - **Reason:** <Why test-first does not apply>
+  - **Approval:** <Where the user explicitly approved the exception>
+  - **Check:** Run `<command>`; expect <observable result>.
+  - _Requirements: <identifiers> or Bugfix: <identifiers>_
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+Use this form only for an explicit user-approved exception such as throwaway exploration, generated output, or configuration-only work.
 
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: FAIL with "function not defined"
+**Integration checkpoint**
 
-- [ ] **Step 3: Write minimal implementation**
-
-```python
-def function(input):
-    return expected
+```markdown
+- [ ] 3. Checkpoint — <Integrated outcome>
+  - **Check:** Run `<integration command>`.
+  - **Expected:** <Observable successful result and warning expectations>.
+  - _Requirements: <covered identifiers> or Bugfix: <covered identifiers>_
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+### Eliminate Plan Failures
 
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: PASS
+Replace these with concrete content before approval:
 
-- [ ] **Step 5: Commit**
+- `TBD`, `TODO`, “implement later,” or “fill in details”
+- “Add appropriate error handling,” “add validation,” or “handle edge cases” without named behavior
+- “Write tests” without the test target, command, and expected result
+- “Similar to Task N” instead of restating the task-local contract
+- Code steps that omit the path, symbol, or interface being changed
+- References to types, functions, or methods no task or existing file defines
+- Commands without expected failure or success evidence
 
-```bash
-git add tests/path/test.py src/path/file.py
-git commit -m "feat: add specific feature"
-```
-````
+### Review the Task Plan
 
-## No Placeholders
+Before approval:
 
-Every step must contain the actual content an engineer needs. These are **plan failures** — never write them:
-- "TBD", "TODO", "implement later", "fill in details"
-- "Add appropriate error handling" / "add validation" / "handle edge cases"
-- "Write tests for the above" (without actual test code)
-- "Similar to Task N" (repeat the code — the engineer may be reading tasks out of order)
-- Steps that describe what to do without showing how (code blocks required for code steps)
-- References to types, functions, or methods not defined in any task
+1. **Spec coverage:** Every required upstream identifier is implemented and verified by at least one required task.
+2. **Dependency agreement:** JSON waves, tree, and table express the same acyclic graph.
+3. **Interface consistency:** Names, paths, types, and schemas match the design and neighboring tasks.
+4. **TDD structure:** Every behavior task has the complete ordered cycle; every exception records approval; every checkpoint has an expected result.
+5. **Placeholder scan:** No vague or incomplete instruction remains.
+6. **Execution readiness:** Every task has exact context and verification evidence.
 
-## Remember
-- Exact file paths always
-- Complete code in every step — if a step changes code, show the code
-- Exact commands with expected output
-- DRY, YAGNI, TDD, frequent commits
-
-## Self-Review
-
-After writing the complete plan, look at the spec with fresh eyes and check the plan against it. This is a checklist you run yourself — not a subagent dispatch.
-
-**1. Spec coverage:** Skim each section/requirement in the spec. Can you point to a task that implements it? List any gaps.
-
-**2. Placeholder scan:** Search your plan for red flags — any of the patterns from the "No Placeholders" section above. Fix them.
-
-**3. Type consistency:** Do the types, method signatures, and property names you used in later tasks match what you defined in earlier tasks? A function called `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
-
-If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
-
-## Execution Handoff
-
-After saving the plan, offer execution choice:
-
-**"Plan complete and saved to `docs/superpowers/plans/<filename>.md`. Two execution options:**
-
-**1. Subagent-Driven (recommended)** - I dispatch a fresh subagent per task, review between tasks, fast iteration
-
-**2. Inline Execution** - Execute tasks in this session using executing-plans, batch execution with checkpoints
-
-**Which approach?"**
-
-**If Subagent-Driven chosen:**
-- **REQUIRED SUB-SKILL:** Use superpowers:subagent-driven-development
-- Fresh subagent per task + two-stage review
-
-**If Inline Execution chosen:**
-- **REQUIRED SUB-SKILL:** Use superpowers:executing-plans
-- Batch execution with checkpoints for review
+Resolve findings inline, validate `tasks.md`, and obtain the phase's required approval. Then return to the main instructions for implementation of approved tasks.

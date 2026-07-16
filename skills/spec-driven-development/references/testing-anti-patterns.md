@@ -2,6 +2,21 @@
 
 **Load this reference when:** writing or changing tests, adding mocks, or tempted to add test-only methods to production code.
 
+## Contents
+
+- [Overview](#overview)
+- [The Iron Laws](#the-iron-laws)
+- [Anti-Pattern 1: Testing Mock Behavior](#anti-pattern-1-testing-mock-behavior)
+- [Anti-Pattern 2: Test-Only Methods in Production](#anti-pattern-2-test-only-methods-in-production)
+- [Anti-Pattern 3: Mocking Without Understanding](#anti-pattern-3-mocking-without-understanding)
+- [Anti-Pattern 4: Incomplete Mocks](#anti-pattern-4-incomplete-mocks)
+- [Anti-Pattern 5: Integration Tests as Afterthought](#anti-pattern-5-integration-tests-as-afterthought)
+- [When Mocks Become Too Complex](#when-mocks-become-too-complex)
+- [TDD Prevents These Anti-Patterns](#tdd-prevents-these-anti-patterns)
+- [Quick Reference](#quick-reference)
+- [Red Flags](#red-flags)
+- [The Bottom Line](#the-bottom-line)
+
 ## Overview
 
 Tests must verify real behavior, not mock behavior. Mocks are a means to isolate, not the thing being tested.
@@ -34,7 +49,7 @@ test('renders sidebar', () => {
 - Test passes when mock is present, fails when it's not
 - Tells you nothing about real behavior
 
-**your human partner's correction:** "Are we testing the behavior of a mock?"
+**Review question:** "Are we testing real behavior or only the behavior of a mock?"
 
 **The fix:**
 ```typescript
@@ -256,7 +271,7 @@ TDD cycle:
 - Mocks missing methods real components have
 - Test breaks when mock changes
 
-**your human partner's question:** "Do we need to be using a mock here?"
+**Review question:** "Does this boundary genuinely require a mock?"
 
 **Consider:** Integration tests with real components often simpler than complex mocks
 

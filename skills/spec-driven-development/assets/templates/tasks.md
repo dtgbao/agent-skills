@@ -34,18 +34,23 @@
 
 ## Tasks
 
-- [ ] 1. <Required task outcome>
-  - <Implementation boundary or concrete deliverable>
-  - <Smallest check that proves the outcome>
+- [ ] 1. <Required behavior outcome>
+  - **RED:** Add `<test path>` with one focused test for <required behavior>.
+  - **Verify RED:** Run `<focused test command>`; expect <failure caused by missing behavior>.
+  - **GREEN:** Implement the smallest change in `<implementation paths>` that satisfies the failing test.
+  - **Verify GREEN:** Run `<focused test command>`; expect it to pass, then run `<related regression command>`.
+  - **REFACTOR:** <Remove duplication or state why no cleanup is needed>, then rerun `<focused or related test command>` and expect it to pass.
   - _Requirements: <1.1, 1.2> or Bugfix: <EB1, UB1>_
 
-- [ ]\* 2. <Optional task outcome>
-  - <Implementation boundary or concrete deliverable>
-  - <Smallest check that proves the outcome>
+- [ ]\* 2. [TDD Exception] <Optional generated, configuration-only, or throwaway outcome>
+  - **Reason:** <Explain concretely why test-first does not apply to this task.>
+  - **Approval:** <Record the user's explicit approval of this exception.>
+  - **Check:** Run `<verification command>`; expect <observable successful result>.
   - _Requirements: <optional requirement identifier>_
 
 - [ ] 3. Checkpoint — <Integrated behavior>
-  - Run `<command>` and resolve failures before continuing.
+  - **Check:** Run `<integration command>`.
+  - **Expected:** <Describe the successful result, including relevant warning or failure expectations.>
   - _Requirements: <covered identifiers>_
 
 ---
@@ -53,6 +58,7 @@
 ## Notes
 
 - Tasks marked with `*` are optional and remain incomplete unless explicitly requested.
-- Mark a task `[x]` only after its stated check passes.
+- Use `[TDD Exception]` only for a user-approved exception recorded in the task.
+- Mark a task `[x]` only after its complete TDD cycle or stated checkpoint/exception check passes.
 
-<!-- Replace the example waves, tree, dependency table, and tasks with one consistent, acyclic, complete plan. Remove every placeholder before approval. -->
+<!-- Replace the example waves, tree, dependency table, and tasks with one consistent, acyclic, complete plan. Preserve one accepted task form per task and remove every placeholder before approval. -->

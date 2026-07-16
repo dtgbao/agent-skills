@@ -20,7 +20,11 @@ USER_STORY_RE = re.compile(r"^\*\*User Story:\*\*\s+\S.*$")
 ACCEPTANCE_RE = re.compile(r"^#### Acceptance Criteria\s*$")
 TABLE_HEADER_RE = re.compile(r"^\|\s*Task\s*\|\s*Depends On\s*\|\s*$")
 TABLE_DIVIDER_RE = re.compile(r"^\|\s*:?-{3,}:?\s*\|\s*:?-{3,}:?\s*\|\s*$")
-TASK_RE = re.compile(r"^- \[[ xX]\](?:\\?\*)?\s+\d+\.\s+\S")
+TASK_RE = re.compile(r"^- \[[ xX]\](?:\\?\*)?\s+(?P<number>\d+)\.\s+(?P<title>\S.*)$")
+TASK_LABEL_RE = re.compile(
+    r"^\s+-\s+\*\*(?P<label>RED|Verify RED|GREEN|Verify GREEN|REFACTOR|Reason|Approval|Check|Expected):\*\*\s+\S.*$"
+)
+TDD_CYCLE = ("RED", "Verify RED", "GREEN", "Verify GREEN", "REFACTOR")
 
 
 @dataclass(frozen=True)
@@ -247,10 +251,53 @@ def validate_tasks(lines: list[str], visible: list[str | None]) -> list[Diagnost
     tasks = section_bounds(visible, "Tasks")
     if tasks is not None:
         start, end = tasks
-        if not any(line is not None and TASK_RE.match(line) for line in visible[start + 1 : end]):
+        task_starts = [
+            (index, match)
+            for index in range(start + 1, end)
+            if visible[index] is not None and (match := TASK_RE.fullmatch(visible[index]))
+        ]
+        if not task_starts:
             diagnostics.append(
                 Diagnostic(start + 1, "tasks/missing-task-checkbox", "Tasks section is missing a numbered top-level task checkbox.")
             )
+        for position, (task_start, match) in enumerate(task_starts):
+            task_end = task_starts[position + 1][0] if position + 1 < len(task_starts) else end
+            labels = [
+                label_match.group("label")
+                for line in visible[task_start + 1 : task_end]
+                if line is not None and (label_match := TASK_LABEL_RE.fullmatch(line))
+            ]
+            title = match.group("title")
+            if title.startswith("Checkpoint"):
+                if not {"Check", "Expected"}.issubset(labels):
+                    diagnostics.append(
+                        Diagnostic(
+                            task_start + 1,
+                            "tasks/missing-checkpoint-verification",
+                            "Checkpoint task must include nonempty Check and Expected entries.",
+                        )
+                    )
+                continue
+            if "[TDD Exception]" in title:
+                if not {"Reason", "Approval", "Check"}.issubset(labels):
+                    diagnostics.append(
+                        Diagnostic(
+                            task_start + 1,
+                            "tasks/incomplete-tdd-exception",
+                            "TDD exception task must include nonempty Reason, Approval, and Check entries.",
+                        )
+                    )
+                continue
+
+            cycle = tuple(label for label in labels if label in TDD_CYCLE)
+            if cycle != TDD_CYCLE:
+                diagnostics.append(
+                    Diagnostic(
+                        task_start + 1,
+                        "tasks/incomplete-tdd-cycle",
+                        "Behavior task must include RED, Verify RED, GREEN, Verify GREEN, and REFACTOR entries in that order.",
+                    )
+                )
     return diagnostics
 
 
