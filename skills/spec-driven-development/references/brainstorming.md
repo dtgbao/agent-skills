@@ -17,7 +17,7 @@ Turn a feature idea into an approved decision brief through focused collaborativ
 
 ## Completion Gate
 
-Keep the repository unchanged while brainstorming. Enter the specification workflow only after the user approves a concise brief covering the goal, success criteria, scope, constraints, and chosen approach.
+Keep the repository unchanged while brainstorming. Enter the specification workflow only after the user confirms shared understanding by approving a concise brief covering the goal, success criteria, scope, constraints, and chosen approach.
 
 Even small changes benefit from this gate. A short brief may be only a few sentences, but it must expose assumptions before artifact creation or implementation begins.
 
@@ -59,7 +59,9 @@ The terminal state is an approved decision brief followed by feature workflow se
 
 - Inspect the current project before asking detailed questions or proposing architecture.
 - Assess scope early. When a request combines independent subsystems, decompose it into separate capabilities, explain their relationships and implementation order, and brainstorm only the first capability through this process.
-- Ask one question per message. Break a broad topic into successive questions.
+- Interview me relentlessly about every aspect of this until we reach a shared understanding. Walk down each relevant branch of the decision tree and resolve dependencies between decisions in order.
+- Ask one question per message and wait for the answer before continuing. Break a broad topic into successive questions, and include a recommended answer with concise reasoning for every question.
+- Discover facts from the repository, documentation, and available tools instead of asking the user. Put every material product or technical decision to the user; recommendations inform those decisions but do not replace them.
 - Prefer multiple-choice questions when the choices are meaningful; use an open question when the answer space is genuinely unknown.
 - Establish purpose, audience, observable success, constraints, boundaries, and important failure behavior.
 - Resolve assumptions that would materially change the workflow recommendation or chosen approach.
