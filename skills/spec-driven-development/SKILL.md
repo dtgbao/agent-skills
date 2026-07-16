@@ -7,27 +7,31 @@ description: Spec-driven development for feature ideas, design-led work, and com
 
 Turn an idea, technical direction, or defect into reviewed artifacts, then implement the approved tasks with traceable verification.
 
-## Brainstorm Feature Ideas Before Choosing a Workflow
+## Choose Workflow Before Brainstorming or Creating Files
 
-For every new feature spec, read [brainstorming](references/brainstorming.md) before presenting workflow choices. Explore the repository, confirm one focused scope, clarify intent one question at a time, compare two or three approaches, and obtain approval for a concise decision brief.
+Use only the request and minimal routing clarification needed to distinguish a feature from a defect and identify whether behavior, technical constraints, or speed should lead. Do not inspect the repository deeply, compare solution approaches, or create files before the choice.
 
-Complete this preflight only when the brief states the goal, success criteria, boundaries, constraints, and chosen approach clearly enough to recommend a workflow. For a defect, begin with the Bugfix workflow choice and evidence flow; reproduction and behavioral boundaries provide its discovery process.
+For a feature, present Requirements-First, Design-First, and Quick Plan. State the recommendation and one-sentence reason, then ask the user to choose:
 
-## Choose Workflow Before Creating Files
-
-After the feature preflight, present Requirements-First, Design-First, and Quick Plan. State the recommendation and one-sentence reason, then ask the user to choose:
-
-| Workflow | Recommend when |
-| --- | --- |
-| Requirements-First | User behavior, scope, or acceptance boundaries should lead; use this by default. |
-| Design-First | Existing architecture, a fixed stack, or strict technical constraints should lead. |
-| Quick Plan | The work is well understood and the user wants all artifacts without intermediate approvals. |
+| Workflow           | Recommend when                                                                               |
+| ------------------ | -------------------------------------------------------------------------------------------- |
+| Requirements-First | User behavior, scope, or acceptance boundaries should lead; use this by default.             |
+| Design-First       | Existing architecture, a fixed stack, or strict technical constraints should lead.           |
+| Quick Plan         | The work is well understood and the user wants all artifacts without intermediate approvals. |
 
 For a defect, present Bugfix and Quick Plan, recommending Bugfix for complex, critical, or regression-prone behavior. Wait for the user's choice before calling the initializer, creating a spec directory, or drafting any artifact.
 
+## Brainstorm After Choosing a Feature Workflow
+
+For every new feature spec, read [brainstorming](references/brainstorming.md) after the user chooses Requirements-First, Design-First, or Quick Plan. Explore the repository, confirm one focused scope, clarify intent one question at a time, compare two or three approaches, and obtain approval for a concise decision brief before creating files.
+
+Focus discovery through the chosen workflow: lead with behavior, scope, and acceptance boundaries for Requirements-First; lead with architecture and technical constraints for Design-First; resolve every material product and technical decision for Quick Plan. If discovery shows the chosen workflow no longer fits, explain the mismatch, recommend a replacement, and ask the user to choose again before creating files.
+
+Complete this gate only when the brief states the goal, success criteria, boundaries, constraints, and chosen approach clearly enough to begin the selected workflow. For a defect, begin with the chosen Bugfix or bugfix Quick Plan evidence flow; reproduction and behavioral boundaries provide its discovery process.
+
 ## Start or Resume a Spec
 
-Work from the repository root and read its agent instructions before writing artifacts. After the user chooses a workflow, create only the artifact for the current phase:
+Work from the repository root and read its agent instructions before writing artifacts. After the user chooses a workflow and completes its discovery gate, create only the artifact for the current phase:
 
 ```bash
 python <skill-directory>/scripts/init_spec.py <slug> \

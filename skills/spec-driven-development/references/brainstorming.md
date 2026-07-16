@@ -1,6 +1,6 @@
-# Brainstorming Before Specification
+# Brainstorming After Workflow Selection
 
-Turn a feature idea into an approved decision brief through focused collaborative dialogue. Use this preflight before choosing a feature workflow; let defect work begin with reproduction evidence and behavioral boundaries.
+Turn a feature idea into an approved decision brief through focused collaborative dialogue. Use this preflight after the user chooses a feature workflow; let defect work begin with reproduction evidence and behavioral boundaries.
 
 ## Contents
 
@@ -17,7 +17,7 @@ Turn a feature idea into an approved decision brief through focused collaborativ
 
 ## Completion Gate
 
-Keep the repository unchanged while brainstorming. Enter the specification workflow only after the user confirms shared understanding by approving a concise brief covering the goal, success criteria, scope, constraints, and chosen approach.
+Keep the repository unchanged while brainstorming. Continue the chosen workflow only after the user confirms shared understanding by approving a concise brief covering the goal, success criteria, scope, constraints, and chosen approach.
 
 Even small changes benefit from this gate. A short brief may be only a few sentences, but it must expose assumptions before artifact creation or implementation begins.
 
@@ -30,7 +30,7 @@ Complete these steps in order:
 3. **Clarify intent** — ask one focused question at a time about purpose, constraints, and success criteria.
 4. **Compare approaches** — present two or three viable approaches with trade-offs and a recommendation.
 5. **Approve the direction** — present the decision brief in sections scaled to the idea's complexity and revise it until approved.
-6. **Choose the workflow** — return to the main specification instructions and recommend Requirements-First, Design-First, or Quick Plan.
+6. **Continue the chosen workflow** — return to the main specification instructions and create only its first artifact.
 
 ```dot
 digraph brainstorming {
@@ -40,7 +40,7 @@ digraph brainstorming {
     "Compare approaches" [shape=box];
     "Present decision brief" [shape=box];
     "User approves?" [shape=diamond];
-    "Choose feature workflow" [shape=doublecircle];
+    "Continue chosen workflow" [shape=doublecircle];
 
     "Explore project context" -> "Check scope";
     "Check scope" -> "Clarify intent" [label="focused"];
@@ -49,11 +49,11 @@ digraph brainstorming {
     "Compare approaches" -> "Present decision brief";
     "Present decision brief" -> "User approves?";
     "User approves?" -> "Present decision brief" [label="revise"];
-    "User approves?" -> "Choose feature workflow" [label="approved"];
+    "User approves?" -> "Continue chosen workflow" [label="approved"];
 }
 ```
 
-The terminal state is an approved decision brief followed by feature workflow selection.
+The terminal state is an approved decision brief followed by continuation of the selected feature workflow.
 
 ## Understand the Idea
 
@@ -64,7 +64,7 @@ The terminal state is an approved decision brief followed by feature workflow se
 - Discover facts from the repository, documentation, and available tools instead of asking the user. Put every material product or technical decision to the user; recommendations inform those decisions but do not replace them.
 - Prefer multiple-choice questions when the choices are meaningful; use an open question when the answer space is genuinely unknown.
 - Establish purpose, audience, observable success, constraints, boundaries, and important failure behavior.
-- Resolve assumptions that would materially change the workflow recommendation or chosen approach.
+- Resolve assumptions that would materially conflict with the selected workflow or chosen approach. If another workflow becomes a better fit, return to the main instructions and ask the user to choose again before creating files.
 
 ## Compare Approaches
 
@@ -81,7 +81,7 @@ Scale the brief to the decision. Use a few sentences for straightforward work an
 - Success criteria and boundaries
 - Constraints and relevant repository context
 - Chosen approach and rejected alternatives
-- Expected components, data flow, error behavior, and testing direction when these affect workflow choice
+- Expected components, data flow, error behavior, and testing direction when these affect the selected workflow's first artifact
 
 Ask for approval after each material section. Revise the brief when feedback changes the direction.
 
@@ -110,9 +110,9 @@ Before asking for final approval, check the brief for:
 2. **Completeness:** Goal, success criteria, boundaries, constraints, and approach are explicit.
 3. **Consistency:** The approach fits the repository context and stated constraints.
 4. **Ambiguity:** Each material decision has one intended interpretation.
-5. **Readiness:** No unresolved choice would change the workflow recommendation.
+5. **Readiness:** No unresolved choice prevents the selected workflow from beginning.
 
-Resolve every finding in the brief or explicitly with the user. Then return to workflow selection without creating specification artifacts during this preflight.
+Resolve every finding in the brief or explicitly with the user. Then continue the chosen workflow without having created specification artifacts during this preflight.
 
 ## Key Principles
 

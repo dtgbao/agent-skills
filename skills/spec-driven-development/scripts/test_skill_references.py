@@ -17,13 +17,21 @@ MARKDOWN_LINK_RE = re.compile(r"\[[^\]]+\]\(([^)]+\.md(?:#[^)]*)?)\)")
 
 
 class SkillReferencesTest(unittest.TestCase):
-    def test_feature_brainstorming_precedes_workflow_choice_and_bugfixes_stay_evidence_first(self) -> None:
+    def test_workflow_choice_precedes_feature_brainstorming_and_bugfixes_stay_evidence_first(self) -> None:
         content = SKILL.read_text(encoding="utf-8")
-        brainstorming = content.index("## Brainstorm Feature Ideas Before Choosing a Workflow")
-        workflow_choice = content.index("## Choose Workflow Before Creating Files")
+        workflow_choice = content.index("## Choose Workflow Before Brainstorming or Creating Files")
+        brainstorming = content.index("## Brainstorm After Choosing a Feature Workflow")
 
-        self.assertLess(brainstorming, workflow_choice)
-        self.assertIn("For a defect, begin with the Bugfix workflow choice and evidence flow", content)
+        self.assertLess(workflow_choice, brainstorming)
+        self.assertIn("Use only the request and minimal routing clarification", content)
+        self.assertIn("For a defect, begin with the chosen Bugfix or bugfix Quick Plan evidence flow", content)
+
+    def test_brainstorming_returns_to_the_chosen_workflow(self) -> None:
+        content = (REFERENCES / "brainstorming.md").read_text(encoding="utf-8")
+
+        self.assertIn("after the user chooses a feature workflow", content)
+        self.assertIn("Continue the chosen workflow", content)
+        self.assertNotIn("Choose the workflow", content)
 
     def test_skill_directly_routes_every_reference(self) -> None:
         content = SKILL.read_text(encoding="utf-8")
