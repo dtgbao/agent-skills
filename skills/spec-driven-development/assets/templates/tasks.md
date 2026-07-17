@@ -2,63 +2,58 @@
 
 ## Overview
 
-<Describe the implementation order, integration strategy, and verification approach.>
+<Describe the vertical implementation order, integration checkpoints, and verification approach.>
 
----
+## Tasks
+
+- [ ] 1. <Required capability outcome>
+  - [ ] 1.1 Prove <observable behavior>
+    - **RED:** Add `<test path>` with one focused assertion for <missing behavior>.
+    - **Verify RED:** Run `<focused command>`; expect <failure caused by the missing behavior>.
+    - _Requirements: <1.1> or Bugfix: <EB1, UB1>_
+  - [ ] 1.2 Implement <observable behavior>
+    - **GREEN:** Implement the approved contract from `design.md` in `<implementation paths or symbols>`.
+    - **Verify GREEN:** Run `<focused command>` and `<related regression command>`; expect both to pass.
+    - **REFACTOR:** <Cleanup or explicit no-cleanup decision>, then rerun `<focused or related command>`.
+    - _Requirements: <1.1> or Bugfix: <EB1, UB1>_
+
+- [ ] 2. Checkpoint — <Integrated vertical slice>
+  - **Check:** Run `<integration command>`.
+  - **Expected:** <Observable successful result, including warning or failure expectations>.
+  - _Requirements: <covered identifiers> or Bugfix: <covered identifiers>_
 
 ## Task Dependency Graph
 
 ```json
 {
-	"waves": [
-		{ "wave": 1, "tasks": [1] },
-		{ "wave": 2, "tasks": [2] },
-		{ "wave": 3, "tasks": [3] }
-	]
+  "waves": [
+    {
+      "wave": 1,
+      "tasks": [
+        { "id": "1.1", "dependsOn": [] }
+      ]
+    },
+    {
+      "wave": 2,
+      "tasks": [
+        { "id": "1.2", "dependsOn": ["1.1"] }
+      ]
+    },
+    {
+      "wave": 3,
+      "tasks": [
+        { "id": "2", "dependsOn": ["1.2"] }
+      ]
+    }
+  ]
 }
 ```
-
-```text
-1 (foundation)
-└── 2 (implementation)
-    └── 3 (checkpoint)
-```
-
-| Task | Depends On |
-| ---- | ---------- |
-| 1    | —          |
-| 2    | 1          |
-| 3    | 2          |
-
----
-
-## Tasks
-
-- [ ] 1. <Required behavior outcome>
-  - **RED:** Add `<test path>` with one focused test for <required behavior>.
-  - **Verify RED:** Run `<focused test command>`; expect <failure caused by missing behavior>.
-  - **GREEN:** Implement the smallest change in `<implementation paths>` that satisfies the failing test.
-  - **Verify GREEN:** Run `<focused test command>`; expect it to pass, then run `<related regression command>`.
-  - **REFACTOR:** <Remove duplication or state why no cleanup is needed>, then rerun `<focused or related test command>` and expect it to pass.
-  - _Requirements: <1.1, 1.2> or Bugfix: <EB1, UB1>_
-
-- [ ]\* 2. [TDD Exception] <Optional generated, configuration-only, or throwaway outcome>
-  - **Reason:** <Explain concretely why test-first does not apply to this task.>
-  - **Approval:** <Record the user's explicit approval of this exception.>
-  - **Check:** Run `<verification command>`; expect <observable successful result>.
-  - _Requirements: <optional requirement identifier>_
-
-- [ ] 3. Checkpoint — <Integrated behavior>
-  - **Check:** Run `<integration command>`.
-  - **Expected:** <Describe the successful result, including relevant warning or failure expectations.>
-  - _Requirements: <covered identifiers>_
-
----
 
 ## Notes
 
 - Tasks marked with `*` are optional and remain incomplete unless explicitly requested.
-- Use `[TDD Exception]` only for a user-approved exception recorded in the task.
-- Mark a task `[x]` only after its complete TDD cycle or stated checkpoint/exception check passes.
+- Use `[TDD Exception]` only for a user-approved generated, configuration-only, or throwaway outcome. Include Reason, Approval, and Check entries.
+- Parent capability tasks contain no implementation prose; their required children determine completion.
+- Mark a parent `[x]` only when every required child is `[x]`.
 
-<!-- Replace the example waves, tree, dependency table, and tasks with one consistent, acyclic, complete plan. Preserve one accepted task form per task and remove every placeholder before approval. -->
+<!-- Replace every example task and graph entry with one consistent plan. Keep architecture, schemas, algorithms, and full contracts in design.md. -->

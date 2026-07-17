@@ -47,8 +47,9 @@ class InitSpecTest(unittest.TestCase):
             tasks = (target / "tasks.md").read_text(encoding="utf-8")
             self.assertIn("## Task Dependency Graph", tasks)
             self.assertIn('"waves"', tasks)
-            self.assertIn("1 (foundation)", tasks)
-            self.assertIn("| Task | Depends On |", tasks)
+            self.assertIn('"id": "1.1"', tasks)
+            self.assertIn('"dependsOn": ["1.1"]', tasks)
+            self.assertNotIn("| Task | Depends On |", tasks)
 
             before = {path.name: path.read_bytes() for path in target.iterdir()}
             second = self.run_script(root, "dogfinder", "--title", "Changed", "--artifact", "design")
@@ -71,6 +72,10 @@ class InitSpecTest(unittest.TestCase):
             design = self.run_script(root, "duplicate-email", "--artifact", "design")
             self.assertEqual(design.returncode, 0, design.stderr)
             self.assertEqual({path.name for path in target.iterdir()}, {"bugfix.md", "design.md"})
+            bugfix_design = (target / "design.md").read_text(encoding="utf-8")
+            self.assertIn("## Affected Hierarchy", bugfix_design)
+            self.assertIn("## Root Cause and Fix", bugfix_design)
+            self.assertNotIn("## Component Hierarchy", bugfix_design)
 
 
 if __name__ == "__main__":

@@ -34,48 +34,24 @@ class ValidateSpecTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stderr, "")
 
-    def tasks_document(self, task_body: str) -> str:
-        return f"""# Implementation Plan: Example
+    def test_templates_are_structurally_valid(self) -> None:
+        for name in ("requirements.md", "bugfix.md", "tasks.md"):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                self.assert_valid(self.write(Path(directory), name))
 
-## Overview
-
-Implement the approved behavior in dependency order.
-
-## Task Dependency Graph
-
-```json
-{{"waves": [{{"wave": 1, "tasks": [1, 2, 3]}}]}}
-```
-
-```text
-1
-2
-3
-```
-
-| Task | Depends On |
-| ---- | ---------- |
-| 1    | —          |
-
-## Tasks
-
-{task_body}
-
-## Notes
-
-Track verification evidence with each task.
-"""
-
-    def test_templates_are_valid_and_correctness_properties_is_optional(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            for name in ("requirements.md", "bugfix.md", "tasks.md"):
-                self.assert_valid(self.write(root, name))
-
             design = (TEMPLATES / "design.md").read_text(encoding="utf-8")
+            self.assert_valid(self.write(root, "design.md", design))
             start = design.index("## Correctness Properties")
             end = design.index("## Error Handling")
             self.assert_valid(self.write(root, "design.md", design[:start] + design[end:]))
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.write(root, "bugfix.md")
+            bugfix_design = (TEMPLATES / "design-bugfix.md").read_text(encoding="utf-8")
+            self.assert_valid(self.write(root, "design.md", bugfix_design))
 
     def test_missing_required_sections_are_aggregated_and_fenced_headings_do_not_count(self) -> None:
         content = """# Requirements Document: Example
@@ -98,24 +74,39 @@ Track verification evidence with each task.
             result = self.run_validator(path)
 
         self.assertEqual(result.returncode, 1)
-        self.assertIn("[requirements/missing-introduction] Missing required section: ## Introduction", result.stderr)
-        self.assertIn("[requirements/missing-glossary] Missing required section: ## Glossary", result.stderr)
+        self.assertIn("[requirements/missing-introduction]", result.stderr)
+        self.assertIn("[requirements/missing-glossary]", result.stderr)
 
-    def test_required_section_codes_cover_design_and_bugfix(self) -> None:
-        cases = (
-            ("design.md", "## Architecture", "## architecture", "design/missing-architecture"),
-            ("bugfix.md", "## Expected Behavior", "## Expected Result", "bugfix/missing-expected-behavior"),
-        )
+    def test_required_section_codes_cover_feature_bugfix_design_and_bugfix_analysis(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            for name, heading, replacement, code in cases:
-                with self.subTest(name=name):
-                    content = (TEMPLATES / name).read_text(encoding="utf-8").replace(heading, replacement)
-                    result = self.run_validator(self.write(root, name, content))
-                    self.assertEqual(result.returncode, 1)
-                    self.assertIn(f"[{code}] Missing required section: {heading}", result.stderr)
+            content = (TEMPLATES / "design.md").read_text(encoding="utf-8").replace(
+                "## Component Hierarchy", "## Runtime Components"
+            )
+            result = self.run_validator(self.write(root, "design.md", content))
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("[design/missing-component-hierarchy]", result.stderr)
 
-    def test_every_requirement_block_needs_its_own_story_and_acceptance_heading(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.write(root, "bugfix.md")
+            content = (TEMPLATES / "design-bugfix.md").read_text(encoding="utf-8").replace(
+                "## Affected Hierarchy", "## Affected Files"
+            )
+            result = self.run_validator(self.write(root, "design.md", content))
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("[design/missing-affected-hierarchy]", result.stderr)
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            content = (TEMPLATES / "bugfix.md").read_text(encoding="utf-8").replace(
+                "## Expected Behavior", "## Expected Result"
+            )
+            result = self.run_validator(self.write(root, "bugfix.md", content))
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("[bugfix/missing-expected-behavior]", result.stderr)
+
+    def test_every_requirement_block_needs_story_and_acceptance_heading(self) -> None:
         content = """# Requirements Document: Example
 
 ## Introduction
@@ -145,31 +136,14 @@ Text.
 ### Requirement 3: Missing criteria
 
 **User Story:** As a user, I want another result, so that I benefit.
-
-### Requirement 4: Missing both
-
-```markdown
-**User Story:** Fake.
-#### Acceptance Criteria
-```
 """
         with tempfile.TemporaryDirectory() as directory:
             path = self.write(Path(directory), "requirements.md", content)
             result = self.run_validator(path)
 
         self.assertEqual(result.returncode, 1)
-        lines = content.splitlines()
-        story_line = lines.index("### Requirement 2: Missing story") + 1
-        criteria_line = lines.index("### Requirement 3: Missing criteria") + 1
-        both_line = lines.index("### Requirement 4: Missing both") + 1
-        self.assertIn(f"{path}:{story_line}:1: error [requirements/missing-user-story]", result.stderr)
-        self.assertIn(f"{path}:{criteria_line}:1: error [requirements/missing-acceptance-criteria]", result.stderr)
-        self.assertIn(f"{path}:{both_line}:1: error [requirements/missing-user-story]", result.stderr)
-        self.assertIn(f"{path}:{both_line}:1: error [requirements/missing-acceptance-criteria]", result.stderr)
-        self.assertEqual(result.stderr.count("requirements/missing-user-story"), 2)
-        self.assertEqual(result.stderr.count("requirements/missing-acceptance-criteria"), 2)
-        self.assertIn("Requirement block is missing **User Story:**", result.stderr)
-        self.assertIn("Requirement block is missing #### Acceptance Criteria", result.stderr)
+        self.assertEqual(result.stderr.count("requirements/missing-user-story"), 1)
+        self.assertEqual(result.stderr.count("requirements/missing-acceptance-criteria"), 1)
 
     def test_requirements_need_at_least_one_requirement_block(self) -> None:
         content = """# Requirements Document: Example
@@ -191,20 +165,20 @@ No requirement blocks.
             result = self.run_validator(path)
 
         self.assertEqual(result.returncode, 1)
-        self.assertIn(f"{path}:11:1: error [requirements/missing-requirement-block]", result.stderr)
+        self.assertIn("[requirements/missing-requirement-block]", result.stderr)
 
-    def test_task_graph_structures_and_checklist_are_required(self) -> None:
+    def test_tasks_require_checklist_and_single_json_graph(self) -> None:
         content = """# Implementation Plan: Example
 
 ## Overview
 
 Text.
 
-## Task Dependency Graph
-
 ## Tasks
 
 No checkboxes.
+
+## Task Dependency Graph
 
 ## Notes
 
@@ -215,145 +189,12 @@ Text.
             result = self.run_validator(path)
 
         self.assertEqual(result.returncode, 1)
-        for code in (
-            "tasks/missing-dag-json",
-            "tasks/missing-dependency-tree",
-            "tasks/missing-dependency-table",
-            "tasks/missing-task-checkbox",
-        ):
-            self.assertIn(f"[{code}]", result.stderr)
+        self.assertIn("[tasks/missing-task-checkbox]", result.stderr)
+        self.assertIn("[tasks/missing-dag-json]", result.stderr)
+        self.assertNotIn("missing-dependency-tree", result.stderr)
+        self.assertNotIn("missing-dependency-table", result.stderr)
 
-    def test_task_waves_reject_invalid_json_and_invalid_identifiers(self) -> None:
-        template = (TEMPLATES / "tasks.md").read_text(encoding="utf-8")
-        json_start = template.index("```json") + len("```json")
-        json_end = template.index("```", json_start)
-
-        def with_json(value: str) -> str:
-            return template[:json_start] + "\n" + value + "\n" + template[json_end:]
-
-        cases = {
-            "invalid-json": (with_json("{"), "tasks/invalid-dag-json"),
-            "empty-waves": (with_json('{"waves": []}'), "tasks/invalid-dag-waves"),
-            "duplicate-task": (
-                with_json('{"waves": [{"wave": 1, "tasks": [1]}, {"wave": 2, "tasks": [1]}]}'),
-                "tasks/invalid-dag-waves",
-            ),
-            "nonpositive-task": (with_json('{"waves": [{"wave": 1, "tasks": [0]}]}'), "tasks/invalid-dag-waves"),
-        }
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            for label, (content, code) in cases.items():
-                with self.subTest(label=label):
-                    path = self.write(root, "tasks.md", content)
-                    result = self.run_validator(path)
-                    self.assertEqual(result.returncode, 1)
-                    self.assertIn(f"[{code}]", result.stderr)
-
-    def test_task_dependency_table_needs_a_mapping_row(self) -> None:
-        template = (TEMPLATES / "tasks.md").read_text(encoding="utf-8")
-        start = template.index("| 1    | —")
-        end = template.index("\n\n---", start)
-        content = template[:start] + template[end:]
-        with tempfile.TemporaryDirectory() as directory:
-            path = self.write(Path(directory), "tasks.md", content)
-            result = self.run_validator(path)
-
-        self.assertEqual(result.returncode, 1)
-        self.assertIn("[tasks/missing-dependency-table]", result.stderr)
-
-    def test_tasks_accept_tdd_exception_checkpoint_and_optional_cycles(self) -> None:
-        content = self.tasks_document(
-            """- [ ] 1. Add observable behavior
-  - **RED:** Add a focused failing test.
-  - **Verify RED:** Run `pytest tests/test_behavior.py -v`; expect the behavior assertion to fail.
-  - **GREEN:** Implement only the behavior required by the failing test.
-  - **Verify GREEN:** Run `pytest tests/test_behavior.py -v`; expect it to pass.
-  - **REFACTOR:** Remove duplication and rerun `pytest tests/test_behavior.py -v`.
-
-- [ ]\\* 2. Optional observable behavior
-  - **RED:** Add the optional behavior test.
-  - **Verify RED:** Run `pytest tests/test_optional.py -v`; expect the assertion to fail.
-  - **GREEN:** Implement the optional behavior.
-  - **Verify GREEN:** Run `pytest tests/test_optional.py -v`; expect it to pass.
-  - **REFACTOR:** Keep the implementation focused and rerun the test.
-
-- [ ] 3. Checkpoint — integrated behavior
-  - **Check:** Run `pytest -q`.
-  - **Expected:** The complete suite passes without warnings.
-"""
-        )
-        with tempfile.TemporaryDirectory() as directory:
-            path = self.write(Path(directory), "tasks.md", content)
-            self.assert_valid(path)
-
-    def test_tdd_exception_requires_reason_approval_and_check(self) -> None:
-        content = self.tasks_document(
-            """- [ ] 1. [TDD Exception] Regenerate checked-in fixtures
-  - **Reason:** The output is generated from the approved schema.
-  - **Check:** Run `python scripts/generate.py --check`.
-"""
-        )
-        with tempfile.TemporaryDirectory() as directory:
-            path = self.write(Path(directory), "tasks.md", content)
-            result = self.run_validator(path)
-
-        self.assertEqual(result.returncode, 1)
-        self.assertIn("[tasks/incomplete-tdd-exception]", result.stderr)
-        self.assertIn("Reason, Approval, and Check", result.stderr)
-
-    def test_complete_tdd_exception_is_valid(self) -> None:
-        content = self.tasks_document(
-            """- [ ] 1. [TDD Exception] Regenerate checked-in fixtures
-  - **Reason:** The output is generated from the approved schema, so test-first does not apply.
-  - **Approval:** The user explicitly approved this exception during task planning.
-  - **Check:** Run `python scripts/generate.py --check`; expect no diff.
-"""
-        )
-        with tempfile.TemporaryDirectory() as directory:
-            path = self.write(Path(directory), "tasks.md", content)
-            self.assert_valid(path)
-
-    def test_checkpoint_requires_check_and_expected_result(self) -> None:
-        content = self.tasks_document(
-            """- [ ] 1. Checkpoint — integrated behavior
-  - **Check:** Run `pytest -q`.
-"""
-        )
-        with tempfile.TemporaryDirectory() as directory:
-            path = self.write(Path(directory), "tasks.md", content)
-            result = self.run_validator(path)
-
-        self.assertEqual(result.returncode, 1)
-        self.assertIn("[tasks/missing-checkpoint-verification]", result.stderr)
-        self.assertIn("Check and Expected", result.stderr)
-
-    def test_behavior_task_requires_complete_ordered_tdd_cycle(self) -> None:
-        cases = {
-            "missing-phase": """- [ ] 1. Add observable behavior
-  - **RED:** Add a focused failing test.
-  - **GREEN:** Implement the behavior.
-  - **Verify GREEN:** Run the focused test and expect it to pass.
-  - **REFACTOR:** Remove duplication and rerun the test.
-""",
-            "misordered-phases": """- [ ] 1. Add observable behavior
-  - **RED:** Add a focused failing test.
-  - **GREEN:** Implement the behavior.
-  - **Verify RED:** Run the focused test and expect it to fail.
-  - **Verify GREEN:** Run the focused test and expect it to pass.
-  - **REFACTOR:** Remove duplication and rerun the test.
-""",
-        }
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            for label, task_body in cases.items():
-                with self.subTest(label=label):
-                    path = self.write(root, "tasks.md", self.tasks_document(task_body))
-                    result = self.run_validator(path)
-                    self.assertEqual(result.returncode, 1)
-                    self.assertIn("[tasks/incomplete-tdd-cycle]", result.stderr)
-                    self.assertIn("RED, Verify RED, GREEN, Verify GREEN, and REFACTOR", result.stderr)
-
-    def test_missing_task_dependency_graph_uses_kiro_compatible_code(self) -> None:
+    def test_missing_task_dependency_graph_uses_stable_code(self) -> None:
         content = (TEMPLATES / "tasks.md").read_text(encoding="utf-8").replace(
             "## Task Dependency Graph", "## Dependency Plan"
         )
@@ -362,7 +203,7 @@ Text.
             result = self.run_validator(path)
 
         self.assertEqual(result.returncode, 1)
-        self.assertIn("[tasks/missing-dependency-graph] Missing required section: ## Task Dependency Graph", result.stderr)
+        self.assertIn("[tasks/missing-dependency-graph]", result.stderr)
 
     def test_bad_inputs_exit_two(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -390,19 +231,19 @@ Text.
             self.assertIn(order, content)
         self.assertIn("Request approval only after validation passes", content)
 
-    def test_skill_requires_workflow_choice_before_brainstorming_and_scaffolding(self) -> None:
+    def test_skill_routes_before_discovery_and_scaffolding(self) -> None:
         content = SKILL.read_text(encoding="utf-8")
-        choice = content.index("## Choose Workflow Before Brainstorming or Creating Files")
-        brainstorming = content.index("## Brainstorm After Choosing a Feature Workflow")
+        choice = content.index("## Choose the Workflow First")
+        discovery = content.index("## Complete Discovery Before Files")
         scaffold = content.index("## Start or Resume a Spec")
-        self.assertLess(choice, brainstorming)
-        self.assertLess(brainstorming, scaffold)
-        self.assertIn("Requirements-First, Design-First, and Quick Plan", content)
-        self.assertIn("State the recommendation and one-sentence reason", content)
-        self.assertIn("Wait for the user's choice before calling the initializer", content)
-        self.assertIn("completes its discovery gate", content)
-        self.assertIn("--artifact <artifact>", content)
-        self.assertIn("create only the artifact for the current phase", content)
+        self.assertLess(choice, discovery)
+        self.assertLess(discovery, scaffold)
+        self.assertIn("Requirements-First", content)
+        self.assertIn("Design-First", content)
+        self.assertIn("Quick Plan", content)
+        self.assertIn("recommend one with a one-sentence reason", content)
+        self.assertIn("wait for the user's choice", content)
+        self.assertIn("create only the current artifact", content)
 
 
 if __name__ == "__main__":

@@ -10,7 +10,8 @@ SKILL = SKILL_ROOT / "SKILL.md"
 REFERENCES = SKILL_ROOT / "references"
 COPIED_REFERENCES = (
     REFERENCES / "brainstorming.md",
-    REFERENCES / "design-and-task-planning.md",
+    REFERENCES / "design-planning.md",
+    REFERENCES / "task-planning.md",
     REFERENCES / "test-driven-development.md",
 )
 MARKDOWN_LINK_RE = re.compile(r"\[[^\]]+\]\(([^)]+\.md(?:#[^)]*)?)\)")
@@ -19,12 +20,12 @@ MARKDOWN_LINK_RE = re.compile(r"\[[^\]]+\]\(([^)]+\.md(?:#[^)]*)?)\)")
 class SkillReferencesTest(unittest.TestCase):
     def test_workflow_choice_precedes_feature_brainstorming_and_bugfixes_stay_evidence_first(self) -> None:
         content = SKILL.read_text(encoding="utf-8")
-        workflow_choice = content.index("## Choose Workflow Before Brainstorming or Creating Files")
-        brainstorming = content.index("## Brainstorm After Choosing a Feature Workflow")
+        workflow_choice = content.index("## Choose the Workflow First")
+        brainstorming = content.index("## Complete Discovery Before Files")
 
         self.assertLess(workflow_choice, brainstorming)
         self.assertIn("Use only the request and minimal routing clarification", content)
-        self.assertIn("For a defect, begin with the chosen Bugfix or bugfix Quick Plan evidence flow", content)
+        self.assertIn("For a defect, reproduce or otherwise establish evidence", content)
 
     def test_brainstorming_returns_to_the_chosen_workflow(self) -> None:
         content = (REFERENCES / "brainstorming.md").read_text(encoding="utf-8")
@@ -37,7 +38,8 @@ class SkillReferencesTest(unittest.TestCase):
         content = SKILL.read_text(encoding="utf-8")
         for link in (
             "[brainstorming](references/brainstorming.md)",
-            "[design and task planning](references/design-and-task-planning.md)",
+            "[design planning](references/design-planning.md)",
+            "[task planning](references/task-planning.md)",
             "[test-driven development](references/test-driven-development.md)",
             "[testing anti-patterns](references/testing-anti-patterns.md)",
         ):

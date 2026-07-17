@@ -39,7 +39,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: artifact already exists: {path}", file=sys.stderr)
         return 1
 
-    template = (template_root / name).read_text(encoding="utf-8")
+    template_name = "design-bugfix.md" if name == "design.md" and (target / "bugfix.md").exists() else name
+    template = (template_root / template_name).read_text(encoding="utf-8")
     content = template.replace("{{SPEC_TITLE}}", title).replace("{{SPEC_SLUG}}", args.slug)
     target.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
