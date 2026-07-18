@@ -11,12 +11,12 @@ Turn an idea, technical direction, or defect into reviewed artifacts, then imple
 
 Use only the request and minimal routing clarification to distinguish a feature from a defect and identify whether behavior, technical constraints, or speed should lead. Before deep repository inspection or file creation, present the applicable workflows, recommend one with a one-sentence reason, and wait for the user's choice.
 
-| Workflow | Use when |
-| --- | --- |
-| Requirements-First | User behavior, scope, or acceptance boundaries should lead; use by default. |
-| Design-First | Existing architecture, a fixed stack, or strict technical constraints should lead. |
-| Quick Plan | Work is well understood and the user wants all artifacts without intermediate approvals. |
-| Bugfix | A complex, critical, or regression-prone defect needs evidence and preserved boundaries. |
+| Workflow           | Use when                                                                                 |
+| ------------------ | ---------------------------------------------------------------------------------------- |
+| Requirements-First | User behavior, scope, or acceptance boundaries should lead; use by default.              |
+| Design-First       | Existing architecture, a fixed stack, or strict technical constraints should lead.       |
+| Quick Plan         | Work is well understood and the user wants all artifacts without intermediate approvals. |
+| Bugfix             | A complex, critical, or regression-prone defect needs evidence and preserved boundaries. |
 
 For a defect, offer Bugfix and Quick Plan. Wait for the choice before scaffolding an artifact.
 
@@ -71,11 +71,11 @@ python <skill-directory>/scripts/validate_spec.py docs/specs/<slug>/<artifact>
 
 Use this order:
 
-| Workflow | Validation order |
-| --- | --- |
-| Requirements-First or feature Quick Plan | `requirements.md` → `design.md` → `tasks.md` |
-| Design-First | `design.md` → `requirements.md` → synchronized `design.md` → `tasks.md` |
-| Bugfix or bugfix Quick Plan | `bugfix.md` → `design.md` → `tasks.md` |
+| Workflow                                 | Validation order                                                        |
+| ---------------------------------------- | ----------------------------------------------------------------------- |
+| Requirements-First or feature Quick Plan | `requirements.md` → `design.md` → `tasks.md`                            |
+| Design-First                             | `design.md` → `requirements.md` → synchronized `design.md` → `tasks.md` |
+| Bugfix or bugfix Quick Plan              | `bugfix.md` → `design.md` → `tasks.md`                                  |
 
 Stop on failure, repair the artifact, and rerun validation. Request approval only after validation passes. When an upstream artifact changes, validate it and every changed downstream artifact in order.
 
