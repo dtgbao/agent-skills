@@ -1,85 +1,72 @@
 ---
 name: web-search
-description: Use when web search is needed for current technical docs, version-specific implementation guidance, library setup, or web-grounded summaries.
+description: Research current technical guidance on the web. Use for version-specific documentation or setup, implementation practices that may have changed, comparisons of official recommendations, or concise source-backed technical summaries.
 ---
 
-# Web Searcher
+# Web Search
 
-Use web search to ground technical answers in current, relevant sources.
+Produce a current, version-aligned technical answer whose material factual claims are traceable to opened sources.
 
 ## Defaults
 
-Apply these defaults unless the user explicitly overrides them:
+- Cite at most 5 unique source URLs unless the user sets another limit. Inspect additional pages when needed; the limit applies to sources cited in the answer.
+- Prefer primary, official sources. Use secondary and community sources for discovery or explicitly requested perspective, then trace technical claims to primary evidence.
+- Include minimal code for implementation requests when the relevant APIs can be verified.
+- Use Markdown unless the user requests another format; match the requested shape, depth, and source constraints.
 
-- Prefer **official documentation first**.
-- Use maintainer-authored release notes, migration guides, GitHub discussions, or issues next.
-- Use community sources only as fallback or to fill gaps.
-- Default `max number of sources` to **5**.
-- Include **sample code** unless the user says not to.
-- Return output in **Markdown**.
+## 1. Frame the research target
 
-## Input handling
+Extract or infer:
 
-When the user asks for technical implementation help, infer or extract these fields:
+- the question or decision to resolve
+- the technology, version, runtime, and platform in scope
+- the freshness target, especially for “latest,” “current,” or migration requests
+- requested sources, source limit, code preference, and output format
 
-- `topic`: the implementation question or task
-- `framework/version`: explicit version if provided; otherwise infer the likely current version carefully and call out uncertainty
-- `max number of sources`: user-provided or default 5
-- `include code examples`: yes/no; default yes
-- `output format`: Markdown
+Use the clearest reasonable interpretation. When plausible interpretations would change the recommendation, cover the meaningful alternatives or state the assumption before answering.
 
-If the request is ambiguous, do not stop. Make a best effort search using the clearest interpretation, then note any ambiguity in the caveats section.
+**Complete this step when:** the question, version scope, freshness target, and output constraints are explicit in the working notes or planned answer.
 
-## Search workflow
+## 2. Build the source map
 
-Follow this sequence:
+Split the question into material claim groups such as setup, API behavior, compatibility, migration, performance, or known limitations. Search each group through this source ladder:
 
-1. Identify the core technology, version, and implementation task.
-2. Search for **official docs** using a minimal query first.
-3. Search maintainer sources for the same task when official docs leave gaps.
-4. Search broader community sources only if authoritative sources conflict, omit practical details, or lack concrete examples.
-5. Open the most relevant pages and verify:
-   - version alignment
-   - publication or last-updated signals when available
-   - whether the content is actually about the requested framework/version
-6. Prefer newer, version-matching sources over older generic ones.
-7. Discard stale or low-confidence sources when a stronger source is available.
-8. Synthesize the answer instead of copying source text.
+1. Current official documentation, API reference, specification, or vendor guidance
+2. Official release notes, migration guides, changelogs, and maintainer repositories
+3. Upstream source, tests, commits, pull requests, issues, or maintainer discussions for behavior absent from published docs
+4. Original standards, research, benchmarks, or datasets when the claim type requires them
 
-## Source ranking rules
+Start with focused queries containing the product, task, and version. Expand only for unresolved claim groups. Open the relevant pages and treat search snippets as discovery signals rather than evidence.
 
-Rank sources in this order:
+**Complete this step when:** every material claim group has the strongest reasonably available evidence, or an authoritative-source gap is recorded.
 
-1. Official product or framework documentation
-2. Official migration guides, release notes, or maintainer docs
-3. Maintainer-authored blog posts, GitHub discussions, or GitHub issues
-4. Third-party blogs, tutorials, forum posts, and Q&A threads
+## 3. Verify the evidence
 
-When sources conflict, prefer the highest-ranked source that clearly matches the requested version.
+Check each source against the claim it will support:
 
-## Recency rules
+- Confirm the page states the claim directly or provides the primary data needed to infer it.
+- Confirm version, runtime, platform, and release status match the request.
+- Prefer the canonical URL for the requested version and language. Treat development-version paths, localized mirrors, and alternate copies as version or provenance mismatches until verified.
+- Capture a concrete freshness signal when recency affects the answer: documentation version, release tag, publication/update date, or dated maintainer statement.
+- Verify API names, package names, configuration keys, CLI flags, and compatibility claims before using them in prose or code.
+- Distinguish released behavior from proposals, previews, open bugs, and workarounds.
+- Resolve conflicts by weighing authority, directness, version fit, and freshness. Explain any conflict that changes the recommendation.
 
-For every answer:
+Prefer a directly relevant version-matched source over a higher-ranked but generic source. Use multiple sources when no single source covers a consequential claim or when independent confirmation materially increases confidence.
 
-- Explicitly check for version and freshness clues.
-- Mention the freshest useful signal you found, such as:
-  - documentation page update date
-  - framework version in the docs URL or title
-  - release or migration guide date
-  - the date of a community answer if it is being relied on
-- If freshness is unclear, say so plainly.
-- If the user asked for the **latest** information, make recency a core part of the answer rather than a footnote.
+**Complete this step when:** every material factual claim and non-obvious code element is traceable to an opened source, and each consequential conflict is resolved or disclosed.
 
-## Output
+## 4. Synthesize the answer
 
-Use `references/output-template.md` when formatting the final answer or needing the worked example. Skip it only when the user asks for a different shape.
+Lead with the answer or recommendation. Then provide only the steps, code, comparison, evidence, freshness context, and caveats that help the user act.
 
-## Writing rules
+- Put a Markdown link beside every material claim in the final response itself. Links present only in research notes, tool output, or a handoff do not count.
+- Separate sourced facts from cross-source synthesis or recommendations, and label consequential inferences.
+- Use exact dates when relative timing could be misunderstood.
+- Keep code minimal and version-aligned; identify unverified adaptation points explicitly.
+- State assumptions, evidence gaps, or lower-confidence inferences where they affect the result.
+- Count unique citation destinations after drafting. A source list may repeat only URLs already cited in the answer.
 
-- Be concise and practical.
-- Do not overwhelm the user with every source you found.
-- Respect the user-provided source limit.
-- If official docs fully answer the question, keep community sources minimal.
-- If no authoritative source exists, say that clearly and explain what you relied on.
-- Preserve nuance around version differences.
-- Never invent APIs, config keys, CLI flags, or version support.
+For a multi-source implementation guide or comparison, read [references/output-template.md](references/output-template.md) and select the smallest matching pattern. For a simple lookup, answer directly without loading the template.
+
+**Complete this step when:** the final response itself resolves the question, stays within the unique-URL limit, links every material factual claim to supporting evidence, and exposes every decision-relevant assumption, conflict, or evidence gap.

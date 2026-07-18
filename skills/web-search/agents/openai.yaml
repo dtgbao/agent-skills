@@ -1,11 +1,7 @@
 interface:
-  display_name: Web Search
-  short_description: Search latest technical docs and return structured Markdown summaries
-  icon: assets/icon.png
+  display_name: "Web Search"
+  short_description: "Research current technical guidance with sources"
+  icon_small: "./assets/icon.png"
+  default_prompt: "Use $web-search to research the current, version-specific guidance for this technical question."
 policy:
-  products:
-    - chatgpt
-    - codex
-    - api
-    - atlas
   allow_implicit_invocation: true

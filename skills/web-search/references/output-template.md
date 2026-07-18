@@ -1,64 +1,64 @@
-# Output Template
+# Output Patterns
 
-Use this as the default format.
+Choose the smallest pattern that fits the request. Emit only populated, useful sections, and keep citations beside the claims they support.
+
+## Implementation guide
 
 ~~~markdown
-# [topic]
+# [Task]
 
-## Key steps
-- Step 1
-- Step 2
-- Step 3
+[Direct recommendation.] [Source](URL)
 
-## Sample code
-```language
-// minimal, version-aligned example
-```
+## Steps
 
-## Source links
-1. [Source title](URL) — why it matters
-2. [Source title](URL) — why it matters
-
-## Last updated / recency note
-- Best freshness signal found
-- Version fit or mismatch note
-
-## Confidence / caveats
-- Confidence: high | medium | low
-- Any conflicts, assumptions, or missing authoritative guidance
-~~~
+1. [Action and version-specific detail.] [Source](URL)
+2. [Action and version-specific detail.] [Source](URL)
 
 ## Example
 
-~~~markdown
-# Unit testing in Nuxt v4
-
-## Key steps
-- Use the Nuxt test utilities package and a Vitest-based test runner.
-- Configure the test environment using the Nuxt-supported test setup for component and app-context tests.
-- Keep pure utility tests separate from Nuxt runtime tests so the environment stays fast.
-- Prefer examples from version-matching Nuxt documentation or migration notes.
-
-## Sample code
-```ts
-import { describe, it, expect } from 'vitest'
-
-describe('sum', () => {
-  it('adds values', () => {
-    expect(1 + 1).toBe(2)
-  })
-})
+```language
+[Minimal, verified code]
 ```
 
-## Source links
-1. [Official docs](URL) — canonical setup guidance
-2. [Community thread](URL) — practical fix for a common setup issue
+## Version notes and caveats
 
-## Last updated / recency note
-- Official docs page references Nuxt v4 APIs.
-- Community thread is newer than many blog posts, but still secondary to docs.
+- [Freshness signal, compatibility boundary, assumption, or evidence gap.]
+~~~
 
-## Confidence / caveats
-- Confidence: medium
-- Exact package names and config may change across RC vs stable releases.
+## Comparison
+
+~~~markdown
+# [Decision]
+
+[Recommended option and the condition under which it wins.]
+
+| Option | Best fit | Trade-offs | Evidence |
+| --- | --- | --- | --- |
+| [A] | [...] | [...] | [Source](URL) |
+| [B] | [...] | [...] | [Source](URL) |
+
+## Recommendation
+
+[Explain the decision using the user's constraints.]
+
+## Version notes and caveats
+
+- [Freshness signal, unresolved conflict, or scope boundary.]
+~~~
+
+## Source-backed summary
+
+~~~markdown
+# [Topic]
+
+[One-paragraph synthesis.] [Source](URL)
+
+## Key findings
+
+- [Finding.] [Source](URL)
+- [Finding.] [Source](URL)
+
+## What changed or remains uncertain
+
+- [Relevant date/version change, conflict, or evidence gap.]
 ~~~
