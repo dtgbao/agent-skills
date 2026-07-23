@@ -8,6 +8,7 @@ This repo is a source tree for reusable instruction bundles. Each skill lives in
 
 | Skill                     | Purpose                                                                              |
 | ------------------------- | ------------------------------------------------------------------------------------ |
+| `frontend-dev`            | Guide source-backed frontend architecture decisions and greenfield scaffolding.      |
 | `orchestrator`            | Plan multi-step work and delegate clean, reviewable subtasks.                        |
 | `prd-to-plan`             | Turn a PRD or spec into an implementation plan grounded in the codebase.             |
 | `react-best-practices`    | Reusable React/TypeScript architecture guidance plus focused reference docs.         |

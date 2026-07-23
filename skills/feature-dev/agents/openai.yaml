@@ -1,0 +1,3 @@
+interface:
+  display_name: "Feature Development"
+  short_description: "A comprehensive, structured workflow for feature development with specialized agents for codebase exploration, architecture design, and quality review."
