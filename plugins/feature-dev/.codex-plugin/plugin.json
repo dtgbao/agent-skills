@@ -1,0 +1,18 @@
+{
+  "name": "feature-dev",
+  "version": "0.1.0",
+  "description": "Guided feature development with codebase exploration, architecture design, and quality review.",
+  "author": {
+    "name": "Local developer"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Feature Dev",
+    "shortDescription": "Develop features with one specialist agent per phase.",
+    "longDescription": "Guide feature work from discovery through codebase exploration, architecture design, implementation, quality review, and summary.",
+    "developerName": "Local developer",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": "Guide this feature from discovery through implementation and review."
+  }
+}
