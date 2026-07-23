@@ -38,10 +38,10 @@ You are helping a developer implement a new feature. Follow a systematic approac
 
 **Actions**:
 
-1. Launch one `@code_explorer` agent. The agent should:
+1. Launch one subagent using `assets/templates/code-explorer.toml` as its prompt template. The subagent should:
    - Trace through the code comprehensively and focus on getting a comprehensive understanding of abstractions, architecture and flow of control
    - Target a different aspect of the codebase (eg. similar features, high level understanding, architectural understanding, user experience, etc)
-   - Include a list of 5-10 key files to read
+   - Include a list of key files to read
 
    **Example agent prompts**:
    - "Find features similar to [feature] and trace through their implementation comprehensively"
@@ -62,10 +62,12 @@ You are helping a developer implement a new feature. Follow a systematic approac
 
 **Actions**:
 
-1. Review the codebase findings and original feature request
-2. Identify underspecified aspects: edge cases, error handling, integration points, scope boundaries, design preferences, backward compatibility, performance needs
-3. **Present all questions to the user in a clear, organized list**
-4. **Wait for answers before proceeding to architecture design**
+1. Read [$grilling](../grilling/SKILL.md) skill and follow its questioning guidance throughout this phase
+2. If `docs/adr/` exists, also read [$domain-modeling](../domain-modeling/SKILL.md) and run the grilling session using its domain-modeling guidance
+3. Review the codebase findings and original feature request
+4. Identify underspecified aspects: edge cases, error handling, integration points, scope boundaries, design preferences, backward compatibility, performance needs
+5. Ask one question at a time, provide a recommended answer, and wait for the user's response before continuing
+6. Confirm shared understanding before proceeding to architecture design
 
 If the user says "whatever you think is best", provide your recommendation and get explicit confirmation.
 
@@ -77,7 +79,7 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 **Actions**:
 
-1. Launch one `@code_architect` agent and ask it to compare these focuses: minimal changes (smallest change, maximum reuse), clean architecture (maintainability, elegant abstractions), and pragmatic balance (speed + quality)
+1. Launch one subagent using `assets/templates/code-architect.toml` as its prompt template and ask it to compare these focuses: minimal changes (smallest change, maximum reuse), clean architecture (maintainability, elegant abstractions), and pragmatic balance (speed + quality)
 2. Review the approaches and form your opinion on which fits best for this specific task (consider: small fix vs large feature, urgency, complexity, team context)
 3. Present to user: brief summary of each approach, trade-offs comparison, **your recommendation with reasoning**, concrete implementation differences
 4. **Ask user which approach they prefer**
@@ -93,24 +95,26 @@ If the user says "whatever you think is best", provide your recommendation and g
 **Actions**:
 
 1. Wait for explicit user approval
-2. Read all relevant files identified in previous phases
-3. Implement following chosen architecture
-4. Follow codebase conventions strictly
-5. Write clean, well-documented code
-6. Update todos as you progress
+2. Read [$tdd](../tdd/SKILL.md) skill and follow its test-driven development workflow throughout this phase
+3. Read all relevant files identified in previous phases
+4. Confirm the public seams to test, then implement the chosen architecture in red-green vertical slices
+5. Follow codebase conventions strictly
+6. Write clean, well-documented code
+7. Update todos as you progress
 
 ---
 
-## Phase 6: Quality Review
+## Phase 6: Code Review
 
-**Goal**: Ensure code is simple, DRY, elegant, easy to read, and functionally correct
+**Goal**: Ensure the changes follow repository standards and the feature specification
 
 **Actions**:
 
-1. Launch one `@code_reviewer` agent and ask it to review simplicity/DRY/elegance, bugs/functional correctness, and project conventions/abstractions
-2. Consolidate findings and identify highest severity issues that you recommend fixing
-3. **Present findings to user and ask what they want to do** (fix now, fix later, or proceed as-is)
-4. Address issues based on user decision
+1. Read [$code-review](../code-review/SKILL.md) completely
+2. Follow its two-axis review process, including launching the Standards and Spec subagents in parallel
+3. Present the two reports separately without merging or reranking their findings
+4. **Ask the user what they want to do** (fix now, fix later, or proceed as-is)
+5. Address issues based on user decision
 
 ---
 
