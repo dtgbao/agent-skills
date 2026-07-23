@@ -38,7 +38,7 @@ You are helping a developer implement a new feature. Follow a systematic approac
 
 **Actions**:
 
-1. Launch @code_explorer agent. The agent should:
+1. Launch one `@code_explorer` agent. The agent should:
    - Trace through the code comprehensively and focus on getting a comprehensive understanding of abstractions, architecture and flow of control
    - Target a different aspect of the codebase (eg. similar features, high level understanding, architectural understanding, user experience, etc)
    - Include a list of 5-10 key files to read
@@ -77,8 +77,8 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 **Actions**:
 
-1. Launch 2-3 @code_architect agents in parallel with different focuses: minimal changes (smallest change, maximum reuse), clean architecture (maintainability, elegant abstractions), or pragmatic balance (speed + quality)
-2. Review all approaches and form your opinion on which fits best for this specific task (consider: small fix vs large feature, urgency, complexity, team context)
+1. Launch one `@code_architect` agent and ask it to compare these focuses: minimal changes (smallest change, maximum reuse), clean architecture (maintainability, elegant abstractions), and pragmatic balance (speed + quality)
+2. Review the approaches and form your opinion on which fits best for this specific task (consider: small fix vs large feature, urgency, complexity, team context)
 3. Present to user: brief summary of each approach, trade-offs comparison, **your recommendation with reasoning**, concrete implementation differences
 4. **Ask user which approach they prefer**
 
@@ -107,7 +107,7 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 **Actions**:
 
-1. Launch 3 @code_reviewer agents in parallel with different focuses: simplicity/DRY/elegance, bugs/functional correctness, project conventions/abstractions
+1. Launch one `@code_reviewer` agent and ask it to review simplicity/DRY/elegance, bugs/functional correctness, and project conventions/abstractions
 2. Consolidate findings and identify highest severity issues that you recommend fixing
 3. **Present findings to user and ask what they want to do** (fix now, fix later, or proceed as-is)
 4. Address issues based on user decision

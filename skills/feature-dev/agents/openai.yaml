@@ -1,3 +1,4 @@
 interface:
   display_name: "Feature Development"
-  short_description: "A comprehensive, structured workflow for feature development with specialized agents for codebase exploration, architecture design, and quality review."
+  short_description: "Develop features with one specialist agent per phase"
+  default_prompt: "Use $feature-dev to guide this feature from discovery through implementation and review with one specialist agent per agent-driven phase."
