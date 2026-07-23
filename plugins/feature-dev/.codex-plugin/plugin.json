@@ -1,18 +1,18 @@
 {
-  "name": "feature-dev",
-  "version": "0.1.0",
-  "description": "Guided feature development with codebase exploration, architecture design, and quality review.",
-  "author": {
-    "name": "Local developer"
-  },
-  "skills": "./skills/",
-  "interface": {
-    "displayName": "Feature Dev",
-    "shortDescription": "Develop features with one specialist agent per phase.",
-    "longDescription": "Guide feature work from discovery through codebase exploration, architecture design, implementation, quality review, and summary.",
-    "developerName": "Local developer",
-    "category": "Productivity",
-    "capabilities": [],
-    "defaultPrompt": "Guide this feature from discovery through implementation and review."
-  }
+	"name": "feature-dev",
+	"version": "0.1.0",
+	"description": "Guided feature development with codebase exploration, architecture design, and quality review.",
+	"author": {
+		"name": "Bao Dang"
+	},
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Feature Dev",
+		"shortDescription": "Guide feature work from discovery through codebase exploration, architecture design, implementation, quality review, and summary.",
+		"longDescription": "The Feature Development Plugin provides a systematic 7-phase approach to building new features. Instead of jumping straight into code, it guides you through understanding the codebase, asking clarifying questions, designing architecture, and ensuring quality—resulting in better-designed features that integrate seamlessly with your existing code",
+		"developerName": "Local developer",
+		"category": "Productivity",
+		"capabilities": ["Interactive", "Read", "Write"],
+		"defaultPrompt": "Implement this feature from discovery through implementation and review."
+	}
 }
