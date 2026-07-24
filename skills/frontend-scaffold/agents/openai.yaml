@@ -1,0 +1,4 @@
+interface:
+  display_name: "Frontend Scaffolding"
+  short_description: "Plan and scaffold maintainable frontend apps"
+  default_prompt: "Use $frontend-scaffold to plan and scaffold a frontend application with current, source-backed recommendations."

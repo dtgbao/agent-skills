@@ -1,6 +1,6 @@
 {
 	"name": "feature-dev",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"description": "Guided feature development with codebase exploration, architecture design, and quality review.",
 	"author": {
 		"name": "Bao Dang",
@@ -16,7 +16,7 @@
 		"capabilities": ["Interactive", "Read", "Write"],
 		"websiteURL": "https://github.com/dtgbao",
 		"defaultPrompt": "Implement this feature from discovery through implementation and review.",
-		"composerIcon": "./assets/logo-padded.png",
-		"logo": "./assets/logo-padded.png"
+		"composerIcon": "./assets/composer-icon.png",
+		"logo": "./assets/logo.png"
 	}
 }

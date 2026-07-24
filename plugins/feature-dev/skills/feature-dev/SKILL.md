@@ -11,7 +11,7 @@ You are helping a developer implement a new feature. Follow a systematic approac
 
 - **Ask clarifying questions**: Identify all ambiguities, edge cases, and underspecified behaviors. Ask specific, concrete questions rather than making assumptions. Wait for user answers before proceeding with implementation. Ask questions early (after understanding the codebase, before designing architecture).
 - **Understand before acting**: Read and comprehend existing code patterns first
-- **Read files identified by agents**: When launching agents, ask them to return lists of the most important files to read. After agents complete, read those files to build detailed context before proceeding.
+- **Exploration**: Read the relevant implementation, tests, configuration, and documentation to build detailed context
 - **Simple and elegant**: Prioritize readable, maintainable, architecturally sound code
 - **Use TodoWrite**: Track all progress throughout
 
@@ -38,19 +38,8 @@ You are helping a developer implement a new feature. Follow a systematic approac
 
 **Actions**:
 
-1. Launch one subagent using [code-explorer](assets/templates/code-explorer.toml) as its prompt template. The subagent should:
-   - Trace through the code comprehensively and focus on getting a comprehensive understanding of abstractions, architecture and flow of control
-   - Target a different aspect of the codebase (eg. similar features, high level understanding, architectural understanding, user experience, etc)
-   - Include a list of key files to read
-
-   **Example agent prompts**:
-   - "Find features similar to [feature] and trace through their implementation comprehensively"
-   - "Map the architecture and abstractions for [feature area], tracing through the code comprehensively"
-   - "Analyze the current implementation of [existing feature/area], tracing through the code comprehensively"
-   - "Identify UI patterns, testing approaches, or extension points relevant to [feature]"
-
-2. Once the agent returns, please read all files to build deep understanding
-3. Present comprehensive summary of findings and patterns discovered
+1. Read [codebase-exploration](references/codebase-exploration.md) and apply it directly until its completion criterion holds
+2. Present a comprehensive summary of the findings, patterns, and essential files
 
 ---
 
@@ -79,11 +68,11 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 **Actions**:
 
-1. Ask the user to choose a plan output: no artifact, Markdown, or HTML. Wait for their decision before continuing; the main agent must not create the plan artifact
-2. Launch one subagent using [code-architect](assets/templates/code-architect.toml) as its prompt template. Ask it to compare three approaches: minimal changes (smallest change, maximum reuse), clean architecture (maintainability, elegant abstractions), and pragmatic balance (speed + quality), then produce a complete plan covering all three. If the user chose Markdown or HTML, have the subagent write the plan to `docs/plans/YYYY-MM-DD-<feature-name>.{md,html}` using the selected extension. For HTML, have it first read [$html-plan](../html-plan/SKILL.md)
-3. Review the approaches and decide which best fits the task, considering its size, urgency, complexity, and team context
-4. Present a brief summary of each approach, a trade-off comparison, **your recommendation with reasoning**, the concrete implementation differences, and the artifact path when one was created
-5. **Ask user which approach they prefer**
+1. Ask the user to choose a plan output: no artifact, Markdown, or HTML. Wait for their decision before continuing
+2. Read [architecture-design](references/architecture-design.md) and apply it directly until its completion criterion holds
+3. If the user chose Markdown or HTML, create the complete plan at `docs/plans/YYYY-MM-DD-<feature-name>.{md,html}` using the selected extension. For HTML, first read [$html-plan](../html-plan/SKILL.md)
+4. Present the approach comparison, **your recommendation with reasoning**, implementation differences, and artifact path when created
+5. **Ask the user which approach they prefer**
 
 ---
 

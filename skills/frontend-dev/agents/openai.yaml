@@ -1,4 +1,0 @@
-interface:
-  display_name: "Frontend Development"
-  short_description: "Plan and scaffold maintainable frontend apps"
-  default_prompt: "Use $frontend-dev to plan and scaffold a frontend application with current, source-backed recommendations."

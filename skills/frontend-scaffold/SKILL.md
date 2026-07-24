@@ -1,9 +1,9 @@
 ---
-name: frontend-dev
+name: frontend-scaffold
 description: Frontend architecture and scaffolding for framework-agnostic web development. Use when starting a frontend project, choosing its framework or architecture/tooling stack, or entering an existing frontend codebase whose structure, UI, styling, state, quality gates, or test strategy must be understood before implementation.
 ---
 
-# Frontend Development
+# Frontend Scaffolding
 
 Run architecture choices as sequential decision gates. Research the current gate, recommend the smallest fitting option, record the user's choice, and only then open the next gate.
 
@@ -25,7 +25,7 @@ Complete these actions for every decision gate:
 1. Inspect the descriptions of repository-local and available global skills. Load each directly relevant skill when repository instructions permit it; otherwise identify the skill and ask for explicit invocation.
 2. Research the current official documentation for the viable candidates. Use an available technical web-research skill such as `$web-search`; otherwise search and open the official sources directly.
 3. Verify current release status, framework/version compatibility, setup commands, and consequential limitations. Prefer official documentation, specifications, release notes, and maintainer repositories.
-4. Cite only the supporting `$skill-name` actually loaded and sources actually opened. Treat `$frontend-dev` as procedure rather than evidence. State `Relevant skill: none found` when the skill search has no match.
+4. Cite only the supporting `$skill-name` actually loaded and sources actually opened. Treat `$frontend-scaffold` as procedure rather than evidence. State `Relevant skill: none found` when the skill search has no match.
 
 Research only the current gate. If current web access is unavailable, disclose that limit and ask whether to proceed with repository and skill evidence alone.
 

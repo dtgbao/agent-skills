@@ -1,4 +1,4 @@
 interface:
   display_name: "Feature Development"
-  short_description: "Develop features with one specialist agent per phase"
-  default_prompt: "Use $feature-dev to guide this feature from discovery through implementation and review with one specialist agent per agent-driven phase."
+  short_description: "Guide features from discovery through verified delivery"
+  default_prompt: "Use $feature-dev to guide this feature from discovery through architecture, implementation, and review."
