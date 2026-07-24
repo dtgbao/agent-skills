@@ -9,12 +9,14 @@ Reusable React rules for modern TypeScript apps. Treat existing app patterns as 
 
 ## Routing
 
-Read only the rows that match the current change. Read helper source only when
-copying or adapting that helper.
+Read only the rows that match the current change. Read helper source only when copying or adapting that helper.
 
-Use impact to prioritize conflicts: `CRITICAL` blocks architecture drift, `HIGH`
-affects architecture or data flow, `MEDIUM` affects maintainability or test
-quality, and `LOW` is incremental.
+Use impact to prioritize conflicts:
+
+- `CRITICAL` blocks architecture drift.
+- `HIGH` affects architecture or data flow.
+- `MEDIUM` affects maintainability or test quality
+- `LOW` is incremental.
 
 | Branch                                          | Impact   | Reference                                                   |
 | ----------------------------------------------- | -------- | ----------------------------------------------------------- |
