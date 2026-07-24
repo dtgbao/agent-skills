@@ -38,7 +38,7 @@ You are helping a developer implement a new feature. Follow a systematic approac
 
 **Actions**:
 
-1. Launch one subagent using `assets/templates/code-explorer.toml` as its prompt template. The subagent should:
+1. Launch one subagent using [code-explorer](assets/templates/code-explorer.toml) as its prompt template. The subagent should:
    - Trace through the code comprehensively and focus on getting a comprehensive understanding of abstractions, architecture and flow of control
    - Target a different aspect of the codebase (eg. similar features, high level understanding, architectural understanding, user experience, etc)
    - Include a list of key files to read
@@ -79,10 +79,11 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 **Actions**:
 
-1. Launch one subagent using `assets/templates/code-architect.toml` as its prompt template and ask it to compare these focuses: minimal changes (smallest change, maximum reuse), clean architecture (maintainability, elegant abstractions), and pragmatic balance (speed + quality)
-2. Review the approaches and form your opinion on which fits best for this specific task (consider: small fix vs large feature, urgency, complexity, team context)
-3. Present to user: brief summary of each approach, trade-offs comparison, **your recommendation with reasoning**, concrete implementation differences
-4. **Ask user which approach they prefer**
+1. Ask the user to choose a plan output: no artifact, Markdown, or HTML. Wait for their decision before continuing; the main agent must not create the plan artifact
+2. Launch one subagent using [code-architect](assets/templates/code-architect.toml) as its prompt template. Ask it to compare three approaches: minimal changes (smallest change, maximum reuse), clean architecture (maintainability, elegant abstractions), and pragmatic balance (speed + quality), then produce a complete plan covering all three. If the user chose Markdown or HTML, have the subagent write the plan to `docs/plans/YYYY-MM-DD-<feature-name>.{md,html}` using the selected extension. For HTML, have it first read [$html-plan](../html-plan/SKILL.md)
+3. Review the approaches and decide which best fits the task, considering its size, urgency, complexity, and team context
+4. Present a brief summary of each approach, a trade-off comparison, **your recommendation with reasoning**, the concrete implementation differences, and the artifact path when one was created
+5. **Ask user which approach they prefer**
 
 ---
 
@@ -99,7 +100,7 @@ If the user says "whatever you think is best", provide your recommendation and g
 3. Read all relevant files identified in previous phases
 4. Confirm the public seams to test, then implement the chosen architecture in red-green vertical slices
 5. Follow codebase conventions strictly
-6. Write clean, well-documented code
+6. Run type checking, single test files, and linting regularly. Run the full test suite and format the code once at the end
 7. Update todos as you progress
 
 ---

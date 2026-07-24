@@ -1,6 +1,6 @@
 {
 	"name": "feature-dev",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"description": "Guided feature development with codebase exploration, architecture design, and quality review.",
 	"author": {
 		"name": "Bao Dang",

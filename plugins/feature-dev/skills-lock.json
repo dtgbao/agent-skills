@@ -19,6 +19,12 @@
       "skillPath": "skills/productivity/grilling/SKILL.md",
       "computedHash": "368d3dd7251247c69f3656d93dc83c8f1577792eacac2111f1e7981db2ece49b"
     },
+    "html-plan": {
+      "source": "plannotator/effective-html",
+      "sourceType": "github",
+      "skillPath": "skills/html-plan/SKILL.md",
+      "computedHash": "4ebd8d8ddeeb0f53efdac1c3474a603b7dec6e1db8909a3e7fb32e69f1730b99"
+    },
     "tdd": {
       "source": "mattpocock/skills",
       "sourceType": "github",
