@@ -70,7 +70,7 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 1. Ask the user to choose a plan output: no artifact, Markdown, or HTML. Wait for their decision before continuing
 2. Read [architecture-design](references/architecture-design.md) and apply it directly until its completion criterion holds
-3. If the user chose Markdown or HTML, create the complete plan at `docs/plans/YYYY-MM-DD-<feature-name>.{md,html}` using the selected extension. For HTML, read [$html-plan](../html-plan/SKILL.md) and follow it after the architecture design is complete
+3. If the user chose Markdown, create the complete plan at `docs/plans/YYYY-MM-DD-<feature-name>.md`.
 4. Present the approach comparison, **your recommendation with reasoning**, implementation differences, and artifact path when created
 5. **Ask the user which approach they prefer**
 
