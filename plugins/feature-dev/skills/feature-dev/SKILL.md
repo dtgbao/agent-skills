@@ -56,27 +56,53 @@ You are helping a developer implement a new feature. Follow a systematic approac
 3. Review the codebase findings and original feature request
 4. Identify underspecified aspects: edge cases, error handling, integration points, scope boundaries, design preferences, backward compatibility, performance needs
 5. Ask one question at a time, provide a recommended answer, and wait for the user's response before continuing
-6. Confirm shared understanding before proceeding to architecture design
+6. Confirm shared understanding before proceeding to requirements
 
 If the user says "whatever you think is best", provide your recommendation and get explicit confirmation.
 
 ---
 
-## Phase 4: Architecture Design
+## Phase 4: Requirements
 
-**Goal**: Design multiple implementation approaches with different trade-offs
+**Goal**: Turn the confirmed feature scope into approved, testable requirements
 
 **Actions**:
 
-1. Ask the user to choose a plan output: no artifact, Markdown, or HTML. Wait for their decision before continuing
-2. Read [architecture-design](references/architecture-design.md) and apply it directly until its completion criterion holds
-3. If the user chose Markdown, create the complete plan at `docs/plans/YYYY-MM-DD-<feature-name>.md`.
-4. Present the approach comparison, **your recommendation with reasoning**, implementation differences, and artifact path when created
-5. **Ask the user which approach they prefer**
+1. Ask the user to choose an output: **No artifact** or **Feature spec**. Wait for their decision before continuing
+2. Read the [requirements template](assets/templates/requirements.md) and use its headings as the output contract
+3. Write numbered user stories with observable EARS acceptance criteria. Keep requirements behavioral and testable; record fixed technology as a constraint rather than invented user behavior
+4. If the user chose **Feature spec**:
+   - Work at `docs/specs/<slug>/`, using a lowercase hyphenated slug
+   - Read every existing artifact before changing it, preserve approved content, and create only missing artifacts
+   - Create `requirements.md` from the template when it is missing, then replace every placeholder
+5. If the user chose **No artifact**, present the complete requirements in the conversation without creating files
+6. Self-review the requirements for the problem, users, outcomes, boundaries, constraints, glossary consistency, measurable success and failure behavior, and unresolved ambiguity
+7. Present the requirements and wait for explicit approval
+
+Complete this phase only when every placeholder and material ambiguity is resolved and the user has approved the requirements.
 
 ---
 
-## Phase 5: Implementation
+## Phase 5: Architecture Design
+
+**Goal**: Select and document an implementation-ready design traced to the approved requirements
+
+**Actions**:
+
+1. Compare three concise, viable approaches: minimal change, clean architecture, and pragmatic balance. For each, explain the affected surface, benefits, trade-offs, and risks
+2. Recommend one approach with evidence-backed reasoning and wait for the user's choice
+3. Read [design planning](references/design-planning.md) and the [design template](assets/templates/design.md), then apply them directly until the reference's completion criterion holds
+4. Document only the chosen approach:
+   - For **Feature spec**, create `docs/specs/<slug>/design.md` from the template when it is missing, replace every placeholder, and preserve approved existing content
+   - For **No artifact**, present the complete design in the conversation without creating files
+5. Present the approved requirements-to-design traceability, implementation differences, and artifact path when created
+6. Wait for explicit architecture approval
+
+Complete this phase only when the chosen design is grounded in inspected code, traces every requirement to design and verification, passes the design self-review, and has explicit user approval.
+
+---
+
+## Phase 6: Implementation
 
 **Goal**: Build the feature
 
@@ -86,15 +112,16 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 1. Wait for explicit user approval
 2. Read [$tdd](../tdd/SKILL.md) skill and follow its test-driven development workflow throughout this phase
-3. Read all relevant files identified in previous phases
+3. Read the approved requirements and design plus all relevant files identified in previous phases
 4. Confirm the public seams to test, then implement the chosen architecture in red-green vertical slices
 5. Follow codebase conventions strictly
 6. Run type checking, single test files, and linting regularly. Run the full test suite and format the code once at the end
-7. Update todos as you progress
+7. When implementation reveals a material correction, update requirements before design and repeat their self-review. Request approval again only when user intent or architecture changes
+8. Update todos as you progress
 
 ---
 
-## Phase 6: Code Review
+## Phase 7: Code Review
 
 **Goal**: Ensure the changes follow repository standards and the feature specification
 
@@ -108,7 +135,7 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 ---
 
-## Phase 7: Summary
+## Phase 8: Summary
 
 **Goal**: Document what was accomplished
 

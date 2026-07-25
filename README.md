@@ -17,9 +17,9 @@ This repo is a source tree for reusable instruction bundles. Standalone skills l
 
 ## Plugins
 
-| Plugin        | Purpose                                                                                               | Bundled skills                                                                  |
-| ------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `feature-dev` | Guide feature work from codebase discovery through architecture, implementation, review, and summary. | `feature-dev`, `code-review`, `domain-modeling`, `grilling`, `html-plan`, `tdd` |
+| Plugin        | Purpose                                                                                                                     | Bundled skills                                                     |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `feature-dev` | Guide feature work from codebase discovery through approved requirements and architecture, implementation, review, and summary. | `feature-dev`, `code-review`, `domain-modeling`, `grilling`, `tdd` |
 
 ## Agent presets
 
