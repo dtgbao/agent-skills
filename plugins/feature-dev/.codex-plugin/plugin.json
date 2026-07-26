@@ -1,11 +1,12 @@
 {
 	"name": "feature-dev",
-	"version": "0.5.0",
+	"version": "0.5.1",
 	"description": "Guided feature development with codebase exploration, approved requirements and architecture, optional feature specs, and quality review.",
 	"author": {
 		"name": "Bao Dang",
 		"url": "https://github.com/dtgbao"
 	},
+	"repository": "https://github.com/dtgbao/agent-skills",
 	"skills": "./skills/",
 	"interface": {
 		"displayName": "Feature Development",
@@ -14,7 +15,7 @@
 		"developerName": "dtgbao",
 		"category": "Productivity",
 		"capabilities": ["Interactive", "Read", "Write"],
-		"websiteURL": "https://github.com/dtgbao",
+		"websiteURL": "https://github.com/dtgbao/agent-skills",
 		"defaultPrompt": "Implement this feature from discovery through implementation and review.",
 		"composerIcon": "./assets/composer-icon.png",
 		"logo": "./assets/logo.png"
