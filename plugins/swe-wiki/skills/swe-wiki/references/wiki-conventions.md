@@ -4,6 +4,7 @@
 
 ```text
 <wiki-root>/
+├── .gitignore
 ├── AGENTS.md
 ├── raw/
 └── wiki/
@@ -19,7 +20,9 @@
     └── questions/
 ```
 
-`raw/` is immutable source material. `wiki/` is the maintained synthesis. `AGENTS.md` is the local schema reminder for future agents.
+The root is a dedicated Git working tree; `.git/` is omitted from the diagram. `raw/` is immutable source material, `wiki/` is the maintained synthesis, and `AGENTS.md` is the local schema reminder for future agents. Track all knowledge content. Ignore only machine-generated files listed in `.gitignore`.
+
+The machine-local config at `~/.config/swe-wiki/config.json` is outside the repository and stores only the schema version and selected root. Git's `origin` remote is the source of truth for the repository URL.
 
 ## Page Kinds
 
@@ -73,6 +76,8 @@ Keep summaries concrete enough that an agent can choose pages from the index bef
 ```
 
 Allowed event kinds: `bootstrap`, `ingest`, `query`, `lint`.
+
+Do not log synchronization events here. Git history is the sync audit trail.
 
 Entry body:
 

@@ -12,14 +12,14 @@ This repo is a source tree for reusable instruction bundles. Standalone skills l
 | `orchestrator`            | Plan multi-step work and delegate clean, reviewable subtasks.                        |
 | `react-best-practices`    | Reusable React/TypeScript architecture guidance plus focused reference docs.         |
 | `spec-driven-development` | Turn features and complex bugs into reviewed specs and verified implementation.      |
-| `swe-wiki`                | Maintain a persistent software engineering knowledge base.                           |
 | `web-search`              | Structured, recency-aware technical web research with source-backed Markdown output. |
 
 ## Plugins
 
-| Plugin        | Purpose                                                                                                                     | Bundled skills                                                     |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Plugin        | Purpose                                                                                                                        | Bundled skills                                                     |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
 | `feature-dev` | Guide feature work from codebase discovery through approved requirements and architecture, implementation, review, and summary. | `feature-dev`, `code-review`, `domain-modeling`, `grilling`, `tdd` |
+| `swe-wiki`    | Maintain a persistent, Git-synced software engineering knowledge base across computers.                                        | `swe-wiki`                                                         |
 
 ## Agent presets
 

@@ -1,0 +1,31 @@
+{
+  "name": "swe-wiki",
+  "version": "0.1.0",
+  "description": "Persistent, Git-synced software engineering knowledge base for Codex.",
+  "author": {
+    "name": "Bao Dang",
+    "url": "https://github.com/dtgbao"
+  },
+  "repository": "https://github.com/dtgbao/agent-skills",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "SWE Wiki",
+    "shortDescription": "Maintain and sync a software engineering wiki.",
+    "longDescription": "Build a persistent Markdown knowledge base for architecture decisions, blueprints, best practices, code conventions, and reusable engineering knowledge, synchronized safely through Git.",
+    "developerName": "dtgbao",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/dtgbao/agent-skills",
+    "composerIcon": "./assets/composer-icon.png",
+    "logo": "./assets/logo.png",
+    "defaultPrompt": [
+      "Set up my SWE wiki and connect it to my Git repository.",
+      "Ingest this source into my SWE wiki: [URL or file path]",
+      "Search my SWE wiki for [topic] and cite the relevant pages."
+    ]
+  }
+}

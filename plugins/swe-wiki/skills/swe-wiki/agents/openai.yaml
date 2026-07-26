@@ -1,0 +1,4 @@
+interface:
+  display_name: "SWE Wiki"
+  short_description: "Maintain and sync a software engineering wiki"
+  default_prompt: "Use $swe-wiki to set up, ingest, query, lint, or sync my software engineering wiki."
