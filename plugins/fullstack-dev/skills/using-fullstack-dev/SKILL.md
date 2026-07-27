@@ -1,18 +1,18 @@
 ---
 name: using-fullstack-dev
-description: Routes full-stack app development from codebase architecture and database design through backend contracts to frontend delivery. Use at the start of a full-stack build or when coordinating modules, seams, database schemas, services, APIs, UI, security, performance, review, Git, or releases.
+description: Routes full-stack app development from architecture and database design through implementation, operations, migration, and launch. Use at the start of a full-stack build or when coordinating modules, data, APIs, UI, security, performance, debugging, observability, documentation, CI/CD, deprecation, review, Git, or releases.
 ---
 
 # Using Fullstack Dev
 
 ## Purpose
 
-Use this meta-skill to guide an app from its data model and persistence boundary through backend
-services and API contracts to the frontend. Treat each selected skill as the source of truth for
+Use this meta-skill to guide an app from codebase and data design through backend and frontend
+delivery, production operations, and launch. Treat each selected skill as the source of truth for
 its domain.
 
-Use repository-native requirements, implementation, testing, debugging, and deployment processes;
-this plugin contributes the end-to-end design sequence and engineering lenses listed below.
+Use repository-native requirements, planning, implementation, and testing processes; this plugin
+contributes the design, operational, migration, quality, and delivery workflows below.
 
 ## Route the Task
 
@@ -21,16 +21,24 @@ Identify every branch that matches the work:
 ```text
 Full-stack app
 │
-├── Choosing modules, interfaces, or seams? ──────→ codebase-design
-├── Designing a data model or database schema? -──→ supabase-postgres-best-practices
-├── Designing backend services or API contracts? ─→ api-and-interface-design
-├── Building the user interface? ─────────────────→ frontend-ui-engineering
+├── Choosing modules, interfaces, or seams? ─────────→ codebase-design
+├── Designing a data model or database schema? ──────→ supabase-postgres-best-practices
+├── Designing backend services or API contracts? ────→ api-and-interface-design
+├── Building the user interface? ────────────────────→ frontend-ui-engineering
 │
-├── Crossing a trust boundary? ───────────────────→ security-and-hardening
-├── Meeting or diagnosing a performance target? ──→ performance-optimization
-├── Reviewing a completed change? ────────────────→ code-review-and-quality
-│   └── Behavior is correct but code is complex? ─→ code-simplification
-└── Branching, committing, resolving, releasing? ─→ git-workflow-and-versioning
+├── Crossing a trust boundary? ──────────────────────→ security-and-hardening
+├── Meeting or diagnosing a performance target? ─────→ performance-optimization
+├── Adding production logs, metrics, traces, alerts? ─→ observability-and-instrumentation
+├── Recording a decision, API, or behavior change? ───→ documentation-and-adrs
+│
+├── Tests, builds, or runtime behavior failing? ──────→ debugging-and-error-recovery
+├── Replacing or removing an existing system? ────────→ deprecation-and-migration
+│
+├── Automating quality or deployment gates? ──────────→ ci-cd-and-automation
+├── Reviewing completed work? ────────────────────────→ code-review-and-quality
+│   └── Behavior is correct but code is complex? ────→ code-simplification
+├── Branching, committing, resolving, versioning? ────→ git-workflow-and-versioning
+└── Deploying, rolling out, or launching? ────────────→ shipping-and-launch
 ```
 
 Load and follow every matching sibling skill before making its corresponding design or code
@@ -67,22 +75,49 @@ change; the branches are cumulative.
    - Completion criterion: every user flow is represented in the UI and the skill's accessibility,
      responsive, and runtime checks pass.
 
-5. **Add cross-cutting constraints while designing and implementing.**
+5. **Build operational guardrails alongside the feature.**
    - Use [`security-and-hardening`](../security-and-hardening/SKILL.md) when untrusted input, authentication, authorization, sensitive
      data, uploads, webhooks, external services, or model output crosses a boundary.
    - Use [`performance-optimization`](../performance-optimization/SKILL.md) when the task has a measurable target, reported regression,
      scale risk, or profiled bottleneck.
-   - Completion criterion: every trust boundary and stated performance concern is covered by its
-     skill, and each selected skill's verification passes.
+   - Use [`observability-and-instrumentation`](../observability-and-instrumentation/SKILL.md) while building production endpoints, jobs,
+     integrations, retries, queues, or cross-service calls so their behavior is diagnosable.
+   - Use [`documentation-and-adrs`](../documentation-and-adrs/SKILL.md) when architecture, a public interface, setup, or user-visible
+     behavior changes.
+   - Completion criterion: every trust boundary is hardened, performance claims are measured,
+     production behavior is observable, and significant decisions and public behavior are current
+     in the repository's documentation.
 
-6. **Close the change.**
+6. **Interrupt the sequence for failures or migrations.**
+   - Use [`debugging-and-error-recovery`](../debugging-and-error-recovery/SKILL.md) immediately when a test, build, runtime path, or
+     expectation fails. Resume the lifecycle only after the root cause and regression guard are
+     verified.
+   - Use [`deprecation-and-migration`](../deprecation-and-migration/SKILL.md) when replacing or removing a system, API, schema, or
+     feature. Inventory consumers, provide a proven replacement, migrate incrementally, and verify
+     zero active usage before removal.
+   - Completion criterion: each failure is fixed at its root and guarded against recurrence; each
+     migration preserves compatibility through cutover and removes the old path only after its
+     consumers are gone.
+
+7. **Automate and review the change.**
+   - Use [`ci-cd-and-automation`](../ci-cd-and-automation/SKILL.md) to enforce the repository's lint, type, test, build, security, and
+     deployment gates.
    - Use [`code-review-and-quality`](../code-review-and-quality/SKILL.md) after implementation or refactoring and before merge.
    - Use [`code-simplification`](../code-simplification/SKILL.md) only when behavior is already verified and complexity warrants a
      focused, behavior-preserving pass; review again after changing the code.
    - Use [`git-workflow-and-versioning`](../git-workflow-and-versioning/SKILL.md) for change hygiene and for user-authorized branch, commit,
      conflict, version, tag, changelog, and release work.
-   - Completion criterion: review blockers are resolved, all selected verification checklists
-     pass, and requested Git or release operations are complete.
+   - Completion criterion: automated gates pass, review blockers are resolved, all selected
+     verification checklists pass, and requested Git operations are complete.
+
+8. **Ship and verify the launch.**
+   - Use [`shipping-and-launch`](../shipping-and-launch/SKILL.md) for user-authorized production deployments, staged rollouts, launch
+     monitoring, and rollback planning.
+   - Use `ci-cd-and-automation` for the deployment mechanism, `observability-and-instrumentation`
+     for health evidence, `documentation-and-adrs` for release documentation, and
+     `git-workflow-and-versioning` for versions and tags.
+   - Completion criterion: the pre-launch gate passes, rollout and rollback thresholds are
+     explicit, and post-launch health checks confirm the release is operating normally.
 
 ## Common Sequences
 
@@ -91,25 +126,28 @@ Full-stack feature
 codebase-design (modules, interfaces, and seams)
 → supabase-postgres-best-practices (data and schema)
 → api-and-interface-design (services and API) → frontend-ui-engineering
-→ security-and-hardening (if a boundary exists)
-→ performance-optimization (if measured) → code-review-and-quality
+→ security-and-hardening (if a boundary exists) + observability-and-instrumentation
+→ performance-optimization (if measured) + documentation-and-adrs (if a decision changes)
+→ ci-cd-and-automation → code-review-and-quality → shipping-and-launch
 
-Backend change
-codebase-design (if module shape changes)
-→ supabase-postgres-best-practices (if persistence changes) → api-and-interface-design
-→ security-and-hardening (if a boundary exists) → code-review-and-quality
+Bug fix
+debugging-and-error-recovery → affected domain skill
+→ observability-and-instrumentation (if telemetry was missing)
+→ ci-cd-and-automation → code-review-and-quality
 
-UI change
-codebase-design (if module shape changes) → frontend-ui-engineering
-→ security-and-hardening (if a boundary exists)
-→ performance-optimization (if measured) → code-review-and-quality
+Deprecation or migration
+deprecation-and-migration → affected architecture, database, API, or UI skills
+→ observability-and-instrumentation + documentation-and-adrs
+→ ci-cd-and-automation → code-review-and-quality → shipping-and-launch
 
 Behavior-preserving refactor
 codebase-design (if seams or interfaces change) → code-simplification
-→ code-review-and-quality
+→ ci-cd-and-automation → code-review-and-quality
 
 Release
-code-review-and-quality → git-workflow-and-versioning
+documentation-and-adrs + observability-and-instrumentation
+→ ci-cd-and-automation → code-review-and-quality
+→ git-workflow-and-versioning → shipping-and-launch
 ```
 
 Apply [`git-workflow-and-versioning`](../git-workflow-and-versioning/SKILL.md) throughout code-changing sequences when Git operations are in
@@ -117,4 +155,4 @@ scope.
 
 Routing is complete when every concern in the task maps to a listed skill or a named
 repository-native process. The task is complete only when the criteria above and every selected
-skill's verification checklist pass.
+skill's verification checklist pass; production work also clears the launch and post-launch gates.
