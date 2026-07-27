@@ -1,0 +1,4 @@
+interface:
+  display_name: "Security and Hardening"
+  short_description: "Harden trust boundaries and sensitive data"
+  default_prompt: "Use $security-and-hardening to review and harden this code's trust boundaries, access controls, and sensitive data."

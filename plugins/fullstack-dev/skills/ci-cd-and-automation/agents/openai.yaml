@@ -1,0 +1,4 @@
+interface:
+  display_name: "CI/CD and Automation"
+  short_description: "Automate quality and deployment gates"
+  default_prompt: "Use $ci-cd-and-automation to design or improve this project's CI/CD and automated quality gates."

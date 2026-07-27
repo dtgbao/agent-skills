@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Workflow and Versioning"
+  short_description: "Guide safe Git and release versioning"
+  default_prompt: "Use $git-workflow-and-versioning to guide the explicitly requested Git, versioning, or changelog work."

@@ -5,7 +5,11 @@ Adapt names, imports, and provider placement to the target project.
 
 ```tsx
 //create-context.tsx
-import { type ReactNode, createContext as createReactContext, use } from "react";
+import {
+	type ReactNode,
+	createContext as createReactContext,
+	useContext as useReactContext,
+} from "react";
 
 type ProviderProps<TContextHook extends (...args: any[]) => unknown> =
 	Parameters<TContextHook> extends []
@@ -19,7 +23,7 @@ export default function createContext<TContextHook extends (...args: any[]) => u
 	const Context = createReactContext<ContextType | null>(null);
 
 	function useContext() {
-		const context = use(Context);
+		const context = useReactContext(Context);
 		if (context === null) {
 			throw new Error("useContext must be used within Provider");
 		}
@@ -34,18 +38,23 @@ export default function createContext<TContextHook extends (...args: any[]) => u
 						contextHookProps as NonNullable<Parameters<TContextHook>[0]>,
 					);
 
-		return <Context value={value}>{children}</Context>;
+		return <Context.Provider value={value}>{children}</Context.Provider>;
 	}
 
 	return [Provider, useContext] as const;
 }
 
 // ThemeContext.tsx
+import { useState } from "react";
+
 export const useTheme = () => {
-	const theme = useState<"light" | "dark">("dark");
+	const [theme, setTheme] = useState<"light" | "dark">("dark");
+
+	const toggle = () => setTheme((current) => (current === "dark" ? "light" : "dark"));
+
 	return {
-		toggle,
 		theme,
+		toggle,
 	};
 };
 

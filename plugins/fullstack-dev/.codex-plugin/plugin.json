@@ -1,7 +1,7 @@
 {
 	"name": "fullstack-dev",
-	"version": "0.1.0",
-	"description": "End-to-end full-stack app development guidance from codebase architecture and database design through backend services and APIs to production frontend delivery.",
+	"version": "0.2.0",
+	"description": "End-to-end guidance for building and operating full-stack applications, from architecture and data modeling through APIs, frontend delivery, migration, and launch.",
 	"author": {
 		"name": "Bao Dang",
 		"url": "https://github.com/dtgbao"
@@ -11,27 +11,31 @@
 		"fullstack",
 		"architecture",
 		"module-design",
-		"supabase",
-		"postgres",
 		"database",
 		"backend",
+		"backend-services",
 		"api",
 		"frontend",
 		"security",
 		"performance",
-		"code-review"
+		"observability",
+		"ci-cd",
+		"debugging",
+		"migration",
+		"code-review",
+		"release"
 	],
 	"skills": "./skills/",
 	"interface": {
 		"displayName": "Fullstack Development",
-		"shortDescription": "Build full-stack apps from database to frontend.",
-		"longDescription": "Guide full-stack application development from deep module and seam design through database schemas, backend service and API contracts, and accessible frontend delivery, with focused skills for security, measured performance, simplification, code review, Git, and releases.",
+		"shortDescription": "Guide full-stack apps from architecture and data through launch.",
+		"longDescription": "Coordinate architecture, data, APIs, frontend UI, security, performance, observability, documentation, CI/CD, debugging, migration, review, versioning, and staged launch.",
 		"developerName": "dtgbao",
 		"category": "Productivity",
 		"capabilities": ["Interactive", "Read", "Write"],
 		"websiteURL": "https://github.com/dtgbao/agent-skills",
 		"defaultPrompt": [
-			"Guide this app from database design to backend APIs and frontend.",
+			"Guide this app from architecture and data design through APIs, frontend, and launch.",
 			"Design the modules, database schema, services, and UI for this feature.",
 			"Review, harden, and prepare this full-stack change for release."
 		],

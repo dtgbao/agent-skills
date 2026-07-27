@@ -19,7 +19,7 @@ This repo is a source tree for reusable instruction bundles. Standalone skills l
 | Plugin                                             | Purpose                                                                                                                         | Bundled skills                                                     |
 | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | `feature-dev`                                      | Guide feature work from codebase discovery through approved requirements and architecture, implementation, review, and summary. | `feature-dev`, `code-review`, `domain-modeling`, `grilling`, `tdd` |
-| [`fullstack-dev`](plugins/fullstack-dev/README.md) | Guide app delivery from codebase and database design through APIs, frontend, and release quality gates.                         | `using-fullstack-dev` plus nine focused engineering skills         |
+| [`fullstack-dev`](plugins/fullstack-dev/README.md) | Guide full-stack delivery from architecture and data through APIs, frontend, operations, migration, and launch.                 | `using-fullstack-dev` plus focused engineering skills              |
 | `swe-wiki`                                         | Maintain a persistent, Git-synced software engineering knowledge base across computers.                                         | `swe-wiki`                                                         |
 
 ## Agent presets

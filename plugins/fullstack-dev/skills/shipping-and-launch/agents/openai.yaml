@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shipping and Launch"
+  short_description: "Plan safe, observable production launches"
+  default_prompt: "Use $shipping-and-launch to prepare an authorized staged launch, verification plan, and recovery strategy."

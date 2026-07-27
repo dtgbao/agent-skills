@@ -21,13 +21,13 @@ Identify every branch that matches the work:
 ```text
 Full-stack app
 │
-├── Choosing modules, interfaces, or seams? ─────────→ codebase-design
-├── Designing a data model or database schema? ──────→ supabase-postgres-best-practices
-├── Designing backend services or API contracts? ────→ api-and-interface-design
-├── Building the user interface? ────────────────────→ frontend-ui-engineering
+├── Choosing modules, interfaces, or seams? ──────────→ codebase-design
+├── Designing a data model or database schema? ───────→ supabase-postgres-best-practices
+├── Designing backend services or API contracts? ─────→ api-and-interface-design
+├── Building the user interface? ─────────────────────→ frontend-ui-engineering
 │
-├── Crossing a trust boundary? ──────────────────────→ security-and-hardening
-├── Meeting or diagnosing a performance target? ─────→ performance-optimization
+├── Crossing a trust boundary? ───────────────────────→ security-and-hardening
+├── Meeting or diagnosing a performance target? ──────→ performance-optimization
 ├── Adding production logs, metrics, traces, alerts? ─→ observability-and-instrumentation
 ├── Recording a decision, API, or behavior change? ───→ documentation-and-adrs
 │
@@ -36,7 +36,7 @@ Full-stack app
 │
 ├── Automating quality or deployment gates? ──────────→ ci-cd-and-automation
 ├── Reviewing completed work? ────────────────────────→ code-review-and-quality
-│   └── Behavior is correct but code is complex? ────→ code-simplification
+│   └── Behavior is correct but code is complex? ─────→ code-simplification
 ├── Branching, committing, resolving, versioning? ────→ git-workflow-and-versioning
 └── Deploying, rolling out, or launching? ────────────→ shipping-and-launch
 ```
@@ -111,13 +111,9 @@ change; the branches are cumulative.
      verification checklists pass, and requested Git operations are complete.
 
 8. **Ship and verify the launch.**
-   - Use [`shipping-and-launch`](../shipping-and-launch/SKILL.md) for user-authorized production deployments, staged rollouts, launch
-     monitoring, and rollback planning.
-   - Use `ci-cd-and-automation` for the deployment mechanism, `observability-and-instrumentation`
-     for health evidence, `documentation-and-adrs` for release documentation, and
-     `git-workflow-and-versioning` for versions and tags.
-   - Completion criterion: the pre-launch gate passes, rollout and rollback thresholds are
-     explicit, and post-launch health checks confirm the release is operating normally.
+   - Use [`shipping-and-launch`](../shipping-and-launch/SKILL.md) for user-authorized production deployments, staged rollouts, launch monitoring, and rollback planning.
+   - Use [`ci-cd-and-automation`](../ci-cd-and-automation/SKILL.md) for the deployment mechanism, [`observability-and-instrumentation`](../observability-and-instrumentation/SKILL.md) for health evidence, [`documentation-and-adrs`](../documentation-and-adrs/SKILL.md) for release documentation, and [`git-workflow-and-versioning`](../git-workflow-and-versioning/SKILL.md) for versions and tags.
+   - Completion criterion: the pre-launch gate passes, rollout and rollback thresholds are explicit, and post-launch health checks confirm the release is operating normally.
 
 ## Common Sequences
 
@@ -150,8 +146,7 @@ documentation-and-adrs + observability-and-instrumentation
 → git-workflow-and-versioning → shipping-and-launch
 ```
 
-Apply [`git-workflow-and-versioning`](../git-workflow-and-versioning/SKILL.md) throughout code-changing sequences when Git operations are in
-scope.
+Apply [`git-workflow-and-versioning`](../git-workflow-and-versioning/SKILL.md) throughout code-changing sequences when Git operations are in scope.
 
 Routing is complete when every concern in the task maps to a listed skill or a named
 repository-native process. The task is complete only when the criteria above and every selected

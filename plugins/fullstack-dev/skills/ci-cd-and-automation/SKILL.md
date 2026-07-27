@@ -263,9 +263,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Rollback deployment
-        run: |
-          # Deploy the specified previous version
-          npx vercel rollback ${{ inputs.version }}
+        env:
+          ROLLBACK_VERSION: ${{ inputs.version }}
+        run: npx vercel rollback "$ROLLBACK_VERSION"
 ```
 
 ## Environment Management

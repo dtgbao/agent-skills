@@ -1,0 +1,4 @@
+interface:
+  display_name: "Deprecation and Migration"
+  short_description: "Replace and retire systems safely"
+  default_prompt: "Use $deprecation-and-migration to plan and verify a safe incremental migration or deprecation."

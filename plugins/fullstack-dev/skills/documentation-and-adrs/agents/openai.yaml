@@ -1,0 +1,4 @@
+interface:
+  display_name: "Documentation and ADRs"
+  short_description: "Record decisions and durable context"
+  default_prompt: "Use $documentation-and-adrs to document this decision, interface, setup, or behavior change."
