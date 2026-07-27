@@ -22,7 +22,7 @@ Identify every branch that matches the work:
 Full-stack app
 │
 ├── Choosing modules, interfaces, or seams? ──────→ codebase-design
-├── Designing Supabase/Postgres data or schema? ──→ supabase-postgres-best-practices
+├── Designing a data model or database schema? -──→ supabase-postgres-best-practices
 ├── Designing backend services or API contracts? ─→ api-and-interface-design
 ├── Building the user interface? ─────────────────→ frontend-ui-engineering
 │
