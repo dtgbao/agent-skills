@@ -125,6 +125,10 @@ Global store (Zustand, Redux)    → Complex client state shared app-wide
 
 ## Design System Adherence
 
+### Component Styling
+
+When adding or changing component styles—including project themes, semantic tokens, UI-library overrides, component variants, or copied style recipes—read [`references/component-styling.md`](references/component-styling.md) before editing. Follow its styling ladder and completion checks.
+
 ### Avoid the AI Aesthetic
 
 AI-generated UI has recognizable patterns. Avoid all of them:
@@ -142,10 +146,13 @@ AI-generated UI has recognizable patterns. Avoid all of them:
 
 ### Spacing and Layout
 
-Use a consistent spacing scale. Don't invent values:
+Use the project's spacing tokens or established scale:
 
 ```css
-/* Use the scale: 0.25rem increments (or whatever the project uses) */
+padding: var(--space-4);
+gap: var(--space-3);
+
+/* Or use the scale: 0.25rem increments (or whatever the project uses) */
 /* Good */
 padding: 1rem; /* 16px */
 /* Good */
@@ -170,7 +177,7 @@ small → Secondary/helper text
 
 Don't skip heading levels. Don't use heading styles for non-heading content.
 
-### Color
+### Color and Contrast
 
 - Use semantic color tokens: `text-primary`, `bg-surface`, `border-default` — not raw hex values
 - Ensure sufficient contrast (4.5:1 for normal text, 3:1 for large text)
@@ -319,5 +326,5 @@ After building UI:
 - [ ] Screen reader can convey the page's content and structure
 - [ ] Responsive: works at 320px, 768px, 1024px, 1440px
 - [ ] Loading, error, and empty states all handled
-- [ ] Follows the project's design system (spacing, colors, typography)
+- [ ] Component styling changes satisfy the completion checks in `references/component-styling.md`
 - [ ] No accessibility warnings in dev tools or axe-core
