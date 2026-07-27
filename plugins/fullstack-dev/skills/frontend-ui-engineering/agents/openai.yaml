@@ -1,0 +1,4 @@
+interface:
+  display_name: "Frontend UI Engineering"
+  short_description: "Build polished, accessible frontend interfaces"
+  default_prompt: "Use $frontend-ui-engineering to build or improve a polished, accessible, responsive user interface."

@@ -1,0 +1,42 @@
+{
+	"name": "fullstack-dev",
+	"version": "0.1.0",
+	"description": "End-to-end full-stack app development guidance from codebase architecture and database design through backend services and APIs to production frontend delivery.",
+	"author": {
+		"name": "Bao Dang",
+		"url": "https://github.com/dtgbao"
+	},
+	"repository": "https://github.com/dtgbao/agent-skills",
+	"keywords": [
+		"fullstack",
+		"architecture",
+		"module-design",
+		"supabase",
+		"postgres",
+		"database",
+		"backend",
+		"api",
+		"frontend",
+		"security",
+		"performance",
+		"code-review"
+	],
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Fullstack Development",
+		"shortDescription": "Build full-stack apps from database to frontend.",
+		"longDescription": "Guide full-stack application development from deep module and seam design through database schemas, backend service and API contracts, and accessible frontend delivery, with focused skills for security, measured performance, simplification, code review, Git, and releases.",
+		"developerName": "dtgbao",
+		"category": "Productivity",
+		"capabilities": ["Interactive", "Read", "Write"],
+		"websiteURL": "https://github.com/dtgbao/agent-skills",
+		"defaultPrompt": [
+			"Guide this app from database design to backend APIs and frontend.",
+			"Design the modules, database schema, services, and UI for this feature.",
+			"Review, harden, and prepare this full-stack change for release."
+		],
+		"brandColor": "#22D3EE",
+		"composerIcon": "./assets/composer-icon.png",
+		"logo": "./assets/logo.png"
+	}
+}
