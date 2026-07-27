@@ -1,48 +1,76 @@
 ---
 name: orchestrator
-description: Use when work is multi-step, ambiguous, cross-cutting, or has independent pieces to plan, coordinate, split, or supervise.
+description: Orchestrate independent or ambiguous work through reasoning-matched delegation and evidence review.
 ---
 
 # Orchestrator
 
-Use subagents for bounded workstreams only after the user approves the plan.
+The coordinator stays user-facing and owns consequential approvals.
 
-## Model Choice
+## Execution graph
 
-Choose the subagent model and reasoning while planning. Allowed choices:
+```mermaid
+flowchart TD
+    A["Plan: streams • dependencies • roles • checks"] --> P{"Complete and user-approved?"}
+    P -- "no" --> A
+    P -- "yes" --> D{"Bounded • independent • reviewable?"}
+    D -- "no" --> L["Keep local or serial"]
+    D -- "yes" --> S["Dispatch within budget"]
+    S --> Q["Scout(s)"]
+    S --> W["Worker(s)"]
+    Q -. "direct finding" .-> W
+    Q --> R["All returned or blocked • verify evidence"]
+    W --> R
+    L --> R
+    R --> V{"Accept?"}
+    V -- "no" --> B["Sharpen brief • retry • trivial fix • exclude"]
+    B --> D
+    V -- "yes" --> I["Integrate • final verification • report dispositions"]
+```
 
-- GPT-5.6 Sol Light/Medium/High
-- GPT-5.6 Terra Medium/High
-- GPT-5.6 Luna High
+The concurrency budget includes the coordinator.
 
-Use the cheapest choice that can do the work under review. Intelligence is how hard a problem can be handed off unsupervised. Taste covers UI/UX, code quality, API design, and copy. Raise reasoning for ambiguity, risk, broad search, or weak review signals; choose GPT-5.6 Sol when taste matters.
+## Roles
 
-## Loop
+| Role         | Default model / reasoning | Assignment                                    |
+| ------------ | ------------------------- | --------------------------------------------- |
+| Scout        | `gpt-5.6-sol` / `low`     | Locate, trace, or find tests; read-only       |
+| Worker       | `gpt-5.6-sol` / `medium`  | Implement one owned scope and run its checks  |
+| Smart worker | `gpt-5.6-sol` / `high`    | Resolve difficult implementation or ambiguity |
 
-1. Build the plan first: identify workstreams, dependencies, merge criteria, the smallest verification that proves the work, and the subagent model/reasoning for each delegated piece. Complete this step when every delegated piece has a clear boundary and the user has approved the plan.
-2. Delegate clean subtasks: start a subagent with the chosen model/reasoning for each independent, bounded, checkable piece. Complete this step when every brief passes the Delegation Gate.
-3. Run independent pieces in parallel. Keep serial or judgment-heavy work local until its prerequisites are clear. Complete this step when every active subtask has returned or is explicitly blocked.
-4. Review every return before merging it. Check claims against source, diffs, logs, tests, or artifacts. Complete this step when every accepted result has evidence you verified.
-5. If a return is wrong or under-scoped, rewrite the brief and run another subagent. Patch it yourself only when the fix is trivial. Complete this step when each rejected result is retried, fixed locally, or excluded.
-6. Integrate reviewed results, run the smallest relevant verification, and report what was delegated, accepted, retried, or kept local.
+Keep one family and the cheapest reviewable effort. Raise it for ambiguity,
+risk, broad search, or weak review signals; reserve `ultra` for high-stakes
+scattered context. Alternative: `gpt-5.6-terra` `medium`/`high`.
 
-## Delegation Gate
+## Gates
 
-Delegate only when the subtask has:
+**Plan:** every delegated node has one outcome, dependencies, ownership, role,
+model/reasoning, context mode, merge criterion, and smallest proving check.
 
-- One outcome.
-- Small enough context to brief cleanly.
-- No hidden dependency on another active subtask.
-- A result you can review without trusting the subagent.
+**Local:** trivial, judgment-continuous, live-system, or unstable work.
 
-Keep the work local when it is trivial, requires continuous judgment, touches live systems, or the plan is not stable enough to brief.
+**Accept:** every claim verified against source, diff, log, test, or artifact;
+every rejection resolved along the graph.
 
-## Subagent Brief
+## Context and coordination
 
-Give each subagent:
+- Fresh: use `fork_turns: "none"`; restate safety, tool, mutation, and approval
+  boundaries.
+- Inherited: only for the goal or prior decisions. Full history inherits
+  model/reasoning; use a positive turn count to override. Mark leaves: complete
+  directly; do not spawn agents.
+- Workers: give exclusive ownership and warn that teammates may edit elsewhere.
+- Handoffs: message the teammate unblocked by a discovery and the coordinator.
 
-- Goal: the concrete outcome.
-- Context: relevant files, commands, constraints, and user intent.
-- Boundaries: what not to change, decide, or assume.
-- Return: the exact artifact to bring back, such as findings, a patch, command output, or a recommendation.
-- Stop condition: when to ask back instead of guessing.
+## Brief
+
+```text
+Outcome: <one checkable result>
+Context: <files, commands, constraints, user intent>
+Ownership: <exclusive scope>
+Context mode: <fresh or inherited; reason>
+Authority: <read/write scope; delegation and approval limits>
+Return: <findings, patch, output, or recommendation with evidence>
+Stop: <when to ask instead of guess>
+Notify: <teammate for a discovered dependency>
+```
