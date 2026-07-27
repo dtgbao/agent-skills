@@ -39,47 +39,47 @@ change; the branches are cumulative.
 ## Apply the Skills
 
 1. **Design the codebase shape.**
-   - Use `codebase-design` to choose deep modules, small interfaces, clean seams, and adapters
+   - Use [`codebase-design`](../codebase-design/SKILL.md) to choose deep modules, small interfaces, clean seams, and adapters
      before committing to detailed database, backend, or frontend structure.
    - Completion criterion: every major responsibility has one module, each interface hides
      meaningful implementation complexity, seams sit where behavior really varies, and callers
      and tests use the same interface.
 
 2. **Model the data and persistence boundary.**
-   - Use `supabase-postgres-best-practices` for Postgres schemas, data types, keys, constraints,
+   - Use [`supabase-postgres-best-practices`](../supabase-postgres-best-practices/SKILL.md) for Postgres schemas, data types, keys, constraints,
      indexes, RLS, queries, connections, transactions, locking, and database diagnostics.
    - Follow repository-native database conventions when the project uses another database engine.
-   - Use `api-and-interface-design` to keep the database schema, domain types, and service contract
+   - Use [`api-and-interface-design`](../api-and-interface-design/SKILL.md) to keep the database schema, domain types, and service contract
      aligned without leaking persistence details.
    - Completion criterion: every required datum has one owner, relationships and invariants are
      enforced by the schema, applicable Postgres rules pass, and the service layer can expose the
      model without coupling consumers to storage details.
 
 3. **Design backend services and API contracts.**
-   - Use `api-and-interface-design` for service boundaries, endpoints, request and response schemas,
+   - Use [`api-and-interface-design`](../api-and-interface-design/SKILL.md) for service boundaries, endpoints, request and response schemas,
      error contracts, compatibility, and the interface between backend and frontend.
    - Completion criterion: every frontend use case maps to a typed service or API contract, and the
      skill's verification passes.
 
 4. **Build the frontend against those contracts.**
-   - Use `frontend-ui-engineering` for pages, components, state, responsive behavior,
+   - Use [`frontend-ui-engineering`](../frontend-ui-engineering/SKILL.md) for pages, components, state, responsive behavior,
      accessibility, and integration with the typed contracts.
    - Completion criterion: every user flow is represented in the UI and the skill's accessibility,
      responsive, and runtime checks pass.
 
 5. **Add cross-cutting constraints while designing and implementing.**
-   - Use `security-and-hardening` when untrusted input, authentication, authorization, sensitive
+   - Use [`security-and-hardening`](../security-and-hardening/SKILL.md) when untrusted input, authentication, authorization, sensitive
      data, uploads, webhooks, external services, or model output crosses a boundary.
-   - Use `performance-optimization` when the task has a measurable target, reported regression,
+   - Use [`performance-optimization`](../performance-optimization/SKILL.md) when the task has a measurable target, reported regression,
      scale risk, or profiled bottleneck.
    - Completion criterion: every trust boundary and stated performance concern is covered by its
      skill, and each selected skill's verification passes.
 
 6. **Close the change.**
-   - Use `code-review-and-quality` after implementation or refactoring and before merge.
-   - Use `code-simplification` only when behavior is already verified and complexity warrants a
+   - Use [`code-review-and-quality`](../code-review-and-quality/SKILL.md) after implementation or refactoring and before merge.
+   - Use [`code-simplification`](../code-simplification/SKILL.md) only when behavior is already verified and complexity warrants a
      focused, behavior-preserving pass; review again after changing the code.
-   - Use `git-workflow-and-versioning` for change hygiene and for user-authorized branch, commit,
+   - Use [`git-workflow-and-versioning`](../git-workflow-and-versioning/SKILL.md) for change hygiene and for user-authorized branch, commit,
      conflict, version, tag, changelog, and release work.
    - Completion criterion: review blockers are resolved, all selected verification checklists
      pass, and requested Git or release operations are complete.
@@ -112,7 +112,7 @@ Release
 code-review-and-quality → git-workflow-and-versioning
 ```
 
-Apply `git-workflow-and-versioning` throughout code-changing sequences when Git operations are in
+Apply [`git-workflow-and-versioning`](../git-workflow-and-versioning/SKILL.md) throughout code-changing sequences when Git operations are in
 scope.
 
 Routing is complete when every concern in the task maps to a listed skill or a named

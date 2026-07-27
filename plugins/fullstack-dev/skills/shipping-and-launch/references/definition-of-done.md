@@ -34,7 +34,7 @@ Apply this to every change before declaring it done.
 - [ ] Changes are scoped to the task; no unrelated refactors snuck in
 - [ ] Linting and formatting pass
 
-The depth behind these items lives in `code-review-and-quality` (the five-axis review) and `code-simplification` (reducing complexity without changing behavior).
+The depth behind these items lives in [`code-review-and-quality`](../../code-review-and-quality/SKILL.md) (the five-axis review) and [`code-simplification`](../../code-simplification/SKILL.md) (reducing complexity without changing behavior).
 
 ### Integration
 
@@ -45,14 +45,14 @@ The depth behind these items lives in `code-review-and-quality` (the five-axis r
 ### Documentation
 
 - [ ] Public interfaces, APIs, and user-facing behavior are documented
-- [ ] Architectural decisions worth preserving are recorded (see `documentation-and-adrs`)
+- [ ] Architectural decisions worth preserving are recorded (see [`documentation-and-adrs`](../../documentation-and-adrs/SKILL.md))
 - [ ] Documentation describes the current state in timeless language, not the change history
 
 ### Ship-readiness
 
-- [ ] Security implications reviewed for any untrusted input, auth, or data handling (see `security-and-hardening`)
-- [ ] Observability in place for new critical paths (logs, metrics, traces) (see `observability-and-instrumentation`)
-- [ ] Rollback path exists for anything risky (see `shipping-and-launch`)
+- [ ] Security implications reviewed for any untrusted input, auth, or data handling (see [`security-and-hardening`](../../security-and-hardening/SKILL.md))
+- [ ] Observability in place for new critical paths (logs, metrics, traces) (see [`observability-and-instrumentation`](../../observability-and-instrumentation/SKILL.md))
+- [ ] Rollback path exists for anything risky (see [`shipping-and-launch`](../SKILL.md))
 - [ ] The human has reviewed and approved before merge or deploy
 
 ## How to Apply

@@ -121,7 +121,7 @@ Server state (React Query, SWR)  → Remote data with caching
 Global store (Zustand, Redux)    → Complex client state shared app-wide
 ```
 
-**Avoid prop drilling deeper than 3 levels.** If you're passing props through components that don't use them, introduce context or restructure the component tree. Read `references/helper-create-context.md` for a pattern to create a context with a provider and consumer hook.
+**Avoid prop drilling deeper than 3 levels.** If you're passing props through components that don't use them, introduce context or restructure the component tree. Read [`helper-create-context.md`](references/helper-create-context.md) for a pattern to create a context with a provider and consumer hook.
 
 ## Design System Adherence
 
@@ -296,7 +296,7 @@ function useToggleTask() {
 
 ## See Also
 
-For detailed accessibility requirements and testing tools, see `references/accessibility-checklist.md`.
+For detailed accessibility requirements and testing tools, see [`accessibility-checklist.md`](references/accessibility-checklist.md).
 
 ## Common Rationalizations
 
@@ -326,5 +326,5 @@ After building UI:
 - [ ] Screen reader can convey the page's content and structure
 - [ ] Responsive: works at 320px, 768px, 1024px, 1440px
 - [ ] Loading, error, and empty states all handled
-- [ ] Component styling changes satisfy the completion checks in `references/component-styling.md`
+- [ ] Component styling changes satisfy the completion checks in [`component-styling.md`](references/component-styling.md)
 - [ ] No accessibility warnings in dev tools or axe-core

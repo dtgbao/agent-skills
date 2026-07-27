@@ -1,6 +1,6 @@
 # Observability Checklist
 
-Quick reference for instrumenting production code. Use alongside the `observability-and-instrumentation` skill.
+Quick reference for instrumenting production code. Use alongside [`observability-and-instrumentation`](../SKILL.md).
 
 ## Table of Contents
 
@@ -27,7 +27,7 @@ Telemetry without a question is noise. Before instrumenting anything:
 - [ ] Every log line carries a correlation/request ID, generated or accepted at the system boundary
 - [ ] Correlation ID is propagated on every outbound call and async boundary (HTTP headers, queue metadata)
 - [ ] Log levels are consistent: `error` = invariant broken, someone may act; `warn` = degraded but handled; `info` = significant business event; `debug` = off in production
-- [ ] No secrets, tokens, passwords, or unredacted PII in any log line (hard rule from `security-and-hardening`)
+- [ ] No secrets, tokens, passwords, or unredacted PII in any log line (hard rule from [`security-and-hardening`](../../security-and-hardening/SKILL.md))
 - [ ] Fields are allowlisted — no whole request/response bodies, no auth headers
 - [ ] External service calls logged with metadata only: endpoint, status, latency, attempt count, sanitized identifiers
 - [ ] Actual log output spot-checked: structured fields, not `[object Object]`
@@ -88,4 +88,4 @@ Before a feature ships to production, all of the following are true:
 - [ ] A request can be traced across every service it touches
 - [ ] On-call knows where the runbooks are
 
-For launch-day monitoring sequence and rollback triggers, see the `shipping-and-launch` skill.
+For launch-day monitoring sequence and rollback triggers, see [`shipping-and-launch`](../../shipping-and-launch/SKILL.md).
