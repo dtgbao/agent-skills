@@ -31,6 +31,8 @@ The TDD cycle is universal; the commands are not. Before writing the first test,
 - **Existing conventions** — where tests live, how files are named, what patterns neighboring tests follow
 - **Documented commands** — README, CONTRIBUTING, and CI workflows show the commands that actually gate merges
 
+When exploring the codebase, read `CONTEXT.md` (if it exists) so test names and interface vocabulary match the project's domain language, and respect ADRs in the area you're touching.
+
 Run the repository's focused-test command during the loop and its full-suite command before completion. Never assume a default like `npm test` — a Gradle, Cargo, or pytest project has its own equivalent.
 
 The examples below use TypeScript for illustration; the workflow is identical in any language once you've discovered the project's own tooling.
@@ -45,6 +47,8 @@ The examples below use TypeScript for illustration; the workflow is identical in
       ▼                  ▼                    ▼
    Test FAILS        Test PASSES         Tests still PASS
 ```
+
+**One slice at a time.** One seam, one test, one minimal implementation per cycle.
 
 ### Step 1: RED — Write a Failing Test
 
@@ -187,6 +191,14 @@ Is it a critical user flow that must work end-to-end?
 
 ## Writing Good Tests
 
+### Seams — where tests go
+
+A **seam** is the public boundary you test at: the interface where you observe behavior without reaching inside. Tests live at seams, never against internals.
+
+**Test only at pre-agreed seams.** Before writing any test, write down the seams under test and confirm them with the user. No test is written at an unconfirmed seam. You can't test everything — agreeing the seams up front is how testing effort lands on the critical paths and complex logic instead of every edge case.
+
+Ask: "What's the public interface, and which seams should we test?"
+
 ### Test State, Not Interactions
 
 Assert on the _outcome_ of an operation, not on which methods were called internally. Tests that verify method call sequences break when you refactor, even if the behavior is unchanged.
@@ -297,14 +309,16 @@ describe('TaskService', () => {
 
 ## Test Anti-Patterns to Avoid
 
-| Anti-Pattern                          | Problem                                                    | Fix                                                                                                                        |
-| ------------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Testing implementation details        | Tests break when refactoring even if behavior is unchanged | Test inputs and outputs, not internal structure                                                                            |
-| Flaky tests (timing, order-dependent) | Erode trust in the test suite                              | Use deterministic assertions, isolate test state                                                                           |
-| Testing framework code                | Wastes time testing third-party behavior                   | Only test YOUR code                                                                                                        |
-| Snapshot abuse                        | Large snapshots nobody reviews, break on any change        | Use snapshots sparingly and review every change                                                                            |
-| No test isolation                     | Tests pass individually but fail together                  | Each test sets up and tears down its own state                                                                             |
-| Mocking everything                    | Tests pass but production breaks                           | Prefer real implementations > fakes > stubs > mocks. Mock only at boundaries where real deps are slow or non-deterministic |
+| Anti-Pattern                          | Problem                                                                                                                                                                                                                                                                       | Fix                                                                                                                                                          |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Implementation-coupled                | Mocks internal collaborators, tests private methods, or verifies through a side channel (querying the database instead of using the interface). The tell: the test breaks when you refactor but behavior hasn't changed.                                                      | Tests live at seams, never against internals.                                                                                                                |
+| Tautological                          | The assertion recomputes the expected value the way the code does (`expect(add(a, b)).toBe(a + b)`, a snapshot derived by hand the same way, a constant asserted equal to itself), so it passes by construction and can never disagree with the code.                         | Expected values must come from an independent source of truth — a known-good literal, a worked example, the spec.                                            |
+| Horizontal slicing                    | Writing all tests first, then all implementation. Bulk tests verify _imagined_ behavior: you test the _shape_ of things rather than user-facing behavior, the tests go insensitive to real changes, and you commit to test structure before understanding the implementation. | Work in **vertical slices** instead — one test → one implementation → repeat, each test a **tracer bullet** that responds to what the last cycle taught you. |
+| Flaky tests (timing, order-dependent) | Erode trust in the test suite                                                                                                                                                                                                                                                 | Use deterministic assertions, isolate test state                                                                                                             |
+| Testing framework code                | Wastes time testing third-party behavior                                                                                                                                                                                                                                      | Only test YOUR code                                                                                                                                          |
+| Snapshot abuse                        | Large snapshots nobody reviews, break on any change                                                                                                                                                                                                                           | Use snapshots sparingly and review every change                                                                                                              |
+| No test isolation                     | Tests pass individually but fail together                                                                                                                                                                                                                                     | Each test sets up and tears down its own state                                                                                                               |
+| Mocking everything                    | Tests pass but production breaks                                                                                                                                                                                                                                              | Prefer real implementations > fakes > stubs > mocks. Mock only at boundaries where real deps are slow or non-deterministic                                   |
 
 ## Browser Testing with DevTools
 
