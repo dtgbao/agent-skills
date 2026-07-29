@@ -1,218 +1,197 @@
 ---
 name: spec-driven-development
-description: Creates specs before coding. Use when starting a new project, feature, or significant change and no specification exists yet. Use when requirements are unclear, ambiguous, or only exist as a vague idea.
+description: Spec-driven development for feature ideas, design-led work, and complex bug fixes. Use when creating, reviewing, synchronizing, or implementing from requirements.md, bugfix.md, and design.md under docs/specs.
 ---
 
 # Spec-Driven Development
 
-## Overview
+Turn an idea, technical direction, or defect into approved requirements and design, then implement
+directly from those artifacts with traceable verification.
 
-Write a structured specification before writing any code. The spec is the shared source of truth between you and the human engineer — it defines what we're building, why, and how we'll know it's done. Code without a spec is guessing.
+## Choose the Workflow First
 
-## When to Use
+Use the request and only enough clarification to distinguish a feature from a defect and decide
+whether behavior, technical constraints, or speed should lead. Before deep repository inspection or
+file creation, present the applicable workflows, recommend one with a one-sentence reason, and wait
+for the user's choice.
 
-- Starting a new project or feature
-- Requirements are ambiguous or incomplete
-- The change touches multiple files or modules
-- You're about to make an architectural decision
-- The task would take more than 30 minutes to implement
+| Workflow           | Use when                                                                                      |
+| ------------------ | --------------------------------------------------------------------------------------------- |
+| Requirements-First | User behavior, scope, or acceptance boundaries should lead; use by default.                   |
+| Design-First       | Existing architecture, a fixed stack, or strict technical constraints should lead.            |
+| Quick Plan         | The work is well understood and the user wants both artifacts without intermediate approvals. |
+| Bugfix             | A complex, critical, or regression-prone defect needs evidence and preserved boundaries.      |
 
-**When NOT to use:** Single-line fixes, typo corrections, or changes where requirements are unambiguous and self-contained.
+For a defect, offer Bugfix and Quick Plan. Wait for the choice before creating an artifact.
 
-## The Gated Workflow
+## Complete Discovery Before Files
 
-Spec-driven development has four phases. Do not advance to the next phase until the current one is validated.
+For a feature, inspect relevant repository context, confirm one independently evolvable capability,
+clarify intent one focused question at a time, and compare two or three viable approaches. Obtain
+approval for a concise decision brief covering the goal, success criteria, boundaries, constraints,
+and chosen approach before creating specification files.
 
-```
-SPECIFY ──→ PLAN ──→ TASKS ──→ IMPLEMENT
-   │          │        │          │
-   ▼          ▼        ▼          ▼
- Human      Human    Human      Human
- reviews    reviews  reviews    reviews
-```
+For a defect, reproduce it or establish equivalent evidence. Use current, expected, and unchanged
+behavior as the discovery boundary.
 
-### Phase 1: Specify
+If discovery invalidates the selected workflow, explain why and ask the user to choose again before
+creating files.
 
-Start with a high-level vision. Ask the human clarifying questions until requirements are concrete.
+## Start or Resume a Spec
 
-**Surface assumptions immediately.** Before writing any spec content, list what you're assuming:
+Work from the repository root and read its agent instructions. Store each spec under
+`docs/specs/<slug>/`. Read the applicable bundled template, use its headings as the output
+contract, and create only the artifact required by the current phase:
 
-```
-ASSUMPTIONS I'M MAKING:
-1. This is a web application (not native mobile)
-2. Authentication uses session-based cookies (not JWT)
-3. The database is PostgreSQL (based on existing Prisma schema)
-4. We're targeting modern browsers only (no IE11)
-→ Correct me now or I'll proceed with these.
-```
+| Artifact            | Template                                                    |
+| ------------------- | ----------------------------------------------------------- |
+| `requirements.md`   | [Requirements template](assets/templates/requirements.md)   |
+| `bugfix.md`         | [Bugfix template](assets/templates/bugfix.md)               |
+| Feature `design.md` | [Feature design template](assets/templates/design.md)       |
+| Bugfix `design.md`  | [Bugfix design template](assets/templates/design-bugfix.md) |
 
-Don't silently fill in ambiguous requirements. The spec's entire purpose is to surface misunderstandings _before_ code gets written — assumptions are the most dangerous form of misunderstanding.
+For an existing spec, read every present artifact before editing it. Preserve approved decisions
+and completed evidence. Replace every scaffold placeholder before presenting an artifact.
 
-**Write a spec document covering these six core areas:**
+## Ground the Design
 
-1. **Objective** — What are we building and why? Who is the user? What does success look like?
+Before writing `design.md`, inspect affected code, tests, configuration, dependency versions,
+generated types, and repository conventions.
 
-2. **Commands** — Full executable commands with flags, not just tool names.
+- For features, show the relevant repository structure and runtime component hierarchy. Define
+  stack-native interfaces, schemas, operations, errors, and nontrivial flows.
+- For bugfixes, show only the affected caller and ownership hierarchy, evidence-backed root cause,
+  smallest shared fix, changed contracts, regression evidence, and preserved `UB` boundaries.
+- Use Mermaid for nontrivial request, state, authorization, persistence, retry, concurrency, cache,
+  or background flows. Use tables for operation, error, test, and traceability inventories.
+- Verify APIs against current official documentation when the requested stack is not installed.
+  Use explicitly labeled pseudocode instead of guessed syntax.
 
-   ```
-   Build: npm run build
-   Test: npm test -- --coverage
-   Lint: npm run lint --fix
-   Dev: npm run dev
-   ```
+The design is ready only when an implementer can proceed without inventing a path, contract,
+behavior, error shape, or verification method.
 
-3. **Project Structure** — Where source code lives, where tests go, where docs belong.
+## Apply Shared Standards
 
-   ```
-   src/           → Application source code
-   src/components → React components
-   src/lib        → Shared utilities
-   tests/         → Unit and integration tests
-   e2e/           → End-to-end tests
-   docs/          → Documentation
-   ```
+- Keep requirements behavioral and testable. Treat fixed technology and architecture as
+  constraints, not invented user behavior.
+- Trace every design element and verification method to acceptance identifiers such as `1.2`, or
+  to bugfix identifiers such as `EB1` and `UB1`.
+- Analyze interacting or high-risk requirements together. Resolve contradictions, ambiguity,
+  conflicting constraints, unstated assumptions, missing boundaries, concurrency, and failure
+  behavior before approval.
+- Keep upstream and downstream artifacts synchronized whenever an approved decision changes.
+- Use correctness properties only for meaningful universal invariants.
+- Keep one independently evolvable capability or defect per spec.
 
-4. **Code Style** — One real code snippet showing your style beats three paragraphs describing it. Include naming conventions, formatting rules, and examples of good output.
+## Validate Each Artifact
 
-5. **Testing Strategy** — What framework, where tests live, coverage expectations, which test levels for which concerns.
+Run any repository-provided spec validator and the smallest relevant Markdown or documentation
+check immediately after writing or changing an artifact. When no validator exists, self-review the
+artifact against its required content and the shared standards above.
 
-6. **Boundaries** — Three-tier system:
-   - **Always do:** Run tests before commits, follow naming conventions, validate inputs
-   - **Ask first:** Database schema changes, adding dependencies, changing CI config
-   - **Never do:** Commit secrets, edit vendor directories, remove failing tests without approval
+| Workflow                                 | Validation order                                           |
+| ---------------------------------------- | ---------------------------------------------------------- |
+| Requirements-First or feature Quick Plan | `requirements.md` → `design.md`                            |
+| Design-First                             | `design.md` → `requirements.md` → synchronized `design.md` |
+| Bugfix or bugfix Quick Plan              | `bugfix.md` → `design.md`                                  |
 
-**Spec template:**
+Stop on failure, repair the artifact, and validate again. Request approval only after validation
+passes. When an upstream artifact changes, validate it and every changed downstream artifact in
+order.
 
-```markdown
-# Spec: [Project/Feature Name]
+## Execute the Chosen Workflow
 
-## Objective
+### Requirements-First
 
-[What we're building and why. User stories or acceptance criteria.]
+1. Fill and obtain approval for behavioral `requirements.md` with numbered user stories and
+   measurable EARS criteria.
+2. Inspect the repository, fill concrete `design.md`, prove every requirement maps to design and
+   verification, then obtain approval.
+3. Continue with **Implement from the Approved Design**.
 
-## Tech Stack
+### Design-First
 
-[Framework, language, key dependencies with versions]
+1. Inspect the repository, fill `design.md` from supplied constraints, validate its structure, and
+   obtain approval.
+2. Derive and approve `requirements.md`, then synchronize its identifiers into `design.md` and
+   validate the design again.
+3. Continue with **Implement from the Approved Design**.
 
-## Commands
+### Bugfix
 
-[Build, test, lint, dev — full commands]
+1. Fill and approve `bugfix.md` with evidence, current behavior, expected behavior, unchanged
+   behavior, and constraints.
+2. Trace callers and root cause, fill the focused bugfix `design.md`, preserve every unchanged
+   boundary, and obtain approval.
+3. Continue with **Implement from the Approved Design**.
 
-## Project Structure
+### Quick Plan
 
-[Directory layout with descriptions]
+Resolve every material product and technical question, then create, fill, and validate the two
+applicable artifacts sequentially without intermediate approval. Present the synchronized set
+together. Begin implementation only when already authorized or subsequently approved.
 
-## Code Style
+## Synchronize Existing Specs
 
-[Example snippet + key conventions]
+Propagate changes in workflow order: Requirements-First from requirements to design; Design-First
+from design to requirements to synchronized design; Bugfix from bugfix analysis to design. Preserve
+completed evidence, and reverify implementation only where the changed contract invalidates it.
 
-## Testing Strategy
+## Implement from the Approved Design
 
-[Framework, test locations, coverage requirements, test levels]
+1. Read the approved artifacts and repository instructions. Select the smallest dependency-ready
+   vertical slice directly from the design.
+2. For each behavior-changing slice, follow
+   [`test-driven-development`](../test-driven-development/SKILL.md): establish failing evidence,
+   implement the minimum change, then refactor only while verification stays green.
+3. Verify the slice against its requirement or bugfix identifiers and run the smallest integration
+   check that covers its interaction with completed work.
+4. If implementation reveals a material correction, synchronize the artifacts first. Obtain
+   approval again when user intent or an approved boundary changes.
+5. Complete the spec only when every acceptance criterion or expected and unchanged behavior has
+   evidence, final repository checks pass, and implementation matches the approved artifacts.
 
-## Boundaries
+## Keep the Spec Alive
 
-- Always: [...]
-- Ask first: [...]
-- Never: [...]
-
-## Success Criteria
-
-[How we'll know this is done — specific, testable conditions]
-
-## Open Questions
-
-[Anything unresolved that needs human input]
-```
-
-**Reframe instructions as success criteria.** When receiving vague requirements, translate them into concrete conditions:
-
-```
-REQUIREMENT: "Make the dashboard faster"
-
-REFRAMED SUCCESS CRITERIA:
-- Dashboard LCP < 2.5s on 4G connection
-- Initial data load completes in < 500ms
-- No layout shift during load (CLS < 0.1)
-→ Are these the right targets?
-```
-
-This lets you loop, retry, and problem-solve toward a clear goal rather than guessing what "faster" means.
-
-### Phase 2: Plan
-
-With the validated spec, generate a technical implementation plan:
-
-1. Identify the major components and their dependencies
-2. Determine the implementation order (what must be built first)
-3. Note risks and mitigation strategies
-4. Identify what can be built in parallel vs. what must be sequential
-5. Define verification checkpoints between phases
-
-> Follow `planning-and-task-breakdown` for the dependency-graph mapping and vertical-slicing mechanics behind these steps; it is the canonical source. The bullets above are a lightweight summary; if they ever diverge, `planning-and-task-breakdown` takes precedence.
->
-> **Output convention:** Save the plan to `tasks/plan.md` and the task list to `tasks/todo.md`, per the `/plan` command convention. Create `tasks/` if it does not exist. Downstream commands (`/build`, etc.) expect these paths.
-
-The plan should be reviewable: the human should be able to read it and say "yes, that's the right approach" or "no, change X."
-
-### Phase 3: Tasks
-
-Break the plan into discrete, implementable tasks:
-
-- Each task should be completable in a single focused session
-- Each task has explicit acceptance criteria
-- Each task includes a verification step (test, build, manual check)
-- Tasks are ordered by dependency, not by perceived importance
-- No task should require changing more than ~5 files
-
-> Follow `planning-and-task-breakdown` for the full task-sizing and dependency-ordering mechanics; it is the canonical source. The template below is a lightweight inline form; if they ever diverge, `planning-and-task-breakdown` takes precedence.
-
-**Task template:**
-
-```markdown
-- [ ] Task: [Description]
-  - Acceptance: [What must be true when done]
-  - Verify: [How to confirm — test command, build, manual check]
-  - Files: [Which files will be touched]
-```
-
-### Phase 4: Implement
-
-Execute tasks one at a time following `skills/incremental-implementation/SKILL.md` (`incremental-implementation`) and `skills/test-driven-development/SKILL.md` (`test-driven-development`). Use `skills/context-engineering/SKILL.md` (`context-engineering`) to load the right spec sections and source files at each step rather than flooding the agent with the entire spec.
-
-## Keeping the Spec Alive
-
-The spec is a living document, not a one-time artifact:
-
-- **Update when decisions change** — If you discover the data model needs to change, update the spec first, then implement.
-- **Update when scope changes** — Features added or cut should be reflected in the spec.
-- **Commit the spec** — The spec belongs in version control alongside the code.
-- **Reference the spec in PRs** — Link back to the spec section that each PR implements.
+- Update the upstream artifact first when behavior or scope changes, then synchronize the design.
+- Update `design.md` first when an implementation detail changes without changing behavior, then
+  confirm upstream requirements remain accurate.
+- Keep the spec in version control with the implementation and reference its identifiers in review
+  or pull-request evidence.
 
 ## Common Rationalizations
 
-| Rationalization                       | Reality                                                                                                 |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| "This is simple, I don't need a spec" | Simple tasks don't need _long_ specs, but they still need acceptance criteria. A two-line spec is fine. |
-| "I'll write the spec after I code it" | That's documentation, not specification. The spec's value is in forcing clarity _before_ code.          |
-| "The spec will slow us down"          | A 15-minute spec prevents hours of rework. Waterfall in 15 minutes beats debugging in 15 hours.         |
-| "Requirements will change anyway"     | That's why the spec is a living document. An outdated spec is still better than no spec.                |
-| "The user knows what they want"       | Even clear requests have implicit assumptions. The spec surfaces those assumptions.                     |
+| Rationalization                                                   | Reality                                                                                                                           |
+| ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| "This is simple, so it does not need a spec"                      | Simple work may need only a short requirement and design, but observable completion still needs to be written down.               |
+| "I will write the spec after coding"                              | That is documentation, not specification. The value comes from resolving misunderstandings before implementation.                 |
+| "Requirements and design will slow us down"                       | Concise, approved artifacts focus effort on unresolved decisions and prevent rework during implementation.                        |
+| "Requirements will change anyway"                                 | That is why upstream artifacts stay synchronized with design and implementation.                                                  |
+| "The design can stay high level because the code will clarify it" | If implementation must invent contracts or error behavior, the design has not resolved the risky decisions.                       |
 
 ## Red Flags
 
-- Starting to write code without any written requirements
-- Asking "should I just start building?" before clarifying what "done" means
-- Implementing features not mentioned in any spec or task list
-- Making architectural decisions without documenting them
-- Skipping the spec because "it's obvious what to build"
+- Starting implementation without approved requirements or bugfix boundaries and an approved design
+- Asking to start building before success criteria and material boundaries are resolved
+- Naming paths, APIs, or contracts in the design without repository or official-source evidence
+- Making architectural or behavioral decisions only in code
+- Failing to synchronize requirement identifiers into a Design-First design
+- Implementing behavior that cannot be traced to an upstream identifier
+- Treating a stale spec as complete after scope or design changes
 
 ## Verification
 
-Before proceeding to implementation, confirm:
+Before implementation, confirm:
 
-- [ ] The spec covers all six core areas
-- [ ] The human has reviewed and approved the spec
-- [ ] Success criteria are specific and testable
-- [ ] Boundaries (Always/Ask First/Never) are defined
-- [ ] The spec is saved to a file in the repository
+- [ ] The user selected the workflow, or explicitly authorized the applicable Quick Plan.
+- [ ] Feature discovery produced an approved decision brief, or defect discovery established evidence.
+- [ ] `requirements.md` or `bugfix.md` is complete, validated, and approved.
+- [ ] `design.md` is repository-grounded, complete, validated, approved, and traceable upstream.
+- [ ] No material decision, placeholder, contradiction, or ambiguous boundary remains.
+- [ ] Both artifacts are saved under the same `docs/specs/<slug>/` directory.
+
+After implementation, confirm:
+
+- [ ] Every acceptance criterion, or every `EB` and `UB` behavior, has verification evidence.
+- [ ] Final repository checks pass.
+- [ ] The artifacts and implementation remain synchronized.
