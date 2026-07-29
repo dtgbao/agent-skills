@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test-Driven Development"
+  short_description: "Drive behavior changes with failing tests"
+  default_prompt: "Use $test-driven-development to implement or fix this behavior test-first and verify it."

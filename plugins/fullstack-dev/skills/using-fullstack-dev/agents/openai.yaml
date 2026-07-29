@@ -1,4 +1,4 @@
 interface:
   display_name: "Using Fullstack Dev"
-  short_description: "Guide full-stack apps from database to UI."
-  default_prompt: "Use $using-fullstack-dev to guide this app from database and backend services through the frontend."
+  short_description: "Route full-stack work across specialist skills"
+  default_prompt: "Use $using-fullstack-dev to route this cross-domain full-stack task through the matching specialist skills in dependency order."

@@ -22,6 +22,7 @@ Start a new Codex task after installation so all bundled skills are available.
 | Architecture | [`codebase-design`](skills/codebase-design/SKILL.md)                                   | Choose deep modules, small interfaces, seams, and adapters.  |
 | Database     | [`supabase-postgres-best-practices`](skills/supabase-postgres-best-practices/SKILL.md) | Apply specialized database guidance when its engine matches. |
 | Backend      | [`api-and-interface-design`](skills/api-and-interface-design/SKILL.md)                 | Define service boundaries and typed API contracts.           |
+| Testing      | [`test-driven-development`](skills/test-driven-development/SKILL.md)                   | Drive every behavior change through a failing test.          |
 | Frontend     | [`frontend-ui-engineering`](skills/frontend-ui-engineering/SKILL.md)                   | Build accessible, responsive interfaces against contracts.   |
 | Automation   | [`ci-cd-and-automation`](skills/ci-cd-and-automation/SKILL.md)                         | Automate repository quality and deployment gates.            |
 | Launch       | [`shipping-and-launch`](skills/shipping-and-launch/SKILL.md)                           | Plan authorized rollout, verification, and recovery.         |

@@ -1,6 +1,6 @@
 {
 	"name": "fullstack-dev",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "End-to-end guidance for building and operating full-stack applications, from architecture and data modeling through APIs, frontend delivery, migration, and launch.",
 	"author": {
 		"name": "Bao Dang",
@@ -16,6 +16,8 @@
 		"backend-services",
 		"api",
 		"frontend",
+		"testing",
+		"tdd",
 		"security",
 		"performance",
 		"observability",
@@ -29,7 +31,7 @@
 	"interface": {
 		"displayName": "Fullstack Development",
 		"shortDescription": "Guide full-stack apps from architecture and data through launch.",
-		"longDescription": "Coordinate architecture, data, APIs, frontend UI, security, performance, observability, documentation, CI/CD, debugging, migration, review, versioning, and staged launch.",
+		"longDescription": "Coordinate architecture, data, APIs, frontend UI, test-driven implementation, security, performance, observability, documentation, CI/CD, debugging, migration, simplification, review, versioning, and staged launch.",
 		"developerName": "dtgbao",
 		"category": "Productivity",
 		"capabilities": ["Interactive", "Read", "Write"],
