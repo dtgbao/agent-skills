@@ -1,7 +1,7 @@
 # Fullstack Dev Plugin
 
-Guide full-stack application development from architecture and data through APIs, frontend
-delivery, operations, migration, review, and launch.
+Guide full-stack application development from requirements and architecture through data, APIs,
+source-verified implementation, frontend delivery, operations, migration, review, and launch.
 
 ## Install
 
@@ -18,10 +18,12 @@ Start a new Codex task after installation so all bundled skills are available.
 
 | Stage        | Skill                                                                                  | Purpose                                                      |
 | ------------ | -------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Route        | [`using-fullstack-dev`](skills/using-fullstack-dev/SKILL.md)                           | Select and sequence every applicable skill.                  |
+| Route        | [`using-fullstack-dev`](skills/using-fullstack-dev/SKILL.md)                           | Discover and sequence every applicable skill.                |
+| Definition   | [`spec-driven-development`](skills/spec-driven-development/SKILL.md)                   | Define approved requirements, design, and traceability.      |
 | Architecture | [`codebase-design`](skills/codebase-design/SKILL.md)                                   | Choose deep modules, small interfaces, seams, and adapters.  |
 | Database     | [`supabase-postgres-best-practices`](skills/supabase-postgres-best-practices/SKILL.md) | Apply specialized database guidance when its engine matches. |
 | Backend      | [`api-and-interface-design`](skills/api-and-interface-design/SKILL.md)                 | Define service boundaries and typed API contracts.           |
+| Sources      | [`source-driven-development`](skills/source-driven-development/SKILL.md)               | Verify version-sensitive work against official sources.      |
 | Testing      | [`test-driven-development`](skills/test-driven-development/SKILL.md)                   | Drive every behavior change through a failing test.          |
 | Frontend     | [`frontend-ui-engineering`](skills/frontend-ui-engineering/SKILL.md)                   | Build accessible, responsive interfaces against contracts.   |
 | Automation   | [`ci-cd-and-automation`](skills/ci-cd-and-automation/SKILL.md)                         | Automate repository quality and deployment gates.            |

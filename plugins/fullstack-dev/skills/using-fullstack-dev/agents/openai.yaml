@@ -1,4 +1,4 @@
 interface:
   display_name: "Using Fullstack Dev"
-  short_description: "Route full-stack work across specialist skills"
-  default_prompt: "Use $using-fullstack-dev to route this cross-domain full-stack task through the matching specialist skills in dependency order."
+  short_description: "Discover and coordinate full-stack workflows"
+  default_prompt: "Use $using-fullstack-dev to discover, load, and coordinate every matching full-stack workflow in dependency order."

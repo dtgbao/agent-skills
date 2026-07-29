@@ -1,7 +1,7 @@
 {
 	"name": "fullstack-dev",
-	"version": "0.2.1",
-	"description": "End-to-end guidance for building and operating full-stack applications, from architecture and data modeling through APIs, frontend delivery, migration, and launch.",
+	"version": "0.3.0",
+	"description": "End-to-end guidance for full-stack applications, from requirements and architecture through data, APIs, source-verified implementation, frontend delivery, and launch.",
 	"author": {
 		"name": "Bao Dang",
 		"url": "https://github.com/dtgbao"
@@ -9,6 +9,7 @@
 	"repository": "https://github.com/dtgbao/agent-skills",
 	"keywords": [
 		"fullstack",
+		"specification",
 		"architecture",
 		"module-design",
 		"database",
@@ -16,6 +17,7 @@
 		"backend-services",
 		"api",
 		"frontend",
+		"source-verification",
 		"testing",
 		"tdd",
 		"security",
@@ -30,14 +32,14 @@
 	"skills": "./skills/",
 	"interface": {
 		"displayName": "Fullstack Development",
-		"shortDescription": "Guide full-stack apps from architecture and data through launch.",
-		"longDescription": "Coordinate architecture, data, APIs, frontend UI, test-driven implementation, security, performance, observability, documentation, CI/CD, debugging, migration, simplification, review, versioning, and staged launch.",
+		"shortDescription": "Coordinate full-stack work from definition through launch.",
+		"longDescription": "Coordinate spec-driven definition, architecture, data, APIs, frontend UI, source-verified and test-driven implementation, security, performance, observability, documentation, CI/CD, debugging, migration, simplification, review, versioning, and staged launch.",
 		"developerName": "dtgbao",
 		"category": "Productivity",
 		"capabilities": ["Interactive", "Read", "Write"],
 		"websiteURL": "https://github.com/dtgbao/agent-skills",
 		"defaultPrompt": [
-			"Guide this app from architecture and data design through APIs, frontend, and launch.",
+			"Discover and coordinate the right full-stack workflows for this task.",
 			"Design the modules, database schema, services, and UI for this feature.",
 			"Review, harden, and prepare this full-stack change for release."
 		],
