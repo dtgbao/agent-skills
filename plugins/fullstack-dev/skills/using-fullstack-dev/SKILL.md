@@ -1,18 +1,19 @@
 ---
 name: using-fullstack-dev
-description: Routes full-stack app development from architecture and database design through implementation, operations, migration, and launch. Use at the start of a full-stack build or when coordinating modules, data, APIs, UI, security, performance, debugging, observability, documentation, CI/CD, deprecation, review, Git, or releases.
+description: Routes full-stack app development from architecture and database design through test-driven implementation, operations, migration, and launch. Use at the start of a full-stack build or when coordinating modules, data, APIs, UI, testing, security, performance, debugging, observability, documentation, CI/CD, deprecation, review, Git, or releases.
 ---
 
 # Using Fullstack Dev
 
 ## Purpose
 
-Use this meta-skill to guide an app from codebase and data design through backend and frontend
-delivery, production operations, and launch. Treat each selected skill as the source of truth for
-its domain.
+Use this meta-skill to guide an app from codebase and data design through test-driven backend and
+frontend delivery, production operations, and launch. Treat each selected skill as the source of
+truth for its domain.
 
 Use repository-native requirements, planning, implementation, and testing processes; this plugin
-contributes the design, operational, migration, quality, and delivery workflows below.
+contributes the design, test-driven development, operational, migration, quality, and delivery
+workflows below.
 
 ## Route the Task
 
@@ -25,6 +26,7 @@ Full-stack app
 ├── Designing a data model or database schema? ───────→ supabase-postgres-best-practices
 ├── Designing backend services or API contracts? ─────→ api-and-interface-design
 ├── Building the user interface? ─────────────────────→ frontend-ui-engineering
+├── Adding or changing behavior, or fixing a bug? ─────→ test-driven-development
 │
 ├── Crossing a trust boundary? ───────────────────────→ security-and-hardening
 ├── Meeting or diagnosing a performance target? ──────→ performance-optimization
@@ -69,13 +71,23 @@ change; the branches are cumulative.
    - Completion criterion: every frontend use case maps to a typed service or API contract, and the
      skill's verification passes.
 
-4. **Build the frontend against those contracts.**
+4. **Drive behavioral work test-first.**
+   - Use [`test-driven-development`](../test-driven-development/SKILL.md) before implementing new logic, fixing a bug, modifying
+     existing behavior, or adding edge-case handling. It wraps the matching domain skill rather
+     than running after implementation.
+   - Work one public seam at a time: write and confirm the failing test, add the minimum code
+     needed to pass, then refactor only while the tests stay green.
+   - Completion criterion: every new behavior has a corresponding test, every bug fix has a
+     reproduction test that failed before the fix, no tests are skipped or disabled, and the
+     repository's focused and full-suite verification passes.
+
+5. **Build the frontend against those contracts.**
    - Use [`frontend-ui-engineering`](../frontend-ui-engineering/SKILL.md) for pages, components, state, responsive behavior,
      accessibility, and integration with the typed contracts.
    - Completion criterion: every user flow is represented in the UI and the skill's accessibility,
      responsive, and runtime checks pass.
 
-5. **Build operational guardrails alongside the feature.**
+6. **Build operational guardrails alongside the feature.**
    - Use [`security-and-hardening`](../security-and-hardening/SKILL.md) when untrusted input, authentication, authorization, sensitive
      data, uploads, webhooks, external services, or model output crosses a boundary.
    - Use [`performance-optimization`](../performance-optimization/SKILL.md) when the task has a measurable target, reported regression,
@@ -88,7 +100,7 @@ change; the branches are cumulative.
      production behavior is observable, and significant decisions and public behavior are current
      in the repository's documentation.
 
-6. **Interrupt the sequence for failures or migrations.**
+7. **Interrupt the sequence for failures or migrations.**
    - Use [`debugging-and-error-recovery`](../debugging-and-error-recovery/SKILL.md) immediately when a test, build, runtime path, or
      expectation fails. Resume the lifecycle only after the root cause and regression guard are
      verified.
@@ -99,7 +111,7 @@ change; the branches are cumulative.
      migration preserves compatibility through cutover and removes the old path only after its
      consumers are gone.
 
-7. **Automate and review the change.**
+8. **Automate and review the change.**
    - Use [`ci-cd-and-automation`](../ci-cd-and-automation/SKILL.md) to enforce the repository's lint, type, test, build, security, and
      deployment gates.
    - Use [`code-review-and-quality`](../code-review-and-quality/SKILL.md) after implementation or refactoring and before merge.
@@ -110,7 +122,7 @@ change; the branches are cumulative.
    - Completion criterion: automated gates pass, review blockers are resolved, all selected
      verification checklists pass, and requested Git operations are complete.
 
-8. **Ship and verify the launch.**
+9. **Ship and verify the launch.**
    - Use [`shipping-and-launch`](../shipping-and-launch/SKILL.md) for user-authorized production deployments, staged rollouts, launch monitoring, and rollback planning.
    - Use [`ci-cd-and-automation`](../ci-cd-and-automation/SKILL.md) for the deployment mechanism, [`observability-and-instrumentation`](../observability-and-instrumentation/SKILL.md) for health evidence, [`documentation-and-adrs`](../documentation-and-adrs/SKILL.md) for release documentation, and [`git-workflow-and-versioning`](../git-workflow-and-versioning/SKILL.md) for versions and tags.
    - Completion criterion: the pre-launch gate passes, rollout and rollback thresholds are explicit, and post-launch health checks confirm the release is operating normally.
@@ -121,23 +133,28 @@ change; the branches are cumulative.
 Full-stack feature
 codebase-design (modules, interfaces, and seams)
 → supabase-postgres-best-practices (data and schema)
-→ api-and-interface-design (services and API) → frontend-ui-engineering
+→ api-and-interface-design (services and API)
+→ test-driven-development (wrap each behavioral implementation slice)
+→ frontend-ui-engineering
 → security-and-hardening (if a boundary exists) + observability-and-instrumentation
 → performance-optimization (if measured) + documentation-and-adrs (if a decision changes)
 → ci-cd-and-automation → code-review-and-quality → shipping-and-launch
 
 Bug fix
-debugging-and-error-recovery → affected domain skill
+test-driven-development (reproduction and regression guard) + debugging-and-error-recovery
+→ affected domain skill
 → observability-and-instrumentation (if telemetry was missing)
 → ci-cd-and-automation → code-review-and-quality
 
 Deprecation or migration
-deprecation-and-migration → affected architecture, database, API, or UI skills
+deprecation-and-migration → test-driven-development
+→ affected architecture, database, API, or UI skills
 → observability-and-instrumentation + documentation-and-adrs
 → ci-cd-and-automation → code-review-and-quality → shipping-and-launch
 
 Behavior-preserving refactor
-codebase-design (if seams or interfaces change) → code-simplification
+test-driven-development (refactor phase with tests green)
+→ codebase-design (if seams or interfaces change) → code-simplification
 → ci-cd-and-automation → code-review-and-quality
 
 Release
@@ -145,6 +162,9 @@ documentation-and-adrs + observability-and-instrumentation
 → ci-cd-and-automation → code-review-and-quality
 → git-workflow-and-versioning → shipping-and-launch
 ```
+
+Apply [`test-driven-development`](../test-driven-development/SKILL.md) throughout behavior-changing sequences so each implementation
+step follows its test-first cycle.
 
 Apply [`git-workflow-and-versioning`](../git-workflow-and-versioning/SKILL.md) throughout code-changing sequences when Git operations are in scope.
 
