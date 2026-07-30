@@ -26,6 +26,7 @@ Start a new Codex task after installation so all bundled skills are available.
 | Sources      | [`source-driven-development`](skills/source-driven-development/SKILL.md)               | Verify version-sensitive work against official sources.      |
 | Testing      | [`test-driven-development`](skills/test-driven-development/SKILL.md)                   | Drive every behavior change through a failing test.          |
 | Frontend     | [`frontend-ui-engineering`](skills/frontend-ui-engineering/SKILL.md)                   | Build accessible, responsive interfaces against contracts.   |
+| ↳ React      | [`react-best-practices`](skills/react-best-practices/SKILL.md)                        | Apply React architecture guidance within frontend work.       |
 | Automation   | [`ci-cd-and-automation`](skills/ci-cd-and-automation/SKILL.md)                         | Automate repository quality and deployment gates.            |
 | Launch       | [`shipping-and-launch`](skills/shipping-and-launch/SKILL.md)                           | Plan authorized rollout, verification, and recovery.         |
 | Versioning   | [`git-workflow-and-versioning`](skills/git-workflow-and-versioning/SKILL.md)           | Guide authorized Git, version, changelog, and release work.  |

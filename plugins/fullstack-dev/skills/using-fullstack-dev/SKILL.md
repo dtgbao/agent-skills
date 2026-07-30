@@ -25,6 +25,7 @@ Task arrives
 ├── Designing backend services, APIs, or public contracts? ──────→ api-and-interface-design
 ├── Writing framework- or library-specific code? ────────────────→ source-driven-development
 ├── Building pages, components, state, or responsive behavior? ──→ frontend-ui-engineering
+│   └── React TypeScript architecture or tests? ─────────────────→ react-best-practices
 ├── Adding or changing behavior, including a bug fix? ───────────→ test-driven-development
 ├── Something failed or behaves unexpectedly? ───────────────────→ debugging-and-error-recovery
 ├── Reviewing completed code? ───────────────────────────────────→ code-review-and-quality
@@ -135,6 +136,7 @@ For a complete feature, use the applicable parts of this sequence:
    Verify version-sensitive implementation decisions against official documentation.
 6. affected domain skills + test-driven-development
    Implement dependency-ready database, service, and UI slices and prove each behavior change.
+   For React TypeScript UI work, apply react-best-practices under frontend-ui-engineering.
 7. security-and-hardening + performance-optimization
    Apply matched safety and measured performance constraints during implementation and review.
 8. observability-and-instrumentation + documentation-and-adrs
@@ -166,6 +168,7 @@ Not every task needs every skill: a focused bug fix may need only
 | Design   | [`api-and-interface-design`](../api-and-interface-design/SKILL.md)                   | Define stable service, API, and module contracts                               |
 | Build    | [`source-driven-development`](../source-driven-development/SKILL.md)                 | Ground version-sensitive code in official documentation                        |
 | Build    | [`frontend-ui-engineering`](../frontend-ui-engineering/SKILL.md)                     | Build accessible, responsive, production-quality interfaces                    |
+| ↳ React  | [`react-best-practices`](../react-best-practices/SKILL.md)                          | Apply React architecture guidance within frontend implementation and review    |
 | Verify   | [`test-driven-development`](../test-driven-development/SKILL.md)                     | Prove behavior changes with a failing test first                               |
 | Recover  | [`debugging-and-error-recovery`](../debugging-and-error-recovery/SKILL.md)           | Reproduce, localize, fix, and guard unexpected failures                        |
 | Review   | [`code-review-and-quality`](../code-review-and-quality/SKILL.md)                     | Review completed changes before merge or release                               |

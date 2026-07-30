@@ -1,7 +1,7 @@
 {
 	"name": "fullstack-dev",
-	"version": "0.3.0",
-	"description": "End-to-end guidance for full-stack applications, from requirements and architecture through data, APIs, source-verified implementation, frontend delivery, and launch.",
+	"version": "0.4.0",
+	"description": "End-to-end guidance for full-stack applications, from requirements and architecture through data, APIs, source-verified implementation, React and frontend delivery, and launch.",
 	"author": {
 		"name": "Bao Dang",
 		"url": "https://github.com/dtgbao"
@@ -17,6 +17,7 @@
 		"backend-services",
 		"api",
 		"frontend",
+		"react",
 		"source-verification",
 		"testing",
 		"tdd",
@@ -33,7 +34,7 @@
 	"interface": {
 		"displayName": "Fullstack Development",
 		"shortDescription": "Coordinate full-stack work from definition through launch.",
-		"longDescription": "Coordinate spec-driven definition, architecture, data, APIs, frontend UI, source-verified and test-driven implementation, security, performance, observability, documentation, CI/CD, debugging, migration, simplification, review, versioning, and staged launch.",
+		"longDescription": "Coordinate spec-driven definition, architecture, data, APIs, frontend UI and React architecture, source-verified and test-driven implementation, security, performance, observability, documentation, CI/CD, debugging, migration, simplification, review, versioning, and staged launch.",
 		"developerName": "dtgbao",
 		"category": "Productivity",
 		"capabilities": ["Interactive", "Read", "Write"],
