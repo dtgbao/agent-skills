@@ -30,7 +30,9 @@ Before writing any code, operate in read-only mode:
 - Map dependencies between components
 - Note risks and unknowns
 
-**Do NOT write code during planning.** The output is a plan document saved to `docs/tasks/plan.md` and a task list saved to `docs/tasks/todo.md`, not implementation.
+**Do NOT write code during planning.** Choose or reuse a stable, kebab-case `<work-slug>`. Save the
+planning artifacts under `docs/tasks/<work-slug>/`; if a spec initiated the work, reuse the directory
+that contains its `spec.md`.
 
 ### Step 2: Identify the Dependency Graph
 
@@ -147,12 +149,14 @@ If a task is L or larger, it should be broken into smaller tasks. An agent perfo
 - It touches two or more independent subsystems (e.g., auth and billing)
 - You find yourself writing "and" in the task title (a sign it is two tasks)
 
-## Output Files
+## Work Directory
 
-- **Plan document:** Save the implementation plan to `docs/tasks/plan.md`.
-- **Task list:** Save the checklist-style task list to `docs/tasks/todo.md`.
+- **Specification:** Read `docs/tasks/<work-slug>/spec.md` when the work began with an approved spec.
+- **Plan document:** Save the implementation plan to `docs/tasks/<work-slug>/plan.md`.
+- **Task list:** Save the checklist-style task list to `docs/tasks/<work-slug>/todo.md`.
 
-Create the `docs/tasks/` directory if it does not exist. These paths are the convention expected by the `/build` command and other downstream tooling.
+Create the work directory if it does not exist, and reuse it when continuing the same work. Pass its
+path to downstream workflows so they resolve the matching spec, plan, and task list.
 
 ## Plan Document Template
 
@@ -245,6 +249,7 @@ Before starting implementation, confirm:
 - [ ] No task touches more than ~5 files
 - [ ] Checkpoints exist between major phases
 - [ ] The human has reviewed and approved the plan
+- [ ] `plan.md` and `todo.md` share the work directory containing `spec.md`, when present
 
 ## See Also
 

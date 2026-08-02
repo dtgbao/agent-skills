@@ -61,7 +61,7 @@ Don't silently fill in ambiguous requirements. The spec's entire purpose is to s
    Dev: npm run dev
    ```
 
-3. **Project Structure** — Where source code lives, where tests go, where docs belong.
+3. **Project/Feature Structure** — Where source code lives, where tests go, where docs belong.
 
    ```
    src/           → Application source code
@@ -98,7 +98,7 @@ Don't silently fill in ambiguous requirements. The spec's entire purpose is to s
 
 [Build, test, lint, dev — full commands]
 
-## Project Structure
+## Project/Feature Structure
 
 [Directory layout with descriptions]
 
@@ -125,6 +125,10 @@ Don't silently fill in ambiguous requirements. The spec's entire purpose is to s
 [Anything unresolved that needs human input]
 ```
 
+**Output convention:** Choose a stable, kebab-case `<work-slug>` and reuse it when continuing the
+same work. Create `docs/tasks/<work-slug>/` and save the specification to
+`docs/tasks/<work-slug>/spec.md`.
+
 **Reframe instructions as success criteria.** When receiving vague requirements, translate them into concrete conditions:
 
 ```
@@ -150,8 +154,8 @@ With the validated spec, generate a technical implementation plan:
 5. Define verification checkpoints between phases
 
 > Follow `planning-and-task-breakdown` for the dependency-graph mapping and vertical-slicing mechanics behind these steps; it is the canonical source. The bullets above are a lightweight summary; if they ever diverge, `planning-and-task-breakdown` takes precedence.
->
-> **Output convention:** Save the plan to `docs/tasks/plan.md` and the task list to `docs/tasks/todo.md`, per the `/plan` command convention. Create `docs/tasks/` if it does not exist. Downstream commands (`/build`, etc.) expect these paths.
+
+**Output convention:** Save the implementation plan beside the spec at `docs/tasks/<work-slug>/plan.md`.
 
 The plan should be reviewable: the human should be able to read it and say "yes, that's the right approach" or "no, change X."
 
@@ -166,6 +170,8 @@ Break the plan into discrete, implementable tasks:
 - No task should require changing more than ~5 files
 
 > Follow `planning-and-task-breakdown` for the full task-sizing and dependency-ordering mechanics; it is the canonical source. The template below is a lightweight inline form; if they ever diverge, `planning-and-task-breakdown` takes precedence.
+
+**Output convention:** Save the task list beside the spec and plan at `docs/tasks/<work-slug>/todo.md`.
 
 **Task template:**
 
@@ -217,4 +223,4 @@ Before proceeding to implementation, confirm:
 - [ ] The human has reviewed and approved the spec
 - [ ] Success criteria are specific and testable
 - [ ] Boundaries (Always/Ask First/Never) are defined
-- [ ] The spec is saved to a file in the repository
+- [ ] The spec is saved to `docs/tasks/<work-slug>/spec.md`
