@@ -19,7 +19,9 @@ acting:
 ```text
 Task arrives
 │
-├── Need requirements and design for a feature or complex bug? ──→ spec-driven-development
+├── User wants to stress-test an idea or decision? ──────────────→ grilling
+├── Need a spec for a project, feature, or significant change? ──→ spec-driven-development
+├── Need an implementation plan or task breakdown? ──────────────→ planning-and-task-breakdown
 ├── Designing architecture, modules, interfaces, or seams? ──────→ codebase-design
 ├── Working with PostgreSQL schemas, queries, or configuration? ─→ supabase-postgres-best-practices
 ├── Designing backend services, APIs, or public contracts? ──────→ api-and-interface-design
@@ -111,45 +113,52 @@ evidence such as tests, builds, runtime checks, or production signals.
    its steps in order, and do not skip its verification.
 3. Select multiple skills when the task spans multiple concerns; do not collapse distinct
    verification gates into one.
-4. Start with `spec-driven-development` when a non-trivial feature or complex defect lacks approved,
-   repository-grounded requirements and design. Do not force a full spec onto a trivial local edit.
-5. Apply security, performance, observability, source verification, and documentation alongside the
+4. Use `grilling` when the user asks to stress-test their thinking or uses a grill trigger phrase.
+5. Start with `spec-driven-development` when a non-trivial feature or complex defect lacks approved,
+   repository-grounded requirements. Do not force a full spec onto a trivial local edit.
+6. Use `planning-and-task-breakdown` after requirements are clear when implementation work needs
+   dependency ordering, vertical slices, task sizing, or explicit checkpoints.
+7. Apply security, performance, observability, source verification, and documentation alongside the
    implementation phase whenever their triggers match.
-6. On failure, switch to `debugging-and-error-recovery`; resume the interrupted workflow only after
+8. On failure, switch to `debugging-and-error-recovery`; resume the interrupted workflow only after
    its verification passes.
-7. Map concerns not covered by a sibling skill to an explicitly named repository-native process.
+9. Map concerns not covered by a sibling skill to an explicitly named repository-native process.
 
 ## Lifecycle Sequence
 
 For a complete feature, use the applicable parts of this sequence:
 
 ```text
-1. spec-driven-development
-   Define approved behavior and a repository-grounded design when the task warrants a spec.
-2. codebase-design
+1. grilling
+   Resolve consequential product or technical choices when the user asks for a stress test.
+2. spec-driven-development
+   Define approved requirements, boundaries, and success criteria when the task warrants a spec.
+3. planning-and-task-breakdown
+   Turn the approved spec into dependency-ordered, verifiable vertical slices.
+4. codebase-design
    Establish modules and seams.
-3. supabase-postgres-best-practices
+5. supabase-postgres-best-practices
    Design or change PostgreSQL data concerns when the engine matches.
-4. api-and-interface-design
+6. api-and-interface-design
    Establish backend and public contracts.
-5. source-driven-development
+7. source-driven-development
    Verify version-sensitive implementation decisions against official documentation.
-6. affected domain skills + test-driven-development
+8. affected domain skills + test-driven-development
    Implement dependency-ready database, service, and UI slices and prove each behavior change.
    For React TypeScript UI work, apply react-best-practices under frontend-ui-engineering.
-7. security-and-hardening + performance-optimization
+9. security-and-hardening + performance-optimization
    Apply matched safety and measured performance constraints during implementation and review.
-8. observability-and-instrumentation + documentation-and-adrs
+10. observability-and-instrumentation + documentation-and-adrs
    Instrument production behavior and record decisions as the implementation evolves.
-9. ci-cd-and-automation
+11. ci-cd-and-automation
    Enforce the applicable repository checks.
-10. code-review-and-quality
+12. code-review-and-quality
     Review the completed change across quality dimensions.
-11. code-simplification
+13. code-simplification
     Remove warranted complexity without changing verified behavior, then review again.
-12. git-workflow-and-versioning
+14. git-workflow-and-versioning
     Prepare authorized commits, versions, tags, or changelogs.
-13. shipping-and-launch
+15. shipping-and-launch
     Complete authorized rollout, monitoring, and recovery work.
 ```
 
@@ -162,7 +171,9 @@ Not every task needs every skill: a focused bug fix may need only
 
 | Phase    | Skill                                                                                | Use it to                                                                      |
 | -------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| Define   | [`spec-driven-development`](../spec-driven-development/SKILL.md)                     | Establish approved requirements, design, and traceability for non-trivial work |
+| Clarify  | [`grilling`](../grilling/SKILL.md)                                                   | Stress-test ideas and resolve consequential choices one question at a time     |
+| Define   | [`spec-driven-development`](../spec-driven-development/SKILL.md)                     | Establish approved requirements, boundaries, and success criteria              |
+| Plan     | [`planning-and-task-breakdown`](../planning-and-task-breakdown/SKILL.md)             | Create dependency-ordered tasks, vertical slices, and verification checkpoints |
 | Design   | [`codebase-design`](../codebase-design/SKILL.md)                                     | Choose deep modules, small interfaces, and clear seams                         |
 | Design   | [`supabase-postgres-best-practices`](../supabase-postgres-best-practices/SKILL.md)   | Design or optimize matching PostgreSQL data concerns                           |
 | Design   | [`api-and-interface-design`](../api-and-interface-design/SKILL.md)                   | Define stable service, API, and module contracts                               |

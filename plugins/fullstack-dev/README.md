@@ -1,7 +1,8 @@
 # Fullstack Dev Plugin
 
-Guide full-stack application development from requirements and architecture through data, APIs,
-source-verified implementation, frontend delivery, operations, migration, review, and launch.
+Guide full-stack application development from decision discovery, requirements, and planning through
+architecture, data, APIs, source-verified implementation, frontend delivery, operations, migration,
+review, and launch.
 
 ## Install
 
@@ -16,10 +17,12 @@ Start a new Codex task after installation so all bundled skills are available.
 
 ## Lifecycle
 
-| Stage        | Skill                                                                                  | Purpose                                                      |
-| ------------ | -------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Route        | [`using-fullstack-dev`](skills/using-fullstack-dev/SKILL.md)                           | Discover and sequence every applicable skill.                |
-| Definition   | [`spec-driven-development`](skills/spec-driven-development/SKILL.md)                   | Define approved requirements, design, and traceability.      |
+| Stage         | Skill                                                                                  | Purpose                                                         |
+| ------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Route         | [`using-fullstack-dev`](skills/using-fullstack-dev/SKILL.md)                           | Discover and sequence every applicable skill.                   |
+| Clarification | [`grilling`](skills/grilling/SKILL.md)                                                 | Stress-test ideas and resolve decisions one question at a time.  |
+| Definition    | [`spec-driven-development`](skills/spec-driven-development/SKILL.md)                   | Define approved requirements, boundaries, and success criteria. |
+| Planning      | [`planning-and-task-breakdown`](skills/planning-and-task-breakdown/SKILL.md)           | Create dependency-ordered, verifiable implementation tasks.     |
 | Architecture | [`codebase-design`](skills/codebase-design/SKILL.md)                                   | Choose deep modules, small interfaces, seams, and adapters.  |
 | Database     | [`supabase-postgres-best-practices`](skills/supabase-postgres-best-practices/SKILL.md) | Apply specialized database guidance when its engine matches. |
 | Backend      | [`api-and-interface-design`](skills/api-and-interface-design/SKILL.md)                 | Define service boundaries and typed API contracts.           |

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Source-Driven Development"
+  short_description: "Ground implementation in authoritative sources"
+  default_prompt: "Use $source-driven-development to verify version-sensitive implementation decisions against authoritative sources."

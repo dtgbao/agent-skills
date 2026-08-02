@@ -1,0 +1,4 @@
+interface:
+  display_name: "Spec-Driven Development"
+  short_description: "Define requirements before implementation"
+  default_prompt: "Use $spec-driven-development to turn this project, feature, or significant change into an approved specification before implementation."
