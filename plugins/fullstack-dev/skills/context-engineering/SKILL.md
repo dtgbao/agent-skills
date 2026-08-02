@@ -62,11 +62,12 @@ src/
 
 ## Commands
 
-- Build: `npm run build`
-- Test: `npm test`
-- Lint: `npm run lint --fix`
 - Dev: `npm run dev`
+- Test: `npm test`
+- Format: `npm run format`
+- Lint: `npm run lint --fix`
 - Type check: `npx tsc --noEmit`
+- Build: `npm run build`
 
 ## Code Conventions
 

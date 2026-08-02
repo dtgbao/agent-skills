@@ -97,6 +97,7 @@ Each task follows this structure:
 **Verification:**
 
 - [ ] Tests pass: [the repository's focused-test command]
+- [ ] Format, lint, typecheck passes: [the repository's format, lint, typecheck command]
 - [ ] Build succeeds: [the repository's build command]
 - [ ] Manual check: [description of what to verify]
 
