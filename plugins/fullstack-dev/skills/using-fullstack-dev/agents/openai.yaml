@@ -1,4 +1,4 @@
 interface:
   display_name: "Using Fullstack Dev"
-  short_description: "Discover and coordinate full-stack workflows"
+  short_description: "Route full-stack workflows in dependency order"
   default_prompt: "Use $using-fullstack-dev to discover, load, and coordinate every matching full-stack workflow in dependency order."

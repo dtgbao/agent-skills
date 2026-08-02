@@ -1,8 +1,8 @@
 # Fullstack Dev Plugin
 
-Guide full-stack application development from decision discovery, requirements, and planning through
-architecture, data, APIs, source-verified implementation, frontend delivery, operations, migration,
-review, and launch.
+Guide full-stack application development from focused context, decision discovery, requirements,
+and planning through architecture, data, APIs, source-verified implementation, frontend delivery,
+operations, migration, review, and launch.
 
 ## Install
 
@@ -20,6 +20,7 @@ Start a new Codex task after installation so all bundled skills are available.
 | Stage         | Skill                                                                                  | Purpose                                                         |
 | ------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
 | Route         | [`using-fullstack-dev`](skills/using-fullstack-dev/SKILL.md)                           | Discover and sequence every applicable skill.                   |
+| Context       | [`context-engineering`](skills/context-engineering/SKILL.md)                           | Curate project rules and focused context for each task.          |
 | Clarification | [`grilling`](skills/grilling/SKILL.md)                                                 | Stress-test ideas and resolve decisions one question at a time.  |
 | Definition    | [`spec-driven-development`](skills/spec-driven-development/SKILL.md)                   | Define approved requirements, boundaries, and success criteria. |
 | Planning      | [`planning-and-task-breakdown`](skills/planning-and-task-breakdown/SKILL.md)           | Create dependency-ordered, verifiable implementation tasks.     |

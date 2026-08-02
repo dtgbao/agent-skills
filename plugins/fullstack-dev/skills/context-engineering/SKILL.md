@@ -1,6 +1,6 @@
 ---
 name: context-engineering
-description: Optimizes agent context setup. Use when starting a new session, when agent output quality degrades, when switching between tasks, or when you need to configure rules files and context for a project.
+description: Curates task-specific agent context. Use at session start, when switching tasks, when output drifts from project conventions, or when creating project rules.
 ---
 
 # Context Engineering
@@ -41,13 +41,24 @@ Create a rules file that persists across sessions. This is the highest-leverage 
 
 **CLAUDE.md** (for Claude Code):
 
-```markdown
+````markdown
 # Project: [Name]
 
 ## Tech Stack
 
 - React 18, TypeScript 5, Vite, Tailwind CSS 4
 - Node.js 22, Express, PostgreSQL, Prisma
+
+## Folder Structure
+
+Include only stable, high-signal structure. Describe each folder or file by its owned responsibility.
+
+```text
+src/
+├── [area]/ — [owned responsibility]
+│   └── [file] — [role in that area]
+└── [shared]/ — [shared responsibility]
+```
 
 ## Commands
 
@@ -75,14 +86,12 @@ Create a rules file that persists across sessions. This is the highest-leverage 
 ## Patterns
 
 [One short example of a well-written component in your style]
-```
+````
 
 **Equivalent files for other tools:**
 
-- `.cursorrules` or `.cursor/rules/*.md` (Cursor)
-- `.windsurfrules` (Windsurf)
-- `.github/copilot-instructions.md` (GitHub Copilot)
-- `AGENTS.md` (OpenAI Codex)
+- `AGENTS.md` (OpenAI Codex, Cursor, Droid,...)
+- `.cursor/rules/*.md` (Cursor)
 
 ### Level 2: Specs and Architecture
 
@@ -164,27 +173,24 @@ CONSTRAINT:
 
 ### The Hierarchical Summary
 
-For large projects, maintain a summary index:
+For large projects, maintain a focused hierarchy. Include only task-relevant branches, give each
+entry one owned responsibility, and place shared patterns on the owning folder instead of repeating
+them beside every file:
 
-```markdown
-# Project Map
-
-## Authentication (src/auth/)
-
-Handles registration, login, password reset.
-Key files: auth.routes.ts, auth.service.ts, auth.middleware.ts
-Pattern: All routes use authMiddleware, errors use AuthError class
-
-## Tasks (src/tasks/)
-
-CRUD for user tasks with real-time updates.
-Key files: task.routes.ts, task.service.ts, task.socket.ts
-Pattern: Optimistic updates via WebSocket, server reconciliation
-
-## Shared (src/lib/)
-
-Validation, error handling, database utilities.
-Key files: validation.ts, errors.ts, db.ts
+```text
+src/
+├── auth/ — Registration, login, and password reset; uses authMiddleware and AuthError
+│   ├── auth.routes.ts — HTTP endpoints
+│   ├── auth.service.ts — Authentication logic
+│   └── auth.middleware.ts — Request authentication
+├── tasks/ — Task CRUD; optimistic WebSocket updates with server reconciliation
+│   ├── task.routes.ts — HTTP endpoints
+│   ├── task.service.ts — Task operations
+│   └── task.socket.ts — Real-time synchronization
+└── lib/ — Shared application infrastructure
+    ├── validation.ts — Input validation
+    ├── errors.ts — Typed application errors
+    └── db.ts — Database access
 ```
 
 Load only the relevant section when working on a specific area.

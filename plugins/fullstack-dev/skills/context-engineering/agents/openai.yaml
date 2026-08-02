@@ -1,0 +1,4 @@
+interface:
+  display_name: "Context Engineering"
+  short_description: "Curate focused context for reliable agent work"
+  default_prompt: "Use $context-engineering to load the project rules, specs, source files, patterns, and focused evidence needed for this task."

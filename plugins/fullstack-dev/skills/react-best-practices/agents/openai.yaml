@@ -1,4 +1,4 @@
 interface:
   display_name: "React Best Practices"
-  short_description: "Reusable React architecture rules"
-  default_prompt: "Use $react-best-practices to review or implement React code in this project."
+  short_description: "Apply React TypeScript architecture patterns"
+  default_prompt: "Use $react-best-practices to implement or review React composition, hooks, state boundaries, effects, data access, and behavior tests."

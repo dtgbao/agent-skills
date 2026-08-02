@@ -1,4 +1,4 @@
 interface:
   display_name: "Grilling"
-  short_description: "Stress-test thinking one question at a time"
-  default_prompt: "Use $grilling to stress-test this idea one decision at a time and recommend an answer for each question."
+  short_description: "Clarify vague requirements to shared understanding"
+  default_prompt: "Use $grilling to clarify these requirements one question at a time, recommend an answer for each decision, and continue until we confirm shared understanding."
