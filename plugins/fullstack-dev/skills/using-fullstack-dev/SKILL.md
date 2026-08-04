@@ -1,6 +1,6 @@
 ---
 name: using-fullstack-dev
-description: Routes full-stack engineering work. Use at task start to select and order every applicable bundled workflow.
+description: Primary entrypoint for the Fullstack Development plugin. Always use this skill first when Fullstack Development is @mentioned, selected in Sources, or otherwise explicitly invoked. Read it before using any sibling skill or taking substantive action. It selects and orders every applicable bundled workflow.
 ---
 
 # Using Fullstack Dev

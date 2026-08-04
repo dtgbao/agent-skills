@@ -1,6 +1,6 @@
 {
 	"name": "fullstack-dev",
-	"version": "0.7.1",
+	"version": "0.7.2",
 	"description": "End-to-end guidance for full-stack applications, from focused context, requirements, and planning through architecture, data, APIs, source-verified implementation, React and frontend delivery, and launch.",
 	"author": {
 		"name": "Bao Dang",
@@ -44,9 +44,9 @@
 		"capabilities": ["Interactive", "Read", "Write"],
 		"websiteURL": "https://github.com/dtgbao/agent-skills",
 		"defaultPrompt": [
-			"Curate context, clarify requirements, and plan the right full-stack workflows for this task.",
-			"Design the modules, database schema, services, and UI for this feature.",
-			"Review, harden, and prepare this full-stack change for release."
+			"Use $using-fullstack-dev first, then curate context, clarify requirements, and plan the applicable full-stack workflows for this task.",
+			"Use $using-fullstack-dev first, then design the modules, database schema, services, and UI for this feature.",
+			"Use $using-fullstack-dev first, then review, harden, and prepare this full-stack change for release."
 		],
 		"brandColor": "#22D3EE",
 		"composerIcon": "./assets/composer-icon.png",
