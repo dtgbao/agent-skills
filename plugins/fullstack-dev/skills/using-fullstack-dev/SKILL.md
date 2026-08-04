@@ -22,14 +22,14 @@ Task arrives
     ├── Requirements vague or materially ambiguous? ─────────────→ grilling
     ├── New project, feature, or significant change? ────────────→ spec-driven-development
     ├── Have a spec, need tasks? ────────────────────────────────→ planning-and-task-breakdown
-    ├── Designing architecture, modules, interfaces, or seams? ──→ codebase-design
-    │   └── PostgreSQL schema, query, or configuration? ─────────→ supabase-postgres-best-practices
     ├── Implementing code?
-    │   ├── UI work? ────────────────────────────────────────────→ frontend-ui-engineering
-    │   │   └── React TypeScript architecture or tests? ─────────→ react-best-practices
-    │   ├── API or public contract work? ────────────────────────→ api-and-interface-design
+    │   ├── Need documentation-verified code? ───────────────────→ source-driven-development
     │   ├── Context missing, stale, or overloaded? ──────────────→ context-engineering
-    │   └── Need documentation-verified code? ───────────────────→ source-driven-development
+    │   ├── Designing architecture, modules, interfaces? ────────→ codebase-design
+    │   │   └── PostgreSQL schema, query, or configuration? ─────→ supabase-postgres-best-practices
+    │   ├── API or public contract work? ────────────────────────→ api-and-interface-design
+    │   └── UI work? ────────────────────────────────────────────→ frontend-ui-engineering
+    │       └── React TypeScript architecture or tests? ─────────→ react-best-practices
     ├── Changing behavior or fixing a bug test-first? ───────────→ test-driven-development
     ├── Something broke? ────────────────────────────────────────→ debugging-and-error-recovery
     ├── Reviewing code? ─────────────────────────────────────────→ code-review-and-quality
@@ -124,55 +124,48 @@ evidence such as tests, builds, runtime checks, or production signals.
    repository-grounded requirements. Do not force a full spec onto a trivial local edit.
 3. Use `planning-and-task-breakdown` after requirements are clear when implementation work needs
    dependency ordering, vertical slices, task sizing, or explicit checkpoints.
-4. Apply security, performance, observability, source verification, and documentation alongside the
-   implementation phase whenever their triggers match.
-5. On failure, switch to `debugging-and-error-recovery`; resume the interrupted workflow only after
+4. Use `source-driven-development` before implementation decisions that depend on version-sensitive
+   frameworks, APIs, or external systems, and verify those decisions against official sources.
+5. Use `context-engineering` before implementation when context is missing, stale, or overloaded.
+   Load only the relevant rules, requirements, source, tests, and failure evidence, then refresh that
+   context when the task changes.
+6. Apply security, performance, observability, and documentation alongside the implementation phase
+   whenever their triggers match.
+7. On failure, switch to `debugging-and-error-recovery`; resume the interrupted workflow only after
    its verification passes.
-6. Map concerns not covered by a sibling skill to an explicitly named repository-native process.
+8. Map concerns not covered by a sibling skill to an explicitly named repository-native process.
 
 ## Lifecycle Sequence
 
-For a complete feature, use the applicable parts of this sequence:
+For a complete feature, the typical skill sequence is:
 
 ```text
-1. context-engineering
-   Establish project rules and focused session context, then refresh it before each new task.
-2. grilling
-   Clarify vague or ambiguous requirements one question at a time until shared understanding.
-3. spec-driven-development
-   Define approved requirements, boundaries, and success criteria when the task warrants a spec.
-4. planning-and-task-breakdown
-   Turn the approved spec into dependency-ordered, verifiable vertical slices.
-5. codebase-design
-   Establish modules and seams.
-6. supabase-postgres-best-practices
-   Design or change PostgreSQL data concerns when the engine matches.
-7. api-and-interface-design
-   Establish backend and public contracts.
-8. source-driven-development
-   Verify version-sensitive implementation decisions against official documentation.
-9. affected domain skills + test-driven-development
-   Implement dependency-ready database, service, and UI slices and prove each behavior change.
-   For React TypeScript UI work, apply react-best-practices under frontend-ui-engineering.
-10. security-and-hardening + performance-optimization
-   Apply matched safety and measured performance constraints during implementation and review.
-11. observability-and-instrumentation + documentation-and-adrs
-   Instrument production behavior and record decisions as the implementation evolves.
-12. ci-cd-and-automation
-   Enforce the applicable repository checks.
-13. code-review-and-quality
-    Review the completed change across quality dimensions.
-14. code-simplification
-    Remove warranted complexity without changing verified behavior, then review again.
-15. git-workflow-and-versioning
-    Prepare authorized commits, versions, tags, or changelogs.
-16. shipping-and-launch
-    Complete authorized rollout, monitoring, and recovery work.
+1.  grilling                               → Clarify materially vague or ambiguous requirements
+2.  spec-driven-development                → Define approved requirements, boundaries, and success criteria
+3.  planning-and-task-breakdown            → Break the approved spec into verifiable, dependency-ordered slices
+4.  source-driven-development              → Verify version-sensitive decisions against official documentation
+5.  context-engineering                    → Load and refresh the focused context needed for implementation
+6.  codebase-design                        → Establish architecture, modules, interfaces, and seams
+    supabase-postgres-best-practices       → Design PostgreSQL concerns when the project uses PostgreSQL
+7.  api-and-interface-design               → Establish applicable API and public contracts
+8.  frontend-ui-engineering                → Build applicable UI slices
+    react-best-practices                   → Apply React TypeScript architecture and testing practices when relevant
+9.  test-driven-development                → Prove each behavior change while implementing slices
+10. debugging-and-error-recovery           → Diagnose failures and recover the interrupted workflow when needed
+11. code-review-and-quality                → Review the completed change across quality dimensions
+    code-simplification                    → Remove warranted complexity without changing verified behavior
+    security-and-hardening                 → Apply matched security constraints during implementation and review
+    performance-optimization               → Measure and address relevant performance constraints
+12. git-workflow-and-versioning            → Prepare authorized commits, versions, tags, or changelogs
+13. ci-cd-and-automation                   → Enforce the applicable repository checks
+14. deprecation-and-migration              → Retire or replace affected systems safely when needed
+15. documentation-and-adrs                 → Record decisions and document the change as it evolves
+16. observability-and-instrumentation      → Add applicable logs, metrics, traces, and alerts
+17. shipping-and-launch                    → Complete authorized rollout, monitoring, and recovery work
 ```
 
-Use `deprecation-and-migration` before affected design and implementation skills when replacing or
-removing a system. Invoke `debugging-and-error-recovery` wherever failure interrupts the sequence.
-Not every task needs every skill: a focused bug fix may need only
+Not every task needs every skill. Run matched cross-cutting skills alongside implementation rather
+than waiting until the numbered position. A focused bug fix may need only
 `debugging-and-error-recovery` → `test-driven-development` → `code-review-and-quality`.
 
 Routing is complete when every task concern maps to a sibling skill or a named repository-native
