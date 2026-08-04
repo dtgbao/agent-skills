@@ -1,0 +1,19 @@
+{
+	"description": "Register the Fullstack Development router instruction when a session starts or resumes.",
+	"hooks": {
+		"SessionStart": [
+			{
+				"matcher": "^(startup|resume|clear|compact)$",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "printf '%s\\n' \"If the Fullstack Development plugin is explicitly mentioned or invoked, first read $PLUGIN_ROOT/skills/using-fullstack-dev/SKILL.md.\"",
+						"commandWindows": "powershell -NoProfile -Command \"Write-Output \\\"If the Fullstack Development plugin is explicitly mentioned or invoked, first read $env:PLUGIN_ROOT/skills/using-fullstack-dev/SKILL.md.\\\"\"",
+						"statusMessage": "Registering Fullstack Development router",
+						"timeout": 5
+					}
+				]
+			}
+		]
+	}
+}

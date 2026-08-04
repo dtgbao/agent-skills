@@ -15,6 +15,11 @@ codex plugin add fullstack-dev@bao-plugins
 
 Start a new Codex task after installation so all bundled skills are available.
 
+The plugin includes a read-only `SessionStart` hook that adds a small routing instruction on startup,
+resume, clear, and compaction. It directs Codex to read `using-fullstack-dev` first when Fullstack
+Development is explicitly mentioned or invoked. After installing or refreshing the plugin, use
+`/hooks` to review and trust the hook; Codex skips untrusted plugin hooks.
+
 ## Lifecycle
 
 | Stage         | Skill                                                                                  | Purpose                                                         |
