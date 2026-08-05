@@ -1,0 +1,4 @@
+interface:
+  display_name: "Spec Requirements"
+  short_description: "Define and revise testable feature requirements"
+  default_prompt: "Use $spec-requirements to create or revise testable requirements for this feature."

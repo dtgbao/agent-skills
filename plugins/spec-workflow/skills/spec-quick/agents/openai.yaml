@@ -1,0 +1,4 @@
+interface:
+  display_name: "Quick Spec"
+  short_description: "Generate a complete lightweight feature spec"
+  default_prompt: "Use $spec-quick to generate requirements, design, and tasks for this small feature."

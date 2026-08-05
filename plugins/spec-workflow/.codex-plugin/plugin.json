@@ -1,33 +1,29 @@
 {
-  "name": "spec-workflow",
-  "version": "2.0.0",
-  "description": "Spec-driven development workflows for requirements, design, bug fixes, quick specs, task planning, and execution.",
-  "author": {
-    "name": "Bao Dang",
-    "url": "https://github.com/dtgbao"
-  },
-  "repository": "https://github.com/dtgbao/agent-skills",
-  "license": "MIT",
-  "keywords": [
-    "spec-driven-development",
-    "requirements",
-    "planning",
-    "workflow",
-    "bugfix"
-  ],
-  "skills": "./skills/",
-  "interface": {
-    "displayName": "Spec Workflow",
-    "shortDescription": "Turn requirements, designs, and bug reports into executable specifications.",
-    "longDescription": "Guide feature and bug-fix work through requirements-first, design-first, bugfix, or quick-spec workflows. Produce approved requirements, designs with correctness properties, dependency-ordered tasks, progress status, and focused task execution.",
-    "developerName": "dtgbao",
-    "category": "Productivity",
-    "capabilities": ["Interactive", "Read", "Write"],
-    "websiteURL": "https://github.com/dtgbao/agent-skills",
-    "defaultPrompt": [
-      "Create a spec for this feature: [describe the feature]",
-      "Plan a surgical fix for this bug: [describe the bug]",
-      "Show the status of my current specification"
-    ]
-  }
+	"name": "spec-workflow",
+	"version": "2.0.1",
+	"description": "Spec-driven development workflows for requirements, design, bug fixes, quick specs, task planning, and execution.",
+	"author": {
+		"name": "Bao Dang",
+		"url": "https://github.com/dtgbao"
+	},
+	"repository": "https://github.com/dtgbao/agent-skills",
+	"license": "MIT",
+	"keywords": ["spec-driven-development", "requirements", "planning", "workflow", "bugfix"],
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Spec Workflow",
+		"shortDescription": "Turn requirements, designs, and bug reports into executable specifications.",
+		"longDescription": "Guide feature and bug-fix work through requirements-first, design-first, bugfix, or quick-spec workflows. Produce approved requirements, designs with correctness properties, dependency-ordered tasks, progress status, and focused task execution.",
+		"developerName": "dtgbao",
+		"category": "Productivity",
+		"capabilities": ["Interactive", "Read", "Write"],
+		"websiteURL": "https://github.com/dtgbao/agent-skills",
+		"composerIcon": "./assets/composer-icon.png",
+		"logo": "./assets/logo.png",
+		"defaultPrompt": [
+			"Create a spec for this feature: [describe the feature]",
+			"Plan a surgical fix for this bug: [describe the bug]",
+			"Show the status of my current specification"
+		]
+	}
 }

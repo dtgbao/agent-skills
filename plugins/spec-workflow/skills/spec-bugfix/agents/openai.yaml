@@ -1,0 +1,4 @@
+interface:
+  display_name: "Spec Bugfix"
+  short_description: "Define bug behavior before designing a fix"
+  default_prompt: "Use $spec-bugfix to document current, expected, and unchanged behavior for this bug."

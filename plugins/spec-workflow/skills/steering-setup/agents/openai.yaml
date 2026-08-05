@@ -1,0 +1,4 @@
+interface:
+  display_name: "Steering Setup"
+  short_description: "Capture durable product and project context"
+  default_prompt: "Use $steering-setup to create or refresh product, technology, and structure context for this repository."

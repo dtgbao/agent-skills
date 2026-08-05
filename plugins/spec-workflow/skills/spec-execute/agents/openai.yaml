@@ -1,0 +1,4 @@
+interface:
+  display_name: "Spec Execute"
+  short_description: "Implement the next approved specification task"
+  default_prompt: "Use $spec-execute to implement the next approved task for this specification."

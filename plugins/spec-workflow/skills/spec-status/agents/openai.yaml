@@ -1,0 +1,4 @@
+interface:
+  display_name: "Spec Status"
+  short_description: "Summarize specification and task progress"
+  default_prompt: "Use $spec-status to summarize the artifacts and task progress for this specification."

@@ -20,6 +20,7 @@ This repo is a source tree for reusable instruction bundles. Standalone skills l
 | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | `feature-dev`                                      | Guide feature work from codebase discovery through approved requirements and architecture, implementation, review, and summary. | `feature-dev`, `code-review`, `domain-modeling`, `grilling`, `tdd` |
 | [`fullstack-dev`](plugins/fullstack-dev/README.md) | Guide full-stack delivery from focused context and requirements through planning, implementation, operations, and launch.      | `using-fullstack-dev` plus focused engineering skills              |
+| [`spec-workflow`](plugins/spec-workflow/README.md) | Guide requirements-first, design-first, bugfix, and quick-spec workflows from project steering through focused execution.      | `spec-new`, spec phases, execution, status, and `steering-setup`   |
 | `swe-wiki`                                         | Maintain a persistent, Git-synced software engineering knowledge base across computers.                                         | `swe-wiki`                                                         |
 
 ## Agent presets

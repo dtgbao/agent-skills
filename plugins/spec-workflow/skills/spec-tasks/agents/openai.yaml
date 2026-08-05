@@ -1,0 +1,4 @@
+interface:
+  display_name: "Spec Tasks"
+  short_description: "Turn approved designs into ordered tasks"
+  default_prompt: "Use $spec-tasks to turn this approved design into dependency-ordered implementation tasks."

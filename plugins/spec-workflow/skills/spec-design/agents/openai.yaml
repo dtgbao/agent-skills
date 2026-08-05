@@ -1,0 +1,4 @@
+interface:
+  display_name: "Spec Design"
+  short_description: "Design features and fixes from approved specs"
+  default_prompt: "Use $spec-design to create or revise the technical design for this specification."
