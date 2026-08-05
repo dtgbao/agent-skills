@@ -1,6 +1,6 @@
 {
 	"name": "fullstack-dev",
-	"version": "0.7.5",
+	"version": "0.7.6",
 	"description": "End-to-end guidance for full-stack applications, from focused context, requirements, and planning through architecture, data, APIs, source-verified implementation, React and frontend delivery, and launch.",
 	"author": {
 		"name": "Bao Dang",
@@ -35,7 +35,6 @@
 		"release"
 	],
 	"skills": "./skills/",
-	"hooks": "./hooks/hooks.json",
 	"interface": {
 		"displayName": "Fullstack Development",
 		"shortDescription": "Coordinate full-stack work from context through launch.",
