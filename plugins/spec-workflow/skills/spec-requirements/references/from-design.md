@@ -1,6 +1,6 @@
 # Mode: derive requirements from an approved design (Design-First phase 2)
 
-Read `.claude/specs/<slug>/design.md` in full first. Every requirement you
+Read `docs/specs/<slug>/design.md` in full first. Every requirement you
 write must be something the design actually supports — that's the whole
 point of Design-First: requirements are guaranteed technically feasible
 because they're derived from validated architecture, not the other way

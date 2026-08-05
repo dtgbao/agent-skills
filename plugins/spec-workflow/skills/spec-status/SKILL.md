@@ -12,7 +12,7 @@ artifacts exist rather than assuming requirements always comes first.
 
 ## If no slug is given
 
-List every subdirectory of `.claude/specs/`. For each, determine its type
+List every subdirectory of `docs/specs/`. For each, determine its type
 from which files are present:
 
 - **Feature spec** — has `requirements.md` and/or `design.md`. Report which
@@ -26,7 +26,7 @@ from which files are present:
 
 Keep this to a compact table or list — one line per spec.
 
-If `.claude/specs/` doesn't exist or is empty, say so and mention
+If `docs/specs/` doesn't exist or is empty, say so and mention
 `/spec-new` as the place to start.
 
 ## If a slug is given

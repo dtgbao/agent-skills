@@ -14,14 +14,14 @@ user explicitly approves requirements.md.
 
 ## 0. Load context
 
-If `.claude/steering/product.md`, `tech.md`, or `structure.md` exist, read
+If `docs/steering/product.md`, `tech.md`, or `structure.md` exist, read
 them for product and technical context before drafting anything.
 
 ## 1. Identify the spec and the mode
 
 Derive a short kebab-case feature slug from `$ARGUMENTS` (e.g. "user
 authentication" → `user-authentication`), unless one is already implied by
-an existing spec directory. Check `.claude/specs/<slug>/`:
+an existing spec directory. Check `docs/specs/<slug>/`:
 
 - **`requirements.md` already exists** → **revision**. Read the current
   file and `references/template.md`, treat `$ARGUMENTS` as the requested
@@ -31,7 +31,7 @@ an existing spec directory. Check `.claude/specs/<slug>/`:
 - **No `requirements.md`, but `design.md` exists** → **Design-First phase
   2.** Read `references/from-design.md`, then `references/template.md`.
 - **Neither exists** → **fresh Requirements-First start.** Create
-  `.claude/specs/<slug>/`. Read `references/fresh-start.md`, then
+  `docs/specs/<slug>/`. Read `references/fresh-start.md`, then
   `references/template.md`.
 
 If the feature description is too vague to write meaningful requirements
@@ -54,7 +54,7 @@ yourself even if the changes look complete to you.
 
 ## 3. On approval
 
-Write the final content to `.claude/specs/<slug>/requirements.md`. Tell the
+Write the final content to `docs/specs/<slug>/requirements.md`. Tell the
 user it's saved and name the correct next command per Step 1: `/spec-design
 <slug>` (fresh start) or `/spec-tasks <slug>` (Design-First — design
 already exists).

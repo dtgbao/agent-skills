@@ -13,16 +13,16 @@ diagnose the root cause or propose a fix in this skill — that's
 
 ## 0. Load context
 
-Read `.claude/steering/*.md` if present, for product/tech/structure
+Read `docs/steering/*.md` if present, for product/tech/structure
 context.
 
 ## 1. Identify the bugfix spec
 
 Derive a short kebab-case slug from `$ARGUMENTS` (e.g. "login button does
 nothing on Safari" → `login-button-safari`). Check whether
-`.claude/specs/<slug>/bugfix.md` already exists.
+`docs/specs/<slug>/bugfix.md` already exists.
 
-- **Doesn't exist:** new bugfix. Create `.claude/specs/<slug>/`.
+- **Doesn't exist:** new bugfix. Create `docs/specs/<slug>/`.
 - **Exists and not yet through tasks:** treat `$ARGUMENTS` as new
   information and update the analysis.
 - **Exists with an approved design/tasks already:** ask whether this is a
@@ -77,6 +77,6 @@ Wait for explicit approval before considering this phase done.
 
 ## 5. On approval
 
-Write the final content to `.claude/specs/<slug>/bugfix.md`. Tell the user
+Write the final content to `docs/specs/<slug>/bugfix.md`. Tell the user
 it's saved and that the next step is `/spec-design <slug>` to diagnose the
 root cause and propose a fix.

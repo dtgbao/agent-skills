@@ -7,12 +7,12 @@ argument-hint: "<feature-slug> [task number]"
 # Spec Execute
 
 Requirements, design, and tasks should already be approved before this runs.
-If `.claude/specs/<slug>/tasks.md` doesn't exist, stop and tell the user to
+If `docs/specs/<slug>/tasks.md` doesn't exist, stop and tell the user to
 run `spec-tasks` first.
 
 ## 0. Load context
 
-Read `.claude/steering/*.md` if present, then `design.md` and `tasks.md`
+Read `docs/steering/*.md` if present, then `design.md` and `tasks.md`
 for the spec, plus whichever of `requirements.md` (feature spec) or
 `bugfix.md` (bugfix spec) exists — that file, if requirements.md, tells you
 *why* and *what counts as done*; if bugfix.md, it tells you what the fix
@@ -48,7 +48,7 @@ questions before continuing, per the task's own instructions.
 **If the task is a normal or property-test subtask:**
 - Follow the design doc's architecture and interfaces for this task; don't
   improvise a different approach without flagging it.
-- Follow conventions in `.claude/steering/tech.md` / `structure.md` where
+- Follow conventions in `docs/steering/tech.md` / `structure.md` where
   present.
 - Write the code, and write/update tests per the design's testing strategy
   and the task's own notes.
@@ -66,7 +66,7 @@ questions before continuing, per the task's own instructions.
 
 Once implemented and verified:
 
-1. Update `.claude/specs/<slug>/tasks.md`, changing this task's `- [ ]` to
+1. Update `docs/specs/<slug>/tasks.md`, changing this task's `- [ ]` to
    `- [x]` (or `- [x]*` if it was optional). If every subtask under a parent
    task is now checked, check the parent too.
 2. Summarize what changed (files touched, what was implemented, test

@@ -141,7 +141,7 @@ feature needs real review or turns out to be a bug report.
 ## Files this produces
 
 ```
-.claude/
+docs/
 ├── steering/            (optional, from steering-setup)
 │   ├── product.md
 │   ├── tech.md

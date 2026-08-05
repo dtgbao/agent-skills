@@ -15,13 +15,13 @@ that happens only after the user explicitly approves this design, via
 
 ## 0. Load context
 
-Read `.claude/steering/*.md` if present, for product/tech/structure
+Read `docs/steering/*.md` if present, for product/tech/structure
 context.
 
 ## 1. Identify the spec and the mode
 
 Derive a short kebab-case slug from `$ARGUMENTS` if one isn't already
-implied by an existing spec directory. Check `.claude/specs/<slug>/`:
+implied by an existing spec directory. Check `docs/specs/<slug>/`:
 
 - **`design.md` already exists** → **revision**. Read it, then infer the
   original mode from what's alongside it (`requirements.md` → Mode A,
@@ -36,7 +36,7 @@ implied by an existing spec directory. Check `.claude/specs/<slug>/`:
   self-contained, no need for `feature-template.md`.
 - **Neither `requirements.md` nor `bugfix.md` exists** → **Mode B:
   Design-First entry**, the first artifact for this spec. Create
-  `.claude/specs/<slug>/`. Read `references/design-first.md`, then
+  `docs/specs/<slug>/`. Read `references/design-first.md`, then
   `references/feature-template.md`.
 
 ## 2. Draft, present, and gate
@@ -53,6 +53,6 @@ proceeding unprompted.
 
 ## 3. On approval
 
-Write the final content to `.claude/specs/<slug>/design.md`. Tell the user
+Write the final content to `docs/specs/<slug>/design.md`. Tell the user
 it's saved and name the correct next command: `/spec-requirements <slug>`
 (Mode B) or `/spec-tasks <slug>` (Modes A and C).

@@ -1,6 +1,6 @@
 ---
 name: steering-setup
-description: Set up or refresh persistent project context for this spec-driven workflow. Use when the user asks to "set up steering", "initialize project context for specs", starts using this workflow for the first time in a repo, or when product/tech/structure context seems stale. Creates .claude/steering/product.md, tech.md, and structure.md.
+description: Set up or refresh persistent project context for this spec-driven workflow. Use when the user asks to "set up steering", "initialize project context for specs", starts using this workflow for the first time in a repo, or when product/tech/structure context seems stale. Creates docs/steering/product.md, tech.md, and structure.md.
 argument-hint: "[what changed, e.g. 'we switched to Postgres']"
 ---
 
@@ -12,7 +12,7 @@ every spec.
 
 ## What to produce
 
-Create (or update) three files under `.claude/steering/`:
+Create (or update) three files under `docs/steering/`:
 
 1. **product.md** — What the product is, who it's for, and the key features/goals.
    2-4 short sections is enough; this is not a full PRD.
@@ -24,7 +24,7 @@ Create (or update) three files under `.claude/steering/`:
 
 ## How to gather the content
 
-1. If `.claude/steering/` already has these files, read them first and treat this
+1. If `docs/steering/` already has these files, read them first and treat this
    as an update, not a rewrite — preserve anything still accurate.
 2. Inspect the repo to ground the docs in reality rather than guessing: check
    `package.json` / `pyproject.toml` / `go.mod` / etc. for stack and scripts, skim
@@ -44,6 +44,19 @@ so brevity keeps token cost down across the whole spec process.
 
 ## After writing
 
-Confirm the three files are in place and give the user a one-line summary of what
-each now says. Let them know they can run this skill again any time the product,
-stack, or repo layout changes meaningfully.
+1. At the repository root, add or update a concise `## Steering` section in
+   `CLAUDE.md` when running in Claude, or in `AGENTS.md` for any other agent.
+   Create the appropriate instruction file if it does not exist. The section
+   must tell agents to read these files before planning or implementing:
+
+   - `docs/steering/product.md`
+   - `docs/steering/tech.md`
+   - `docs/steering/structure.md`
+
+   Preserve all unrelated instructions and update an existing steering reference
+   instead of adding a duplicate.
+
+2. Confirm the three steering files and the instruction-file reference are in
+   place, then give the user a one-line summary of what each steering file says.
+   Let them know they can run this skill again any time the product, stack, or
+   repo layout changes meaningfully.

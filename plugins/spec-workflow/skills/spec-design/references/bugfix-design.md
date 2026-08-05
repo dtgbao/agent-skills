@@ -1,6 +1,6 @@
 # Mode C: bugfix design (self-contained — does not use feature-template.md)
 
-Read `.claude/specs/<slug>/bugfix.md` in full — it defines the Current
+Read `docs/specs/<slug>/bugfix.md` in full — it defines the Current
 (Defect), Expected (Correct), and Unchanged (Regression Prevention)
 behavior this design must resolve.
 

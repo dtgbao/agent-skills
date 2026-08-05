@@ -12,7 +12,7 @@ the separate `spec-execute` skill, after the user approves this task list.
 
 ## 0. Load context and determine spec type
 
-Read `.claude/steering/*.md` if present. Then check `.claude/specs/<slug>/`:
+Read `docs/steering/*.md` if present. Then check `docs/specs/<slug>/`:
 
 - **Feature spec** (`requirements.md` exists): read `requirements.md` and
   `design.md`. Both are required.
@@ -22,7 +22,7 @@ Read `.claude/steering/*.md` if present. Then check `.claude/specs/<slug>/`:
 If either required file is missing, stop and tell the user which earlier
 phase to run first.
 
-If `.claude/specs/<slug>/tasks.md` already exists, treat `$ARGUMENTS` as a
+If `docs/specs/<slug>/tasks.md` already exists, treat `$ARGUMENTS` as a
 revision request and preserve the completion state (`[x]`) of any task that
 hasn't conceptually changed.
 
@@ -48,6 +48,6 @@ Wait for explicit approval before treating the spec as ready to execute.
 
 ## 3. On approval
 
-Write the final content to `.claude/specs/<slug>/tasks.md`. Tell the user
+Write the final content to `docs/specs/<slug>/tasks.md`. Tell the user
 the plan is saved and ready — they can run `spec-execute <slug>` to start
 implementing, either one task at a time or by naming a task number.

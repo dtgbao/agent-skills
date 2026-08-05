@@ -1,6 +1,6 @@
 # Mode A: derive design from approved requirements
 
-Read `.claude/specs/<slug>/requirements.md` in full, including its
+Read `docs/specs/<slug>/requirements.md` in full, including its
 Glossary — reuse those exact terms in the design; don't rename `Auth_Guard`
 to "the guard middleware" partway through.
 

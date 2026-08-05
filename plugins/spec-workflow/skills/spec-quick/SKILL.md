@@ -27,7 +27,7 @@ no quick variant for those.
 ## 1. Identify the spec
 
 Derive a short kebab-case slug from `$ARGUMENTS`. Create
-`.claude/specs/<slug>/`.
+`docs/specs/<slug>/`.
 
 ## 2. Ask clarifying questions up front — once
 
@@ -55,7 +55,7 @@ gated skills use:
 reference files** — that's the one thing Quick Spec intentionally omits.
 Generate requirements.md first, then design.md from it (citing requirement
 numbers as normal, since they now exist), then tasks.md from both, writing
-each to `.claude/specs/<slug>/` as you go, without pausing for confirmation
+each to `docs/specs/<slug>/` as you go, without pausing for confirmation
 in between.
 
 Because there's no review checkpoint to catch a wrong turn mid-way, ground

@@ -116,5 +116,5 @@ where it clarifies why something exists (Mode A only, since Mode B has no
 requirement numbers yet). If a requirement turns out ambiguous or
 under-specified once you try to design against it, flag it explicitly
 rather than silently resolving it your own way. Follow conventions from
-`.claude/steering/tech.md` and `structure.md` where they exist (naming,
+`docs/steering/tech.md` and `structure.md` where they exist (naming,
 folder layout, preferred libraries) rather than introducing new patterns.
