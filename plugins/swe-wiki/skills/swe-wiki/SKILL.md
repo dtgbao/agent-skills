@@ -33,8 +33,9 @@ Read `references/wiki-conventions.md` before initializing a wiki, ingesting a so
 | --- | --- |
 | Setup | Configure this computer, clone or initialize the dedicated Git repository, initialize the wiki, make the initial commit when needed, and push. |
 | Init | Create or repair the local wiki structure without configuring or invoking Git. |
-| Ingest | Read one source fully, scaffold its source page, extract SWE knowledge, update durable pages and `index.md`, then append a log entry. |
-| Query | Read `index.md`, search for recall, read relevant pages, answer with citations, and file reusable synthesis under `wiki/questions/` when it should compound. |
+| Ingest | Read one source fully, propose its primary domain, wait for approval, scaffold its source page, extract SWE knowledge, rebuild local indexes, then append a log entry. |
+| Query | Start at `wiki/index.md`, follow domain indexes, search for recall, answer with citations, and file reusable synthesis in its owning domain when it should compound. |
+| Migrate | Preview an explicit domain-assignment manifest, obtain approval, then apply it only from a clean Git worktree. |
 | Lint | Run mechanical lint, repair drift, then perform the semantic checks in the conventions reference. |
 | Sync | Explicitly commit wiki changes, rebase onto the current remote branch, and push without force. |
 
@@ -47,31 +48,74 @@ python3 <script> init
 python3 <script> init --root <wiki-root>
 ```
 
+`init` never rearranges a legacy kind-first wiki. If it reports a legacy layout, use the migration workflow before ingesting new material.
+
 ## Ingest
 
 Use one source at a time unless the user explicitly asks for batch ingestion.
 
+Before creating, copying, or editing anything:
+
+1. Read the entire source and inspect the existing domain indexes and related pages.
+2. Recommend one lowercase, kebab-case primary domain such as `aws/iam`. Explain why it owns the knowledge, identify related existing pages, and offer reasonable alternative domains when they exist.
+3. Wait for explicit user approval. For cross-domain material, choose one canonical primary domain and use tags and cross-links for secondary discovery; never duplicate the page.
+4. Pass the approved domain to the CLI. Supplying `--domain` asserts that approval was obtained.
+
 ```bash
-python3 <script> ingest <source-path-or-url> --title "Source title"
+python3 <script> ingest <source-path-or-url> --domain aws/iam --title "Source title"
+python3 <script> ingest <transcript-path> --asset <slide-path> --domain aws/iam --title "Source title"
 ```
 
-The script creates the source-page scaffold. Read the entire source, including code blocks, diagrams, tables, footnotes, and referenced local images when available, then write the synthesis.
+The script copies local source files and repeated `--asset` files into `raw/<domain>/` without moving or overwriting their originals. URLs remain external provenance. It creates the source-page scaffold under `wiki/<domain>/sources/`; durable synthesis pages belong directly under `wiki/<domain>/` and keep their page kind in frontmatter.
 
 Extract every software-engineering atom worth keeping: architecture decisions, tradeoffs, invariants, failure modes, interfaces, data flows, algorithms, testing strategy, security/reliability/performance notes, deployment details, best practices, code conventions, commands, and reusable principles.
 
 Update existing pages instead of creating near-duplicates. Create a page only when its concept, decision, blueprint, practice, convention, or system will be useful independently. Architecture decisions and blueprints should include Mermaid diagrams when relationships, flows, or boundaries matter.
 
-Complete ingestion only when `wiki/index.md` lists every added or changed page, `wiki/log.md` has a parseable `ingest` entry, and contradictions or superseded claims are recorded on the affected pages.
+Complete ingestion only when every changed page appears in its local `index.md`, ancestor indexes reach that domain, `wiki/log.md` has a parseable `ingest` entry, and contradictions or superseded claims are recorded on the affected pages.
+
+## Migrate
+
+Migration is explicit and never automatic. Create a JSON manifest that assigns every legacy wiki page and flat raw file to one approved primary domain:
+
+```json
+{
+  "assignments": [
+    {
+      "domain": "aws/iam",
+      "paths": [
+        "wiki/systems/aws-identity-and-access-management.md",
+        "wiki/sources/2026-07-28-iam-introduction.md",
+        "raw/2026-07-28-iam-introduction.txt"
+      ]
+    }
+  ]
+}
+```
+
+Preview first and show the exact moves and indexes to the user:
+
+```bash
+python3 <script> migrate <manifest.json>
+```
+
+Wait for explicit approval, verify the dedicated wiki Git worktree is clean, then apply:
+
+```bash
+python3 <script> migrate <manifest.json> --apply
+```
+
+Application moves files, adds domain frontmatter, rewrites relative links and provenance, removes emptied legacy kind directories, rebuilds indexes, and appends a `migrate` log entry. Do not sync unless the user separately requests it.
 
 ## Query
 
-Start with the index, then search:
+Start with the root domain index, follow the most relevant nested indexes, then search:
 
 ```bash
 python3 <script> query "question or keywords"
 ```
 
-Answer from wiki pages first and cite page paths. Read raw sources only when the wiki points there or the index is insufficient. If the answer creates reusable synthesis, save it as `wiki/questions/<slug>.md`, update `index.md`, and append a `query` log entry.
+Answer from wiki pages first and cite page paths. Read raw sources only when the wiki points there or the index is insufficient. If the answer creates reusable synthesis, save it under the owning domain with `kind: question`, rebuild its indexes, and append a `query` log entry.
 
 ## Lint
 
@@ -105,4 +149,5 @@ Append workflow entries after the corresponding agent-led work:
 python3 <script> log ingest "Article Title"
 python3 <script> log query "Cache invalidation comparison"
 python3 <script> log lint "Monthly wiki health check"
+python3 <script> log migrate "Domain-first wiki layout"
 ```

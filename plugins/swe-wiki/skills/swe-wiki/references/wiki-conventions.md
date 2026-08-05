@@ -7,33 +7,39 @@
 ├── .gitignore
 ├── AGENTS.md
 ├── raw/
+│   └── <domain>/
+│       └── source files
 └── wiki/
     ├── index.md
     ├── log.md
-    ├── sources/
-    ├── concepts/
-    ├── decisions/
-    ├── blueprints/
-    ├── practices/
-    ├── conventions/
-    ├── systems/
-    └── questions/
+    └── <domain>/
+        ├── index.md
+        ├── durable-page.md
+        ├── <subdomain>/
+        │   └── index.md
+        └── sources/
+            ├── index.md
+            └── source-page.md
 ```
 
 The root is a dedicated Git working tree; `.git/` is omitted from the diagram. `raw/` is immutable source material, `wiki/` is the maintained synthesis, and `AGENTS.md` is the local schema reminder for future agents. Track all knowledge content. Ignore only machine-generated files listed in `.gitignore`.
+
+Organize both trees by one primary knowledge domain, using lowercase kebab-case segments such as `aws/iam` or `software-engineering/ai-agents`. The reserved `sources` segment is created only beneath a wiki domain for provenance pages. A page belongs to one canonical domain; use tags and cross-links rather than copies for secondary domains. Course chapters and source organization do not override the technical domain that owns the durable knowledge.
 
 The machine-local config at `~/.config/swe-wiki/config.json` is outside the repository and stores only the schema version and selected root. Git's `origin` remote is the source of truth for the repository URL.
 
 ## Page Kinds
 
-- `sources/`: one page per raw source with provenance, summary, extracted SWE atoms, impacted pages, and open questions.
-- `concepts/`: durable ideas, tradeoffs, algorithms, patterns, failure modes, and mental models.
-- `decisions/`: ADR-like records. Include context, forces, decision, consequences, status, alternatives, and Mermaid when system relationships matter.
-- `blueprints/`: reusable architectures, implementation plans, protocols, data flows, or operational designs. Include Mermaid diagrams, component boundaries, and stepwise build notes.
-- `practices/`: best practices, checklists, testing strategies, review heuristics, operational playbooks.
-- `conventions/`: coding standards, naming rules, API style, file layout, error handling, logging, comments, documentation rules.
-- `systems/`: specific frameworks, libraries, services, repos, tools, vendors, or platforms.
-- `questions/`: durable query answers that should compound into the wiki.
+- `source`: one page per raw source with provenance, summary, extracted SWE atoms, impacted pages, and open questions. Store it under `wiki/<domain>/sources/`.
+- `concept`: durable ideas, tradeoffs, algorithms, patterns, failure modes, and mental models.
+- `decision`: ADR-like records. Include context, forces, decision, consequences, status, alternatives, and Mermaid when system relationships matter.
+- `blueprint`: reusable architectures, implementation plans, protocols, data flows, or operational designs. Include Mermaid diagrams, component boundaries, and stepwise build notes.
+- `practice`: best practices, checklists, testing strategies, review heuristics, operational playbooks.
+- `convention`: coding standards, naming rules, API style, file layout, error handling, logging, comments, documentation rules.
+- `system`: specific frameworks, libraries, services, repos, tools, vendors, or platforms.
+- `question`: durable query answers that should compound into the wiki.
+
+Store every non-source page directly in its owning domain directory. Page kind is metadata, not a directory axis.
 
 ## Frontmatter
 
@@ -43,6 +49,7 @@ Every wiki page except `index.md` and `log.md` uses:
 ---
 title: "Readable title"
 kind: concept
+domain: aws/iam
 status: draft
 tags: [swe]
 sources: []
@@ -55,17 +62,21 @@ Allowed `kind`: `source`, `concept`, `decision`, `blueprint`, `practice`, `conve
 
 Allowed `status`: `draft`, `evergreen`, `superseded`.
 
+`domain` must match the page path. For example, durable page `wiki/aws/iam/least-privilege.md` and source page `wiki/aws/iam/sources/lesson.md` both use `domain: aws/iam`.
+
 Use `sources` for raw file paths, URLs, or wiki source pages. Use `confidence` as `high`, `medium`, or `low`.
 
 ## Indexing
 
-`wiki/index.md` is content-oriented. Update it on every ingest, durable query, and lint repair. Organize by page kind. Each row should be one line:
+Every directory under `wiki/` that contains pages or subdirectories has a generated `index.md`. The root index lists only top-level domains. A nested index lists only its immediate subdomains and local pages, grouping local pages by kind. Raw directories do not receive indexes; source-page indexes provide their navigation.
+
+Update the index chain on every ingest, durable query, migration, and lint repair. Each page row stays on one line:
 
 ```markdown
-- [Readable title](concepts/readable-title.md) - one-line summary | tags: swe,architecture | updated: 2026-07-06 | sources: 2
+- [Readable title](readable-title.md) - one-line summary | tags: swe,architecture | updated: 2026-07-06 | sources: 2
 ```
 
-Keep summaries concrete enough that an agent can choose pages from the index before reading them. Prefer stable relative markdown links.
+Keep summaries concrete enough that an agent can choose pages from the local index before reading them. Prefer stable relative Markdown links. Index files do not use page frontmatter.
 
 ## Logging
 
@@ -75,14 +86,14 @@ Keep summaries concrete enough that an agent can choose pages from the index bef
 ## [2026-07-06 14:30] ingest | Source title
 ```
 
-Allowed event kinds: `bootstrap`, `ingest`, `query`, `lint`.
+Allowed event kinds: `bootstrap`, `ingest`, `query`, `lint`, `migrate`.
 
 Do not log synchronization events here. Git history is the sync audit trail.
 
 Entry body:
 
 ```markdown
-- Changed: wiki/sources/source-title.md, wiki/concepts/cache-invalidation.md
+- Changed: wiki/backend/caching/sources/source-title.md, wiki/backend/caching/cache-invalidation.md
 - Notes: New source strengthens the write-through cache guidance.
 - Follow-ups: Compare against production incident notes.
 ```
@@ -94,6 +105,8 @@ grep '^## \[' wiki/log.md | tail -5
 ```
 
 ## Ingest Extraction
+
+Before ingestion writes anything, read the source, inspect the existing hierarchy, recommend a primary domain with reasoning and relevant pages, offer plausible alternatives, and wait for explicit approval. Copy local inputs into `raw/<domain>/`; never move or overwrite their originals.
 
 Read the whole source, including code blocks, diagrams, tables, footnotes, and referenced local images when available.
 
@@ -141,7 +154,8 @@ After the script linter, check:
 - Contradictions: pages disagree on a claim without naming the tension.
 - Staleness: newer sources supersede old claims without marking `status: superseded` or adding notes.
 - Orphans: important pages have no inbound links.
+- Domain drift: frontmatter does not match the domain-first page or raw-source path.
 - Missing pages: important concepts are mentioned repeatedly but have no page.
 - Thin provenance: claims lack `sources` or page-level citations.
 - Weak diagrams: decisions or blueprints describe architecture but have no Mermaid diagram.
-- Index drift: summaries are too vague to support search.
+- Index drift: local indexes are missing, list non-local content, or use summaries too vague to support search.

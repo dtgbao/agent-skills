@@ -1,6 +1,6 @@
 # SWE Wiki Plugin
 
-Maintain a persistent Markdown knowledge base for software engineering decisions, blueprints, practices, conventions, systems, and reusable answers. The wiki lives in a dedicated Git repository so it can be synchronized safely across computers.
+Maintain a persistent, domain-first Markdown knowledge base for software engineering decisions, blueprints, practices, conventions, systems, and reusable answers. The wiki lives in a dedicated Git repository so it can be synchronized safely across computers.
 
 ## Install
 
@@ -27,12 +27,52 @@ Setup clones an existing repository or initializes an empty one, creates the wik
 ## Workflows
 
 - `init`: Create or repair a local wiki without invoking Git.
-- `ingest`: Read a source and synthesize reusable engineering knowledge.
+- `ingest`: Classify a source into an approved primary domain, preserve local inputs under `raw/<domain>/`, and synthesize reusable engineering knowledge.
+- `migrate`: Preview and explicitly apply a legacy kind-first to domain-first migration.
 - `query`: Search the wiki and answer with page citations.
 - `lint`: Check mechanical structure and semantic health.
 - `sync`: Explicitly commit, rebase, and push without force.
 
 Synchronization is never automatic. If a rebase conflicts, the script aborts it, preserves the local commit, and reports the files requiring user-guided resolution.
+
+## Domain Layout
+
+Knowledge is organized by the technical domain that owns it, not by page kind or source course structure:
+
+```text
+wiki/
+├── index.md
+└── aws/
+    ├── index.md
+    └── iam/
+        ├── index.md
+        ├── durable-page.md
+        └── sources/
+            ├── index.md
+            └── source-page.md
+raw/
+└── aws/
+    └── iam/
+        └── source-files
+```
+
+The root index links top-level domains; every nested wiki directory has its own local index. Page kind remains frontmatter metadata. Before ingestion, Codex reads the source, recommends a primary domain and alternatives, and waits for approval.
+
+The CLI requires that approved domain explicitly:
+
+```bash
+python3 skills/swe-wiki/scripts/swe_wiki.py ingest ./lesson.txt \
+  --asset ./slide.png \
+  --domain aws/iam \
+  --title "IAM lesson"
+```
+
+Legacy migrations use a JSON assignment manifest and preview by default. Apply only after reviewing the exact moves:
+
+```bash
+python3 skills/swe-wiki/scripts/swe_wiki.py migrate ./migration.json
+python3 skills/swe-wiki/scripts/swe_wiki.py migrate ./migration.json --apply
+```
 
 ## Requirements
 

@@ -1,7 +1,7 @@
 {
 	"name": "swe-wiki",
-	"version": "0.1.2",
-	"description": "Persistent, Git-synced software engineering knowledge base for Codex.",
+	"version": "0.2.0",
+	"description": "Domain-first, Git-synced software engineering knowledge base for Codex.",
 	"author": {
 		"name": "Bao Dang",
 		"url": "https://github.com/dtgbao"
@@ -11,7 +11,7 @@
 	"interface": {
 		"displayName": "SWE Wiki",
 		"shortDescription": "Maintain and sync a software engineering wiki.",
-		"longDescription": "Build a persistent Markdown knowledge base for architecture decisions, blueprints, best practices, code conventions, and reusable engineering knowledge, synchronized safely through Git.",
+		"longDescription": "Build a domain-first Markdown knowledge base with local indexes for architecture decisions, blueprints, best practices, code conventions, and reusable engineering knowledge, synchronized safely through Git.",
 		"developerName": "dtgbao",
 		"category": "Productivity",
 		"capabilities": ["Interactive", "Read", "Write"],
