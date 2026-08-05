@@ -1,4 +1,4 @@
 interface:
-  display_name: "Start a Spec"
+  display_name: "Spec New"
   short_description: "Choose the right workflow for new spec work"
   default_prompt: "Use $spec-new to choose and start the right specification workflow for this request."
