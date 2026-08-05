@@ -1,12 +1,22 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
-  "name": "spec-workflow",
-  "displayName": "Spec Workflow",
-  "version": "2.0.0",
-  "description": "Spec-driven development for Claude Code with four entry workflows — Requirements-First, Design-First, Bugfix, and Quick Spec — routed through a single /spec-new command. Produces requirements.md (EARS + glossary), design.md (with correctness properties), and a dependency-ordered tasks.md, with approval gates between phases except in Quick Spec.",
-  "author": {
-    "name": "Your Name"
-  },
-  "license": "MIT",
-  "keywords": ["spec-driven-development", "requirements", "planning", "ears", "workflow", "bugfix", "design-first", "quick-spec"]
+	"$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+	"name": "spec-workflow",
+	"displayName": "Spec Workflow",
+	"version": "2.0.0",
+	"description": "Spec-driven development for agents with four entry workflows — Requirements-First, Design-First, Bugfix, and Quick Spec — routed through a single /spec-new command. Produces requirements.md (EARS + glossary), design.md (with correctness properties), and a dependency-ordered tasks.md, with approval gates between phases except in Quick Spec.",
+	"author": {
+		"name": "Bao Dang",
+		"url": "https://github.com/dtgbao"
+	},
+	"license": "MIT",
+	"keywords": [
+		"spec-driven-development",
+		"requirements",
+		"planning",
+		"ears",
+		"workflow",
+		"bugfix",
+		"design-first",
+		"quick-spec"
+	]
 }

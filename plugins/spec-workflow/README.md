@@ -1,6 +1,6 @@
-# Spec-Driven Developmen Workflow
+# Spec-Driven Development Workflow
 
-A Claude Code plugin for spec-driven development, with **four entry
+A plugin for spec-driven development, with **four entry
 workflows** routed through a single unified command:
 
 | Workflow               | Best for                                                                                                             | Produces, in order                                                      |
@@ -10,37 +10,11 @@ workflows** routed through a single unified command:
 | **Bugfix**             | Something already built is behaving incorrectly                                                                      | bugfix.md → design.md → tasks.md                                        |
 | **Quick Spec**         | A small, well-understood feature where you trust the output                                                          | requirements.md, design.md, tasks.md — generated back-to-back, no gates |
 
-Every phase's logic lives in a **skill** (`skills/<name>/SKILL.md`, plus
-`references/*.md` for skills with more than one mode). Each **command**
-(`commands/<name>.md`) is a thin pointer that just tells Claude to read and
-follow the matching skill — commands exist purely for discoverable,
-predictable `/name` invocation; all the actual instructions live in one
-place.
-
-## Install
-
-Pick one:
-
-**A. Personal, available in every project (simplest for trying it out)**
-
-Copy this whole folder to `~/.claude/skills/spec-workflow/` (it must contain
-`.claude-plugin/plugin.json` at that path). It loads automatically on your
-next Claude Code session as `spec-workflow@skills-dir` — no install step.
-
-**B. For a single session, from any location**
-
-```bash
-claude --plugin-dir /path/to/spec-workflow
-```
-
-**C. Shared with a team**
-
-Publish this folder in a marketplace repo (a `.claude-plugin/marketplace.json`
-pointing at it), then teammates run:
-
-```bash
-claude plugin install spec-workflow@your-marketplace
-```
+Every phase's logic lives in a **skill** (`skills/<name>/SKILL.md`).
+Each **command** (`commands/<name>.md`) is a thin pointer that just
+tells Claude to read and follow the matching skill — commands exist purely
+for discoverable, predictable `/name` invocation; all the actual instructions
+live in one place.
 
 ## Start here: `/spec-new`
 
@@ -63,14 +37,14 @@ or Low Level) when it's the entry point instead of a continuation:
 Requirements-First                        Design-First
 ───────────────────                       ────────────
 /spec-requirements <name>                 /spec-design <description>
-→ requirements.md    ── approve ──┐       → design.md         ── approve ──┐
-                                  ▼                                        ▼
+  → requirements.md    ── approve ──┐       → design.md         ── approve ──┐
+                                    ▼                                        ▼
 /spec-design <slug>                       /spec-requirements <slug>
-→ design.md          ── approve ──┐       → requirements.md   ── approve ──┐
-                                  ▼                                        ▼
+  → design.md          ── approve ──┐       → requirements.md   ── approve ──┐
+                                    ▼                                        ▼
 /spec-tasks <slug>                        /spec-tasks <slug>
-→ tasks.md           ── approve ──┐       → tasks.md          ── approve ──┐
-                                  ▼                                        ▼
+  → tasks.md           ── approve ──┐       → tasks.md          ── approve ──┐
+                                    ▼                                        ▼
 /spec-execute <slug> [n]  → implements one task, checks it off, repeat
 /spec-status [slug]       → check progress any time
 ```
@@ -107,16 +81,16 @@ The generated documents follow a consistent shape:
 ```
 /spec-bugfix <bug description>
   → bugfix.md (Current / Expected / Unchanged Behavior)   ── approve ──┐
-                                                                        ▼
+                                                                       ▼
 /spec-design <slug>
   → Bugfix Design: root cause, fix approach, and exactly
     three Properties to Test (bug reproducible, bug fixed,
-    no regressions)                                        ── approve ──┐
-                                                                          ▼
+    no regressions)                                       ── approve ──┐
+                                                                       ▼
 /spec-tasks <slug>
   → tasks.md, always including property tests for all
-    three properties                                       ── approve ──┐
-                                                                          ▼
+    three properties                                      ── approve ──┐
+                                                                       ▼
 /spec-execute <slug> [n]  → implements the fix, adds regression tests
 ```
 
@@ -183,51 +157,35 @@ feature needs real review or turns out to be a bug report.
         └── tasks.md
 ```
 
-All of it is plain markdown meant to be committed alongside your code, so
-specs are reviewable in PRs and shared across a team.
-
 ## Plugin layout
 
 ```
 spec-workflow/
-├── .claude-plugin/plugin.json
-├── commands/            one thin file per skill — just points at it
+├── commands/                         one thin file per skill — just points at it
 └── skills/
-    ├── spec-new/                 router: recommends a workflow, hands off
+    ├── spec-new/                     router: recommends a workflow, hands off
     ├── spec-requirements/
-    │   ├── SKILL.md              router: picks the mode below
+    │   ├── SKILL.md                  router: picks the mode below
     │   └── references/
-    │       ├── template.md       shared Glossary + EARS structure
-    │       ├── fresh-start.md    Requirements-First mode
-    │       └── from-design.md    Design-First phase 2 mode
+    │       ├── template.md           shared Glossary + EARS structure
+    │       ├── fresh-start.md        Requirements-First mode
+    │       └── from-design.md        Design-First phase 2 mode
     ├── spec-design/
-    │   ├── SKILL.md              router: picks the mode below
+    │   ├── SKILL.md                  router: picks the mode below
     │   └── references/
     │       ├── feature-template.md   shared design.md structure
     │       ├── from-requirements.md  Mode A
     │       ├── design-first.md       Mode B (asks detail level)
     │       └── bugfix-design.md      Mode C (self-contained)
-    ├── spec-bugfix/               Bugfix Analysis phase (bugfix.md)
+    ├── spec-bugfix/                  Bugfix Analysis phase (bugfix.md)
     ├── spec-tasks/
-    │   ├── SKILL.md              router: shared tasks.md shape
+    │   ├── SKILL.md                  router: shared tasks.md shape
     │   └── references/
     │       ├── structure.md          hierarchy, checkpoints, dep graph
     │       ├── feature-tasks.md      requirement citations
     │       └── bugfix-tasks.md       bugfix citations, required PBTs
-    ├── spec-quick/                no-gate generator, reuses the above
-    ├── spec-execute/              implements tasks one at a time
-    ├── spec-status/               progress across all spec types
-    └── steering-setup/            product/tech/structure context
+    ├── spec-quick/                   no-gate generator, reuses the above
+    ├── spec-execute/                 implements tasks one at a time
+    ├── spec-status/                  progress across all spec types
+    └── steering-setup/               product/tech/structure context
 ```
-
-Skills with more than one mode are split into a short router `SKILL.md`
-plus mode-specific `references/*.md` files, so Claude only loads the
-content relevant to the mode actually in play instead of one large file
-covering every case.
-
-## Customizing
-
-- Edit any `SKILL.md` or `references/*.md` file to change what a phase or
-  mode actually does — the commands don't need touching since they just
-  point at the skill's entry file.
-- Update `.claude-plugin/plugin.json` → `author` before publishing.
