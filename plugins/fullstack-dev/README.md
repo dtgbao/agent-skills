@@ -22,7 +22,7 @@ Start a new Codex task after installation so all bundled skills are available.
 | Route         | [`index`](skills/index/SKILL.md)                                                       | Discover and sequence every applicable skill.                   |
 | Context       | [`context-engineering`](skills/context-engineering/SKILL.md)                           | Curate project rules and focused context for each task.         |
 | Sources       | [`source-driven-development`](skills/source-driven-development/SKILL.md)               | Verify version-sensitive work against official sources.         |
-| Clarification | [`grilling`](skills/grilling/SKILL.md)                                                 | Stress-test ideas and resolve decisions one question at a time. |
+| Clarification | [`grilling`](skills/grilling/SKILL.md)                                                 | Stress-test ideas by resolving each unblocked decision frontier in rounds. |
 | Definition    | [`spec-driven-development`](skills/spec-driven-development/SKILL.md)                   | Define approved requirements, boundaries, and success criteria. |
 | Planning      | [`planning-and-task-breakdown`](skills/planning-and-task-breakdown/SKILL.md)           | Create dependency-ordered, verifiable implementation tasks.     |
 | Architecture  | [`codebase-design`](skills/codebase-design/SKILL.md)                                   | Choose deep modules, small interfaces, seams, and adapters.     |
