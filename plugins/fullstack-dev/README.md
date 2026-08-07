@@ -15,30 +15,25 @@ codex plugin add fullstack-dev@bao-plugins
 
 Start a new Codex task after installation so all bundled skills are available.
 
-The plugin includes a read-only `SessionStart` hook that adds a small routing instruction on startup,
-resume, clear, and compaction. It directs Codex to read `using-fullstack-dev` first when Fullstack
-Development is explicitly mentioned or invoked. After installing or refreshing the plugin, use
-`/hooks` to review and trust the hook; Codex skips untrusted plugin hooks.
-
 ## Lifecycle
 
 | Stage         | Skill                                                                                  | Purpose                                                         |
 | ------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| Route         | [`using-fullstack-dev`](skills/using-fullstack-dev/SKILL.md)                           | Discover and sequence every applicable skill.                   |
-| Context       | [`context-engineering`](skills/context-engineering/SKILL.md)                           | Curate project rules and focused context for each task.          |
-| Clarification | [`grilling`](skills/grilling/SKILL.md)                                                 | Stress-test ideas and resolve decisions one question at a time.  |
+| Route         | [`index`](skills/index/SKILL.md)                                                       | Discover and sequence every applicable skill.                   |
+| Context       | [`context-engineering`](skills/context-engineering/SKILL.md)                           | Curate project rules and focused context for each task.         |
+| Sources       | [`source-driven-development`](skills/source-driven-development/SKILL.md)               | Verify version-sensitive work against official sources.         |
+| Clarification | [`grilling`](skills/grilling/SKILL.md)                                                 | Stress-test ideas and resolve decisions one question at a time. |
 | Definition    | [`spec-driven-development`](skills/spec-driven-development/SKILL.md)                   | Define approved requirements, boundaries, and success criteria. |
 | Planning      | [`planning-and-task-breakdown`](skills/planning-and-task-breakdown/SKILL.md)           | Create dependency-ordered, verifiable implementation tasks.     |
-| Architecture | [`codebase-design`](skills/codebase-design/SKILL.md)                                   | Choose deep modules, small interfaces, seams, and adapters.  |
-| Database     | [`supabase-postgres-best-practices`](skills/supabase-postgres-best-practices/SKILL.md) | Apply specialized database guidance when its engine matches. |
-| Backend      | [`api-and-interface-design`](skills/api-and-interface-design/SKILL.md)                 | Define service boundaries and typed API contracts.           |
-| Sources      | [`source-driven-development`](skills/source-driven-development/SKILL.md)               | Verify version-sensitive work against official sources.      |
-| Testing      | [`test-driven-development`](skills/test-driven-development/SKILL.md)                   | Drive every behavior change through a failing test.          |
-| Frontend     | [`frontend-ui-engineering`](skills/frontend-ui-engineering/SKILL.md)                   | Build accessible, responsive interfaces against contracts.   |
-| ↳ React      | [`react-best-practices`](skills/react-best-practices/SKILL.md)                        | Apply React architecture guidance within frontend work.       |
-| Automation   | [`ci-cd-and-automation`](skills/ci-cd-and-automation/SKILL.md)                         | Automate repository quality and deployment gates.            |
-| Launch       | [`shipping-and-launch`](skills/shipping-and-launch/SKILL.md)                           | Plan authorized rollout, verification, and recovery.         |
-| Versioning   | [`git-workflow-and-versioning`](skills/git-workflow-and-versioning/SKILL.md)           | Guide authorized Git, version, changelog, and release work.  |
+| Architecture  | [`codebase-design`](skills/codebase-design/SKILL.md)                                   | Choose deep modules, small interfaces, seams, and adapters.     |
+| Database      | [`supabase-postgres-best-practices`](skills/supabase-postgres-best-practices/SKILL.md) | Apply specialized database guidance when its engine matches.    |
+| Backend       | [`api-and-interface-design`](skills/api-and-interface-design/SKILL.md)                 | Define service boundaries and typed API contracts.              |
+| Testing       | [`test-driven-development`](skills/test-driven-development/SKILL.md)                   | Drive every behavior change through a failing test.             |
+| Frontend      | [`frontend-ui-engineering`](skills/frontend-ui-engineering/SKILL.md)                   | Build accessible, responsive interfaces against contracts.      |
+| ↳ React       | [`react-best-practices`](skills/react-best-practices/SKILL.md)                         | Apply React architecture guidance within frontend work.         |
+| Automation    | [`ci-cd-and-automation`](skills/ci-cd-and-automation/SKILL.md)                         | Automate repository quality and deployment gates.               |
+| Launch        | [`shipping-and-launch`](skills/shipping-and-launch/SKILL.md)                           | Plan authorized rollout, verification, and recovery.            |
+| Versioning    | [`git-workflow-and-versioning`](skills/git-workflow-and-versioning/SKILL.md)           | Guide authorized Git, version, changelog, and release work.     |
 
 Apply these skills wherever their concern appears:
 

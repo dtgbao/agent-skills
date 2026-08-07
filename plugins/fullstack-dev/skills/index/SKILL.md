@@ -1,9 +1,9 @@
 ---
-name: using-fullstack-dev
-description: Primary entrypoint for the Fullstack Development plugin. Always use this skill first when Fullstack Development is @mentioned, or explicitly invoked. Read it before using any sibling skill or taking substantive action.
+name: index
+description: Primary entrypoint for the Fullstack Development plugin. Use when Fullstack Development is explicitly invoked or the user's main goal is full-stack engineering work spanning definition, design, implementation, verification, operations, or delivery. Routes the request to the appropriate focused skills.
 ---
 
-# Using Fullstack Dev
+# Fullstack Development Router
 
 ## Overview
 

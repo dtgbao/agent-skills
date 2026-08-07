@@ -1,0 +1,59 @@
+{
+	"$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+	"name": "fullstack-dev",
+	"version": "0.7.7",
+	"description": "End-to-end guidance for full-stack applications, from focused context, requirements, and planning through architecture, data, APIs, source-verified implementation, React and frontend delivery, and launch.",
+	"author": {
+		"name": "Bao Dang",
+		"url": "https://github.com/dtgbao"
+	},
+	"repository": "https://github.com/dtgbao/agent-skills",
+	"keywords": [
+		"fullstack",
+		"context-engineering",
+		"agent-context",
+		"specification",
+		"planning",
+		"task-breakdown",
+		"architecture",
+		"module-design",
+		"database",
+		"backend",
+		"backend-services",
+		"api",
+		"frontend",
+		"react",
+		"source-verification",
+		"testing",
+		"tdd",
+		"security",
+		"performance",
+		"observability",
+		"ci-cd",
+		"debugging",
+		"migration",
+		"code-review",
+		"release"
+	],
+	"extensions": {
+		"com.openai.codex": {
+			"interface": {
+				"displayName": "Fullstack Development",
+				"shortDescription": "Coordinate full-stack work from context through launch.",
+				"longDescription": "Coordinate focused context curation, decision discovery, spec-driven definition, implementation planning, architecture, data, APIs, frontend UI and React architecture, source-verified and test-driven implementation, security, performance, observability, documentation, CI/CD, debugging, migration, simplification, review, versioning, and staged launch.",
+				"developerName": "dtgbao",
+				"category": "Productivity",
+				"capabilities": ["Interactive", "Read", "Write"],
+				"websiteURL": "https://github.com/dtgbao/agent-skills",
+				"defaultPrompt": [
+					"Help me clarify the requirements and plan for this task.",
+					"Design the modules, database schema, services, and UI for this feature.",
+					"Review the recent changes, address important gaps, and prepare it for release."
+				],
+				"brandColor": "#22D3EE",
+				"composerIcon": "./assets/composer-icon.png",
+				"logo": "./assets/logo.png"
+			}
+		}
+	}
+}

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Fullstack Development"
+  short_description: "Route full-stack engineering workflows in dependency order"
+  default_prompt: "Use Fullstack Development to discover, load, and coordinate every matching full-stack workflow in dependency order."
+policy:
+  allow_implicit_invocation: true

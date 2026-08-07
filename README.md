@@ -6,22 +6,22 @@ This repo is a source tree for reusable instruction bundles. Standalone skills l
 
 ## Standalone skills
 
-| Skill                     | Purpose                                                                              |
-| ------------------------- | ------------------------------------------------------------------------------------ |
-| `frontend-scaffold`       | Guide source-backed frontend architecture decisions and greenfield scaffolding.      |
-| `orchestrator`            | Plan multi-step work and delegate clean, reviewable subtasks.                        |
-| `react-best-practices`    | Reusable React/TypeScript architecture guidance plus focused reference docs.         |
-| `spec-driven-development` | Turn features and complex bugs into reviewed specs and verified implementation.      |
-| `web-search`              | Structured, recency-aware technical web research with source-backed Markdown output. |
+| Skill                     | Purpose                                                                                      |
+| ------------------------- | -------------------------------------------------------------------------------------------- |
+| `design-pattern`          | Provide TypeScript implementations and tradeoffs for the 22 Gang of Four design patterns.    |
+| `frontend-scaffold`       | Guide framework-agnostic frontend architecture, tooling choices, and project scaffolding.    |
+| `frontend-ui-engineering` | Build accessible, responsive, production-quality interfaces and components.                  |
+| `orchestrator`            | Plan multi-step work and delegate clean, reviewable subtasks.                                |
+| `react-best-practices`    | Provide focused React and TypeScript architecture, state, composition, and testing guidance. |
+| `web-search`              | Research current technical guidance and return concise, source-backed summaries.             |
 
 ## Plugins
 
-| Plugin                                             | Purpose                                                                                                                         | Bundled skills                                                     |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `feature-dev`                                      | Guide feature work from codebase discovery through approved requirements and architecture, implementation, review, and summary. | `feature-dev`, `code-review`, `domain-modeling`, `grilling`, `tdd` |
-| [`fullstack-dev`](plugins/fullstack-dev/README.md) | Guide full-stack delivery from focused context and requirements through planning, implementation, operations, and launch.      | `using-fullstack-dev` plus focused engineering skills              |
-| [`spec-workflow`](plugins/spec-workflow/README.md) | Guide requirements-first, design-first, bugfix, and quick-spec workflows from project steering through focused execution.      | `spec-new`, spec phases, execution, status, and `steering-setup`   |
-| `swe-wiki`                                         | Maintain a persistent, Git-synced software engineering knowledge base across computers.                                         | `swe-wiki`                                                         |
+| Plugin                                             | Purpose                                                                                                                  | Bundled skills                                                   |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| [`fullstack-dev`](plugins/fullstack-dev/README.md) | Coordinate full-stack work from focused context and requirements through implementation, review, operations, and launch. | `index` router plus focused engineering workflows                |
+| [`spec-workflow`](plugins/spec-workflow/README.md) | Guide requirements, design, bug-fix, quick-spec, task-planning, and execution workflows.                                 | `spec-new`, spec phases, execution, status, and `steering-setup` |
+| [`swe-wiki`](plugins/swe-wiki/README.md)           | Maintain a domain-first, Git-synced software engineering knowledge base across computers.                                | `swe-wiki`                                                       |
 
 ## Agent presets
 
@@ -43,7 +43,8 @@ The `.codex/agents/` directory currently contains:
 │   └── agents/          # Codex agent presets
 ├── plugins/
 │   └── <plugin>/
-│       ├── .codex-plugin/plugin.json
+│       ├── plugin.json       # Portable Agent Plugins manifest
+│       ├── .claude-plugin/   # Optional Claude-specific compatibility metadata
 │       └── skills/      # Skills bundled by the plugin
 └── skills/
     ├── <skill>/SKILL.md # Main instructions
@@ -55,5 +56,6 @@ The `.codex/agents/` directory currently contains:
 
 ## Notes
 
-- `SKILL.md` is the entrypoint for each skill.
+- Plugin roots follow the [Agent Plugins 1.0.0 specification](https://agent-plugins.org/), with
+  client-specific compatibility metadata retained only where needed.
 - Reference files stay next to the skill that uses them.
