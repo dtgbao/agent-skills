@@ -3,5 +3,5 @@ description: Start a new spec — recommends Requirements-First, Design-First, B
 argument-hint: "<what you want to build or fix>"
 ---
 
-Read `../skills/spec-new/SKILL.md` in full and follow its
+Read [`spec-new`](../skills/spec-new/SKILL.md) in full and follow its
 instructions exactly, using the following as input: $ARGUMENTS

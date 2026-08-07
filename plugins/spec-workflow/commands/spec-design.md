@@ -3,5 +3,5 @@ description: Produce a design — derived from approved requirements, started fr
 argument-hint: "<feature-slug or new feature/design description> [notes or revision request]"
 ---
 
-Read `../skills/spec-design/SKILL.md` in full and follow
+Read [`spec-design`](../skills/spec-design/SKILL.md) in full and follow
 its instructions exactly, using the following as input: $ARGUMENTS

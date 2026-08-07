@@ -3,5 +3,5 @@ description: Set up or refresh persistent project context (product/tech/structur
 argument-hint: "[what changed, e.g. 'we switched to Postgres']"
 ---
 
-Read `../skills/steering-setup/SKILL.md` in full and follow
+Read [`steering-setup`](../skills/steering-setup/SKILL.md) in full and follow
 its instructions exactly, using the following as input: $ARGUMENTS

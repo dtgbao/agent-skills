@@ -3,5 +3,5 @@ description: Start Requirements-First on a new feature, revise requirements.md, 
 argument-hint: "<feature-name or description> [revision notes]"
 ---
 
-Read `../skills/spec-requirements/SKILL.md` in full and
+Read [`spec-requirements`](../skills/spec-requirements/SKILL.md) in full and
 follow its instructions exactly, using the following as input: $ARGUMENTS
