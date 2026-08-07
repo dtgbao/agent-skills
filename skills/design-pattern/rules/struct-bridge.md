@@ -12,23 +12,51 @@ Use Bridge when two dimensions must evolve independently without creating a subc
 **Incorrect (class explosion):**
 
 ```typescript
-class UrgentEmailAlert {}
-class UrgentSmsAlert {}
-class DigestEmailAlert {}
+class AbstractionWithConcreteImplementationA {}
+class AbstractionWithConcreteImplementationB {}
+class ExtendedAbstractionWithConcreteImplementationA {}
+class ExtendedAbstractionWithConcreteImplementationB {}
 ```
 
-**Correct (bridge abstraction to implementation):**
+**Correct (abstractions delegate to interchangeable implementations):**
 
 ```typescript
-interface Channel {
-  send(message: string): void;
-}
-class Alert {
-  constructor(private channel: Channel) {}
-  send(message: string) {
-    this.channel.send(message);
+class Abstraction {
+  constructor(protected implementation: Implementation) {}
+
+  operation(): string {
+    return `Abstraction: ${this.implementation.operationImplementation()}`;
   }
 }
+
+class ExtendedAbstraction extends Abstraction {
+  operation(): string {
+    return `Extended: ${this.implementation.operationImplementation()}`;
+  }
+}
+
+interface Implementation {
+  operationImplementation(): string;
+}
+
+class ConcreteImplementationA implements Implementation {
+  operationImplementation(): string {
+    return "Platform A";
+  }
+}
+
+class ConcreteImplementationB implements Implementation {
+  operationImplementation(): string {
+    return "Platform B";
+  }
+}
+
+function clientCode(abstraction: Abstraction): string {
+  return abstraction.operation();
+}
+
+clientCode(new Abstraction(new ConcreteImplementationA()));
+clientCode(new ExtendedAbstraction(new ConcreteImplementationB()));
 ```
 
 **Tradeoff:** Prevents combinatorial inheritance but adds indirection; avoid it when the dimensions are not independently variable.

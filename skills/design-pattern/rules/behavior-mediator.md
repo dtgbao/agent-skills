@@ -12,24 +12,76 @@ Use Mediator when peer components are tightly coupled and their collaboration ru
 **Incorrect (components call each other directly):**
 
 ```typescript
-button.form.dialog.analytics.trackAndSubmit();
+class Component1 {
+  constructor(private readonly component2: Component2) {}
+  doA(): void {
+    this.component2.doC();
+  }
+}
 ```
 
-**Correct (components notify a mediator):**
+**Correct (a mediator owns component collaboration and wires itself into peers):**
 
 ```typescript
 interface Mediator {
   notify(sender: object, event: string): void;
 }
-class DialogMediator implements Mediator {
+
+class ConcreteMediator implements Mediator {
   constructor(
-    private form: Form,
-    private dialog: Dialog,
-  ) {}
-  notify(_: object, event: string) {
-    if (event === "submit") this.dialog.close(this.form.value());
+    private readonly component1: Component1,
+    private readonly component2: Component2,
+  ) {
+    component1.setMediator(this);
+    component2.setMediator(this);
+  }
+
+  notify(_sender: object, event: string): void {
+    if (event === "A") {
+      this.component2.doC();
+    }
+    if (event === "D") {
+      this.component1.doB();
+      this.component2.doC();
+    }
   }
 }
+
+class BaseComponent {
+  protected mediator?: Mediator;
+
+  setMediator(mediator: Mediator): void {
+    this.mediator = mediator;
+  }
+}
+
+class Component1 extends BaseComponent {
+  doA(): void {
+    console.log("Component 1 does A");
+    this.mediator?.notify(this, "A");
+  }
+
+  doB(): void {
+    console.log("Component 1 does B");
+  }
+}
+
+class Component2 extends BaseComponent {
+  doC(): void {
+    console.log("Component 2 does C");
+  }
+
+  doD(): void {
+    console.log("Component 2 does D");
+    this.mediator?.notify(this, "D");
+  }
+}
+
+const component1 = new Component1();
+const component2 = new Component2();
+new ConcreteMediator(component1, component2);
+component1.doA();
+component2.doD();
 ```
 
 **Tradeoff:** Reduces peer coupling, but a mediator can accumulate too many unrelated rules.

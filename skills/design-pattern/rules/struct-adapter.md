@@ -12,21 +12,42 @@ Use Adapter to make a legacy or third-party object satisfy the interface expecte
 **Incorrect (translation leaks into every client):**
 
 ```typescript
-const result = legacy.specificRequest().split("").reverse().join("");
+function clientCode(adaptee: Adaptee): string {
+  return adaptee.specificRequest().split("").reverse().join("");
+}
 ```
 
-**Correct (translate once at the boundary):**
+**Correct (an adapter translates the target call to the adaptee):**
 
 ```typescript
-interface Target {
-  request(): string;
-}
-class LegacyAdapter implements Target {
-  constructor(private legacy: LegacyService) {}
-  request() {
-    return this.legacy.specificRequest().split("").reverse().join("");
+class Target {
+  request(): string {
+    return "Target behavior";
   }
 }
+
+class Adaptee {
+  specificRequest(): string {
+    return "eetpadA";
+  }
+}
+
+class Adapter extends Target {
+  constructor(private readonly adaptee: Adaptee) {
+    super();
+  }
+
+  request(): string {
+    return this.adaptee.specificRequest().split("").reverse().join("");
+  }
+}
+
+function clientCode(target: Target): string {
+  return target.request();
+}
+
+clientCode(new Target());
+clientCode(new Adapter(new Adaptee()));
 ```
 
 **Tradeoff:** Isolates conversion but adds a wrapper. Change the adaptee directly when you own it and compatibility is unnecessary.

@@ -12,13 +12,15 @@ Explain the intent and concrete applicability signals.
 **Incorrect (describe the design problem):**
 
 ```typescript
-// Minimal incorrect example
+// Use the same domain, participant names, and operation as the correct example.
+// Keep it short while making the coupling or rigidity visible.
 ```
 
 **Correct (describe how the pattern resolves it):**
 
 ```typescript
-// Minimal correct example
+// Include every canonical participant and the client collaboration flow.
+// Preserve the article's pattern structure while using original code.
 ```
 
 **Tradeoff:** State the main benefit and cost.

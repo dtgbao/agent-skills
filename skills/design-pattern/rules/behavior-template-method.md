@@ -12,33 +12,85 @@ Use Template Method when subclasses may vary selected steps but must preserve th
 **Incorrect (duplicate workflows drift apart):**
 
 ```typescript
-class CsvImport {
-  run() {
-    /* parse, validate, save */
+class ConcreteClass1 {
+  templateMethod(): void {
+    baseOperation1();
+    concreteClass1RequiredOperation1();
+    baseOperation2();
   }
 }
-class JsonImport {
-  run() {
-    /* same flow */
+
+class ConcreteClass2 {
+  templateMethod(): void {
+    baseOperation1();
+    concreteClass2RequiredOperation1();
+    baseOperation2();
   }
 }
 ```
 
-**Correct (base class fixes the sequence):**
+**Correct (the template calls invariant steps, required operations, and hooks):**
 
 ```typescript
-abstract class Importer {
-  run(raw: string) {
-    const rows = this.parse(raw);
-    this.validate(rows);
-    return this.save(rows);
+abstract class AbstractClass {
+  templateMethod(): void {
+    this.baseOperation1();
+    this.requiredOperation1();
+    this.baseOperation2();
+    this.hook1();
+    this.requiredOperation2();
+    this.baseOperation3();
+    this.hook2();
   }
-  protected abstract parse(raw: string): Row[];
-  protected validate(rows: Row[]) {
-    if (!rows.length) throw new Error("empty");
+
+  protected baseOperation1(): void {
+    console.log("Base operation 1");
   }
-  protected abstract save(rows: Row[]): number;
+
+  protected baseOperation2(): void {
+    console.log("Base operation 2");
+  }
+
+  protected baseOperation3(): void {
+    console.log("Base operation 3");
+  }
+
+  protected abstract requiredOperation1(): void;
+  protected abstract requiredOperation2(): void;
+  protected hook1(): void {}
+  protected hook2(): void {}
 }
+
+class ConcreteClass1 extends AbstractClass {
+  protected requiredOperation1(): void {
+    console.log("ConcreteClass1 operation 1");
+  }
+
+  protected requiredOperation2(): void {
+    console.log("ConcreteClass1 operation 2");
+  }
+}
+
+class ConcreteClass2 extends AbstractClass {
+  protected requiredOperation1(): void {
+    console.log("ConcreteClass2 operation 1");
+  }
+
+  protected requiredOperation2(): void {
+    console.log("ConcreteClass2 operation 2");
+  }
+
+  protected hook1(): void {
+    console.log("ConcreteClass2 hook");
+  }
+}
+
+function clientCode(abstractClass: AbstractClass): void {
+  abstractClass.templateMethod();
+}
+
+clientCode(new ConcreteClass1());
+clientCode(new ConcreteClass2());
 ```
 
 **Tradeoff:** Removes workflow duplication, but inheritance fixes variation at class level and may constrain subclasses.

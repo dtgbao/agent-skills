@@ -12,30 +12,75 @@ Use State when behavior changes with internal state and large conditionals obscu
 **Incorrect (conditionals spread across methods):**
 
 ```typescript
-if (order.status === "paid") refund();
-else if (order.status === "draft") cancel();
+class Context {
+  state: "A" | "B" = "A";
+  request1(): void {
+    if (this.state === "A") this.state = "B";
+    else console.log("State B handles request 1");
+  }
+}
 ```
 
-**Correct (delegate to the current state):**
+**Correct (context and concrete states manage behavior and transitions):**
 
 ```typescript
-interface OrderState {
-  cancel(order: Order): void;
-}
-class PaidState implements OrderState {
-  cancel(order: Order) {
-    order.transition(new RefundState());
+class Context {
+  private state!: State;
+
+  constructor(state: State) {
+    this.transitionTo(state);
+  }
+
+  transitionTo(state: State): void {
+    this.state = state;
+    this.state.context = this;
+  }
+
+  request1(): void {
+    this.state.handle1();
+  }
+
+  request2(): void {
+    this.state.handle2();
   }
 }
-class Order {
-  constructor(private state: OrderState) {}
-  cancel() {
-    this.state.cancel(this);
+
+abstract class State {
+  protected currentContext!: Context;
+
+  set context(context: Context) {
+    this.currentContext = context;
   }
-  transition(s: OrderState) {
-    this.state = s;
+
+  abstract handle1(): void;
+  abstract handle2(): void;
+}
+
+class ConcreteStateA extends State {
+  handle1(): void {
+    console.log("State A handles request 1 and moves to B");
+    this.currentContext.transitionTo(new ConcreteStateB());
+  }
+
+  handle2(): void {
+    console.log("State A handles request 2");
   }
 }
+
+class ConcreteStateB extends State {
+  handle1(): void {
+    console.log("State B handles request 1");
+  }
+
+  handle2(): void {
+    console.log("State B handles request 2 and moves to A");
+    this.currentContext.transitionTo(new ConcreteStateA());
+  }
+}
+
+const context = new Context(new ConcreteStateA());
+context.request1();
+context.request2();
 ```
 
 **Tradeoff:** Localizes transitions but creates more types; use a discriminated union for a small stable machine.

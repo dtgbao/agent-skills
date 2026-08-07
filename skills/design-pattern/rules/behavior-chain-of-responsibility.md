@@ -12,27 +12,61 @@ Use a handler chain when several receivers may process a request and their order
 **Incorrect (one rigid conditional dispatcher):**
 
 ```typescript
-if (kind === "auth") authenticate(req);
-else if (kind === "cache") cache(req);
+function clientCode(request: string): string | undefined {
+  if (request === "Banana") return "Monkey handled Banana";
+  if (request === "Nut") return "Squirrel handled Nut";
+  if (request === "MeatBall") return "Dog handled MeatBall";
+}
 ```
 
-**Correct (handlers forward or stop):**
+**Correct (concrete handlers process or forward through a configurable chain):**
 
 ```typescript
-interface Handler {
-  setNext(next: Handler): Handler;
+interface Handler<Request = string, Result = string> {
+  setNext(handler: Handler<Request, Result>): Handler<Request, Result>;
   handle(request: Request): Result | undefined;
 }
-abstract class BaseHandler implements Handler {
-  private next?: Handler;
-  setNext(next: Handler) {
-    this.next = next;
-    return next;
+
+abstract class AbstractHandler implements Handler {
+  private nextHandler?: Handler;
+
+  setNext(handler: Handler): Handler {
+    this.nextHandler = handler;
+    return handler;
   }
-  handle(request: Request) {
-    return this.next?.handle(request);
+
+  handle(request: string): string | undefined {
+    return this.nextHandler?.handle(request);
   }
 }
+
+class MonkeyHandler extends AbstractHandler {
+  handle(request: string): string | undefined {
+    return request === "Banana" ? "Monkey handled Banana" : super.handle(request);
+  }
+}
+
+class SquirrelHandler extends AbstractHandler {
+  handle(request: string): string | undefined {
+    return request === "Nut" ? "Squirrel handled Nut" : super.handle(request);
+  }
+}
+
+class DogHandler extends AbstractHandler {
+  handle(request: string): string | undefined {
+    return request === "MeatBall" ? "Dog handled MeatBall" : super.handle(request);
+  }
+}
+
+function clientCode(handler: Handler, requests: string[]): Array<string | undefined> {
+  return requests.map((request) => handler.handle(request));
+}
+
+const monkey = new MonkeyHandler();
+const squirrel = new SquirrelHandler();
+const dog = new DogHandler();
+monkey.setNext(squirrel).setNext(dog);
+clientCode(monkey, ["Nut", "Banana", "Cup of coffee"]);
 ```
 
 **Tradeoff:** Reorders handlers easily, but a request may go unhandled unless the terminal behavior is explicit.

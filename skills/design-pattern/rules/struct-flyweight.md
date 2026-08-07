@@ -12,22 +12,56 @@ Use Flyweight only when profiling shows that many objects duplicate large immuta
 **Incorrect (duplicate shared data per object):**
 
 ```typescript
-cars.push({ owner, plate, make, model, color });
+const first = new Flyweight(["BMW", "M5", "red"]);
+const second = new Flyweight(["BMW", "M5", "red"]); // duplicates intrinsic state
 ```
 
-**Correct (cache intrinsic state and pass extrinsic state):**
+**Correct (a factory caches flyweights by intrinsic state):**
 
 ```typescript
-class CarType {
-  constructor(
-    readonly make: string,
-    readonly model: string,
-    readonly color: string,
-  ) {}
+class Flyweight {
+  constructor(private readonly sharedState: readonly string[]) {}
+
+  operation(uniqueState: readonly string[]): string {
+    return JSON.stringify({ shared: this.sharedState, unique: uniqueState });
+  }
 }
-const types = new Map<string, CarType>();
-const type = types.get(key) ?? new CarType(make, model, color);
-types.set(key, type);
+
+class FlyweightFactory {
+  private readonly flyweights = new Map<string, Flyweight>();
+
+  constructor(initialStates: readonly string[][]) {
+    initialStates.forEach((state) => this.flyweights.set(this.getKey(state), new Flyweight(state)));
+  }
+
+  private getKey(state: readonly string[]): string {
+    return [...state].sort().join("_");
+  }
+
+  getFlyweight(sharedState: readonly string[]): Flyweight {
+    const key = this.getKey(sharedState);
+    const existing = this.flyweights.get(key);
+    if (existing) return existing;
+
+    const created = new Flyweight(sharedState);
+    this.flyweights.set(key, created);
+    return created;
+  }
+}
+
+function addCarToDatabase(
+  factory: FlyweightFactory,
+  plate: string,
+  owner: string,
+  brand: string,
+  model: string,
+  color: string,
+): string {
+  return factory.getFlyweight([brand, model, color]).operation([plate, owner]);
+}
+
+const factory = new FlyweightFactory([["BMW", "M5", "red"]]);
+addCarToDatabase(factory, "CL234IR", "James", "BMW", "M5", "red");
 ```
 
 **Tradeoff:** Saves memory at scale but adds lookup cost, state separation, and cache-lifecycle complexity.

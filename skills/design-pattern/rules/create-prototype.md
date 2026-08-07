@@ -12,22 +12,46 @@ Use Prototype when clients must copy configured objects without depending on the
 **Incorrect (shallow copy aliases mutable state):**
 
 ```typescript
-const copy = { ...template }; // nested rules remain shared
+const original = new Prototype();
+const copy = Object.assign(Object.create(Object.getPrototypeOf(original)), original);
+copy.component === original.component; // nested state is still shared
 ```
 
-**Correct (the prototype owns copy semantics):**
+**Correct (the prototype clones primitive, nested, and back-reference state):**
 
 ```typescript
-interface Prototype<T> {
-  clone(): T;
-}
+class Prototype {
+  primitive = 0;
+  component = { createdAt: new Date() };
+  circularReference!: ComponentWithBackReference;
 
-class Plan implements Prototype<Plan> {
-  constructor(readonly rules: Rule[]) {}
-  clone() {
-    return new Plan(this.rules.map((rule) => rule.clone()));
+  clone(): this {
+    const clone = Object.create(Object.getPrototypeOf(this));
+    Object.assign(clone, this);
+    clone.component = { createdAt: new Date(this.component.createdAt) };
+    clone.circularReference = new ComponentWithBackReference(clone);
+    return clone;
   }
 }
+
+class ComponentWithBackReference {
+  constructor(public prototype: Prototype) {}
+}
+
+function clientCode(): boolean {
+  const original = new Prototype();
+  original.primitive = 42;
+  original.circularReference = new ComponentWithBackReference(original);
+
+  const copy = original.clone();
+  return (
+    copy !== original &&
+    copy.component !== original.component &&
+    copy.circularReference.prototype === copy
+  );
+}
+
+clientCode();
 ```
 
 **Tradeoff:** Reuses expensive configuration, but cyclic graphs and external resources make cloning difficult.

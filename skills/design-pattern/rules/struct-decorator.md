@@ -12,22 +12,54 @@ Use Decorator to add responsibilities dynamically while preserving the wrapped c
 **Incorrect (subclass per behavior combination):**
 
 ```typescript
-class LoggedCachedCompressedStore extends Store {}
-```
-
-**Correct (compose wrappers):**
-
-```typescript
-interface Store {
-  save(value: string): void;
-}
-class LoggedStore implements Store {
-  constructor(private inner: Store) {}
-  save(value: string) {
-    console.log("save");
-    this.inner.save(value);
+class ConcreteComponentWithDecoratorAAndB extends ConcreteComponent {
+  operation(): string {
+    return `DecoratorB(DecoratorA(${super.operation()}))`;
   }
 }
+```
+
+**Correct (base and concrete decorators preserve the component contract):**
+
+```typescript
+interface Component {
+  operation(): string;
+}
+
+class ConcreteComponent implements Component {
+  operation(): string {
+    return "ConcreteComponent";
+  }
+}
+
+class Decorator implements Component {
+  constructor(protected component: Component) {}
+
+  operation(): string {
+    return this.component.operation();
+  }
+}
+
+class ConcreteDecoratorA extends Decorator {
+  operation(): string {
+    return `DecoratorA(${super.operation()})`;
+  }
+}
+
+class ConcreteDecoratorB extends Decorator {
+  operation(): string {
+    return `DecoratorB(${super.operation()})`;
+  }
+}
+
+function clientCode(component: Component): string {
+  return component.operation();
+}
+
+const decorated = new ConcreteDecoratorB(
+  new ConcreteDecoratorA(new ConcreteComponent()),
+);
+clientCode(decorated);
 ```
 
 **Tradeoff:** Behaviors compose freely, but wrapper order matters and a deep stack is harder to debug.

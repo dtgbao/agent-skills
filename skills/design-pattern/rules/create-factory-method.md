@@ -12,25 +12,58 @@ Use Factory Method when creator logic should work with a product interface while
 **Incorrect (creator branches on concrete types):**
 
 ```typescript
-function deliver(mode: string) {
-  return mode === "sea" ? new Ship() : new Truck();
+function clientCode(type: "one" | "two"): string {
+  const product = type === "one" ? new ConcreteProduct1() : new ConcreteProduct2();
+  return `Creator works with ${product.operation()}`;
 }
 ```
 
-**Correct (subclasses override creation):**
+**Correct (creators vary products while preserving creator business logic):**
 
 ```typescript
-abstract class Logistics {
-  protected abstract createTransport(): Transport;
-  plan() {
-    return this.createTransport().deliver();
+abstract class Creator {
+  abstract factoryMethod(): Product;
+
+  someOperation(): string {
+    const product = this.factoryMethod();
+    return `Creator works with ${product.operation()}`;
   }
 }
-class SeaLogistics extends Logistics {
-  protected createTransport() {
-    return new Ship();
+
+class ConcreteCreator1 extends Creator {
+  factoryMethod(): Product {
+    return new ConcreteProduct1();
   }
 }
+
+class ConcreteCreator2 extends Creator {
+  factoryMethod(): Product {
+    return new ConcreteProduct2();
+  }
+}
+
+interface Product {
+  operation(): string;
+}
+
+class ConcreteProduct1 implements Product {
+  operation(): string {
+    return "ConcreteProduct1";
+  }
+}
+
+class ConcreteProduct2 implements Product {
+  operation(): string {
+    return "ConcreteProduct2";
+  }
+}
+
+function clientCode(creator: Creator): string {
+  return creator.someOperation();
+}
+
+clientCode(new ConcreteCreator1());
+clientCode(new ConcreteCreator2());
 ```
 
 **Tradeoff:** Product coupling falls, but subclass count grows. Prefer a simple factory function when inheritance adds no value.

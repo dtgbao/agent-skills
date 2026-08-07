@@ -12,25 +12,73 @@ Use Visitor when element types are stable but many operations must be added with
 **Incorrect (operation branches on concrete elements):**
 
 ```typescript
-if (node instanceof TextNode) renderText(node);
-else if (node instanceof ImageNode) renderImage(node);
+function clientCode(components: Array<ConcreteComponentA | ConcreteComponentB>): void {
+  components.forEach((component) => {
+    if (component instanceof ConcreteComponentA) visitA(component);
+    else visitB(component);
+  });
+}
 ```
 
-**Correct (elements dispatch to visitor overloads):**
+**Correct (elements and visitors perform double dispatch across all concrete types):**
 
 ```typescript
-interface Node {
-  accept<T>(visitor: Visitor<T>): T;
+interface Component {
+  accept(visitor: Visitor): void;
 }
-interface Visitor<T> {
-  text(node: TextNode): T;
-  image(node: ImageNode): T;
-}
-class TextNode implements Node {
-  accept<T>(visitor: Visitor<T>) {
-    return visitor.text(this);
+
+class ConcreteComponentA implements Component {
+  accept(visitor: Visitor): void {
+    visitor.visitConcreteComponentA(this);
+  }
+
+  exclusiveMethodOfConcreteComponentA(): string {
+    return "A";
   }
 }
+
+class ConcreteComponentB implements Component {
+  accept(visitor: Visitor): void {
+    visitor.visitConcreteComponentB(this);
+  }
+
+  specialMethodOfConcreteComponentB(): string {
+    return "B";
+  }
+}
+
+interface Visitor {
+  visitConcreteComponentA(element: ConcreteComponentA): void;
+  visitConcreteComponentB(element: ConcreteComponentB): void;
+}
+
+class ConcreteVisitor1 implements Visitor {
+  visitConcreteComponentA(element: ConcreteComponentA): void {
+    console.log(`${element.exclusiveMethodOfConcreteComponentA()} + Visitor1`);
+  }
+
+  visitConcreteComponentB(element: ConcreteComponentB): void {
+    console.log(`${element.specialMethodOfConcreteComponentB()} + Visitor1`);
+  }
+}
+
+class ConcreteVisitor2 implements Visitor {
+  visitConcreteComponentA(element: ConcreteComponentA): void {
+    console.log(`${element.exclusiveMethodOfConcreteComponentA()} + Visitor2`);
+  }
+
+  visitConcreteComponentB(element: ConcreteComponentB): void {
+    console.log(`${element.specialMethodOfConcreteComponentB()} + Visitor2`);
+  }
+}
+
+function clientCode(components: Component[], visitor: Visitor): void {
+  components.forEach((component) => component.accept(visitor));
+}
+
+const components: Component[] = [new ConcreteComponentA(), new ConcreteComponentB()];
+clientCode(components, new ConcreteVisitor1());
+clientCode(components, new ConcreteVisitor2());
 ```
 
 **Tradeoff:** New operations are easy; adding an element type requires changing every visitor.

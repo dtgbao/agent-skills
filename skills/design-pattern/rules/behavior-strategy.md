@@ -12,21 +12,48 @@ Use Strategy when clients need to select among algorithms that perform the same 
 **Incorrect (context owns every algorithm branch):**
 
 ```typescript
-return mode === "fast" ? fastSort(data) : stableSort(data);
-```
-
-**Correct (inject an algorithm contract):**
-
-```typescript
-interface SortStrategy {
-  sort(values: string[]): string[];
-}
 class Context {
-  constructor(private strategy: SortStrategy) {}
-  sort(values: string[]) {
-    return this.strategy.sort(values);
+  doSomeBusinessLogic(values: string[], mode: "ascending" | "descending"): string[] {
+    return mode === "ascending" ? [...values].sort() : [...values].sort().reverse();
   }
 }
+```
+
+**Correct (a context delegates to replaceable concrete strategies):**
+
+```typescript
+class Context {
+  constructor(private strategy: Strategy) {}
+
+  setStrategy(strategy: Strategy): void {
+    this.strategy = strategy;
+  }
+
+  doSomeBusinessLogic(values: string[]): string[] {
+    return this.strategy.doAlgorithm(values);
+  }
+}
+
+interface Strategy {
+  doAlgorithm(data: string[]): string[];
+}
+
+class ConcreteStrategyA implements Strategy {
+  doAlgorithm(data: string[]): string[] {
+    return [...data].sort();
+  }
+}
+
+class ConcreteStrategyB implements Strategy {
+  doAlgorithm(data: string[]): string[] {
+    return [...data].sort().reverse();
+  }
+}
+
+const context = new Context(new ConcreteStrategyA());
+context.doSomeBusinessLogic(["a", "b", "c"]);
+context.setStrategy(new ConcreteStrategyB());
+context.doSomeBusinessLogic(["a", "b", "c"]);
 ```
 
 **Tradeoff:** Algorithms vary independently, but clients must understand which strategy to choose. Functions may replace classes for simple algorithms.

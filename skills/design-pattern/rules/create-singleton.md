@@ -9,22 +9,40 @@ tags: creational, singleton, lifecycle
 
 Use Singleton only when the domain requires exactly one instance and clients need a controlled access point. Prefer dependency injection when available.
 
-**Incorrect (uncontrolled global mutable state):**
+**Incorrect (clients can create multiple instances):**
 
 ```typescript
-export const settings: any = {};
+class Singleton {}
+const first = new Singleton();
+const second = new Singleton();
+first === second; // false
 ```
 
-**Correct (construction is restricted):**
+**Correct (a static accessor controls the single cached instance):**
 
 ```typescript
-class Registry {
-  private static value?: Registry;
+class Singleton {
+  private static cached?: Singleton;
+
   private constructor() {}
-  static instance() {
-    return (this.value ??= new Registry());
+
+  static get instance(): Singleton {
+    return (this.cached ??= new Singleton());
+  }
+
+  someBusinessLogic(): string {
+    return "shared result";
   }
 }
+
+function clientCode(): boolean {
+  const first = Singleton.instance;
+  const second = Singleton.instance;
+  first.someBusinessLogic();
+  return first === second;
+}
+
+clientCode();
 ```
 
 **Tradeoff:** Guarantees identity but hides dependencies, couples tests to global state, and combines lifecycle with business responsibility.

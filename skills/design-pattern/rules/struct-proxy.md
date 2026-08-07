@@ -12,27 +12,51 @@ Use Proxy when a stand-in must preserve a service interface while controlling ac
 **Incorrect (cross-cutting access logic in every client):**
 
 ```typescript
-if (user.allowed) {
-  audit.log();
-  service.request();
+function clientCode(realSubject: RealSubject): void {
+  if (checkAccess()) {
+    realSubject.request();
+    logAccess();
+  }
 }
 ```
 
-**Correct (proxy remains substitutable):**
+**Correct (proxy and real subject expose the same contract):**
 
 ```typescript
 interface Subject {
   request(): void;
 }
-class GuardedSubject implements Subject {
-  constructor(
-    private real: Subject,
-    private allowed: () => boolean,
-  ) {}
-  request() {
-    if (this.allowed()) this.real.request();
+
+class RealSubject implements Subject {
+  request(): void {
+    console.log("RealSubject handling request");
   }
 }
+
+class Proxy implements Subject {
+  constructor(private readonly realSubject: RealSubject) {}
+
+  request(): void {
+    if (this.checkAccess()) {
+      this.realSubject.request();
+      this.logAccess();
+    }
+  }
+
+  private checkAccess(): boolean {
+    return true;
+  }
+
+  private logAccess(): void {
+    console.log("Proxy logged request time");
+  }
+}
+
+function clientCode(subject: Subject): void {
+  subject.request();
+}
+
+clientCode(new Proxy(new RealSubject()));
 ```
 
 **Tradeoff:** Controls a service transparently but adds latency and another lifecycle layer.
