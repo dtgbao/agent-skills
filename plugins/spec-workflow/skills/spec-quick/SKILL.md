@@ -44,11 +44,11 @@ Using the description and answers, produce each file in order, writing
 each to disk before moving to the next. Read the same reference files the
 gated skills use:
 
-- `${CLAUDE_PLUGIN_ROOT}/skills/spec-requirements/references/template.md`
+- `../skills/spec-requirements/references/template.md`
   for requirements.md (Glossary + EARS)
-- `${CLAUDE_PLUGIN_ROOT}/skills/spec-design/references/feature-template.md`
+- `../skills/spec-design/references/feature-template.md`
   for design.md
-- `${CLAUDE_PLUGIN_ROOT}/skills/spec-tasks/references/structure.md` and
+- `../skills/spec-tasks/references/structure.md` and
   `references/feature-tasks.md` for tasks.md
 
 **Skip every "present and gate" / "wait for approval" instruction in those

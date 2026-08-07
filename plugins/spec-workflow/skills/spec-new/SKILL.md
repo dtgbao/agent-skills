@@ -65,10 +65,10 @@ follow the corresponding skill file, passing the original description (plus
 anything they added while discussing the choice) as its input — don't make
 them repeat themselves in a separate command:
 
-- Requirements-First → `${CLAUDE_PLUGIN_ROOT}/skills/spec-requirements/SKILL.md`
-- Design-First → `${CLAUDE_PLUGIN_ROOT}/skills/spec-design/SKILL.md`
-- Bugfix → `${CLAUDE_PLUGIN_ROOT}/skills/spec-bugfix/SKILL.md`
-- Quick Spec → `${CLAUDE_PLUGIN_ROOT}/skills/spec-quick/SKILL.md`
+- Requirements-First → `../skills/spec-requirements/SKILL.md`
+- Design-First → `../skills/spec-design/SKILL.md`
+- Bugfix → `../skills/spec-bugfix/SKILL.md`
+- Quick Spec → `../skills/spec-quick/SKILL.md`
 
 Continue directly into that skill's own steps (e.g. deriving a slug,
 building a glossary, asking its own clarifying questions) — `spec-new`'s job

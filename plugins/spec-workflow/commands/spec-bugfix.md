@@ -3,5 +3,5 @@ description: Start the Bugfix Analysis phase for a bug (phase 1 of 3 — Analysi
 argument-hint: "<bug description> [reproduction steps, constraints]"
 ---
 
-Read `${CLAUDE_PLUGIN_ROOT}/skills/spec-bugfix/SKILL.md` in full and follow
+Read `../skills/spec-bugfix/SKILL.md` in full and follow
 its instructions exactly, using the following as input: $ARGUMENTS
