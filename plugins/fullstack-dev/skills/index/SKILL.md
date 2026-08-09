@@ -23,14 +23,14 @@ Task arrives
     ├── New project, feature, or significant change? ────────────→ spec-driven-development
     ├── Have a spec, need tasks? ────────────────────────────────→ planning-and-task-breakdown
     ├── Implementing code?
-    │   ├── Need documentation-verified code? ───────────────────→ source-driven-development
     │   ├── Context missing, stale, or overloaded? ──────────────→ context-engineering
+    │   ├── Need documentation-verified code? ───────────────────→ source-driven-development
     │   ├── Designing architecture, modules, interfaces? ────────→ codebase-design
     │   │   └── PostgreSQL schema, query, or configuration? ─────→ supabase-postgres-best-practices
     │   ├── API or public contract work? ────────────────────────→ api-and-interface-design
     │   └── UI work? ────────────────────────────────────────────→ frontend-ui-engineering
     │       └── React TypeScript architecture or tests? ─────────→ react-best-practices
-    ├── Changing behavior or fixing a bug test-first? ───────────→ test-driven-development
+    ├── Writing/running tests? ──────────────────────────────────→ test-driven-development
     ├── Something broke? ────────────────────────────────────────→ debugging-and-error-recovery
     ├── Reviewing code? ─────────────────────────────────────────→ code-review-and-quality
     │   ├── Too complex? ────────────────────────────────────────→ code-simplification
@@ -141,11 +141,11 @@ Per-skill verification is the local check. The project-wide bar that applies to 
    repository-grounded requirements. Do not force a full spec onto a trivial local edit.
 3. Use `planning-and-task-breakdown` after requirements are clear when implementation work needs
    dependency ordering, vertical slices, task sizing, or explicit checkpoints.
-4. Use `source-driven-development` before implementation decisions that depend on version-sensitive
-   frameworks, APIs, or external systems, and verify those decisions against official sources.
-5. Use `context-engineering` before implementation when context is missing, stale, or overloaded.
+4. Use `context-engineering` before implementation when context is missing, stale, or overloaded.
    Load only the relevant rules, requirements, source, tests, and failure evidence, then refresh that
    context when the task changes.
+5. Use `source-driven-development` before implementation decisions that depend on version-sensitive
+   frameworks, APIs, or external systems, and verify those decisions against official sources.
 6. Apply security, performance, observability, and documentation alongside the implementation phase
    whenever their triggers match.
 7. On failure, switch to `debugging-and-error-recovery`; resume the interrupted workflow only after
@@ -160,8 +160,8 @@ For a complete feature, the typical skill sequence is:
 1.  grilling                               → Clarify materially vague or ambiguous requirements
 2.  spec-driven-development                → Define approved requirements, boundaries, and success criteria
 3.  planning-and-task-breakdown            → Break the approved spec into verifiable, dependency-ordered slices
-4.  source-driven-development              → Verify version-sensitive decisions against official documentation
-5.  context-engineering                    → Load and refresh the focused context needed for implementation
+4.  context-engineering                    → Load and refresh the focused context needed for implementation
+5.  source-driven-development              → Verify version-sensitive decisions against official documentation
 6.  codebase-design                        → Establish architecture, modules, interfaces, and seams
     supabase-postgres-best-practices       → Design PostgreSQL concerns when the project uses PostgreSQL
 7.  api-and-interface-design               → Establish applicable API and public contracts
