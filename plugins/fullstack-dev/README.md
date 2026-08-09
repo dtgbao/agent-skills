@@ -29,6 +29,7 @@ Start a new Codex task after installation so all bundled skills are available.
 | Database      | [`supabase-postgres-best-practices`](skills/supabase-postgres-best-practices/SKILL.md) | Apply specialized database guidance when its engine matches.    |
 | Backend       | [`api-and-interface-design`](skills/api-and-interface-design/SKILL.md)                 | Define service boundaries and typed API contracts.              |
 | Testing       | [`test-driven-development`](skills/test-driven-development/SKILL.md)                   | Drive every behavior change through a failing test.             |
+| ↳ Vitest      | [`vitest-best-practices`](skills/vitest-best-practices/SKILL.md)                       | Write reliable Vitest and component tests.                       |
 | Frontend      | [`frontend-ui-engineering`](skills/frontend-ui-engineering/SKILL.md)                   | Build accessible, responsive interfaces against contracts.      |
 | ↳ React       | [`react-best-practices`](skills/react-best-practices/SKILL.md)                         | Apply React architecture guidance within frontend work.         |
 | Automation    | [`ci-cd-and-automation`](skills/ci-cd-and-automation/SKILL.md)                         | Automate repository quality and deployment gates.               |

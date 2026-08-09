@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vitest Best Practices"
+  short_description: "Write reliable Vitest and component tests"
+  default_prompt: "Use $vitest-best-practices to configure Vitest or write reliable, behavior-focused component tests."

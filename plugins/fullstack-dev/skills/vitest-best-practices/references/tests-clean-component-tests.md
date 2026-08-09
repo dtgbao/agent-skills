@@ -1,11 +1,14 @@
 ---
-title: Write Clean React Unit Tests
+title: Write Clean Component Tests
 impact: MEDIUM
 impactDescription: keeps tests scoped, behavior-focused, and resilient to harmless UI changes
-tags: testing, vitest, react-testing-library, user-event
+tags: testing, vitest, component-testing, testing-library, user-event
 ---
 
-## Write Clean React Unit Tests
+## Write Clean Component Tests
+
+The examples use React, but the rules apply to Vue, Svelte, and other component frameworks. Replace
+the renderer, router, and component syntax with the project's equivalents.
 
 **Incorrect:**
 
@@ -30,20 +33,22 @@ describe("ProductPage", () => {
 **Correct:**
 
 ```tsx
-const mockNavigate = vi.hoisted(() => vi.fn());
-
-vi.mock("react-router-dom", async () => ({
-	...(await vi.importActual<typeof import("react-router-dom")>("react-router-dom")),
-	useNavigate: () => mockNavigate,
+const { mockNavigate } = vi.hoisted(() => ({
+	mockNavigate: vi.fn(),
 }));
+
+vi.mock(import("react-router-dom"), async (importOriginal) => {
+	const original = await importOriginal();
+
+	return {
+		...original,
+		useNavigate: () => mockNavigate,
+	};
+});
 
 describe("ProductPage", () => {
 	beforeEach(() => {
 		mockNavigate.mockClear();
-
-		return () => {
-			// Page-specific cleanup, if this page needs it.
-		};
 	});
 
 	const renderProductPage = () => {
@@ -89,11 +94,20 @@ describe("ProductPage", () => {
 Rules:
 
 - Keep page or component setup inside the matching `describe` block.
-- Use module-level `vi.hoisted` mocks only when Vitest needs the mock before imports run.
+- Use `vi.hoisted` only for values referenced by a hoisted `vi.mock` factory. Prefer typed dynamic
+  import syntax so TypeScript validates the module path and factory shape.
 - Put `beforeEach` inside `describe` unless the setup is truly file-wide.
-- Put page-specific render helpers inside `describe`; return `user`, render helpers, and repeated user actions.
+- Put page-specific render helpers inside `describe`. Call `userEvent.setup()` before rendering, then
+  return `user`, render helpers, and repeated user actions.
 - Keep hard-boundary mocks local to the test file. Avoid global UI library mocks in setup files.
 - Use `screen` queries instead of `document` selectors. Prefer roles, labels, and accessible names.
 - Use exact strings when the text is the behavior under test. Use case-insensitive regex for copy that can change harmlessly.
 - Use `userEvent.setup()` and test the behavior a user performs. Avoid asserting component internals.
 - Mock one boundary when the test is about emitted intent. Use the real router or API mocks when route rendering or data loading is the behavior.
+
+## Sources
+
+- [Testing Library query priority](https://testing-library.com/docs/queries/about/#priority)
+- [Testing Library user-event setup](https://testing-library.com/docs/user-event/intro/#writing-tests-with-userevent)
+- [Vitest module mocking](https://vitest.dev/guide/mocking/modules.html)
+- [Vitest mock hoisting](https://vitest.dev/guide/mocking.html)

@@ -1,66 +1,74 @@
 ---
-title: Setup Vitest for React Tests
+title: Setup Vitest for Component Tests
 impact: MEDIUM
-impactDescription: keeps React test environment setup predictable
+impactDescription: keeps component test environment setup predictable
 tags: setup, testing, vitest
 ---
 
-# Setup Vitest for React Tests
+# Setup Vitest for Component Tests
 
-Use this when adding or checking project-level Vitest setup for React tests.
-Keep setup in three places: Vite/Vitest config, `tests/setup.ts`, and
-`tsconfig.test.json`.
+Use this when adding or checking project-level Vitest setup for component tests. Preserve the
+repository's existing Vite/Vitest config and TypeScript project layout. Add only the settings the
+test suite actually needs.
 
-## `vite.config.ts`
+## Vitest Configuration
 
-Put test configuration under `test`:
+Put test configuration under `test` in the existing `vite.config.ts` or `vitest.config.ts`:
 
 ```ts
 test: {
   environment: "jsdom",
-  globals: true,
   setupFiles: ["tests/setup.ts"],
   coverage: {
-    include: ["src/**/*.{ts,tsx}"],
-    thresholds: {
-      statements: 80,
-      lines: 80,
-      functions: 85, // Slightly higher because making sure a function fires at least once is easy
-      branches: 80,
-    },
+    include: ["src/**/*.{js,jsx,ts,tsx,vue,svelte}"],
   },
 },
 ```
 
-Use `jsdom` for React DOM tests. Keep `globals: true` only when tests and setup
-files use global `vi`, `describe`, `it`, or `expect`.
+Use `jsdom` only for files that need an emulated DOM. Keep Vitest's default explicit imports unless
+the repository already uses `globals: true`; when globals are enabled, include `vitest/globals` in
+the test TypeScript config. Define coverage thresholds only from an agreed project baseline and risk
+policy. See `setup-choose-environment.md` and `coverage-measure-behavior.md` for those decisions.
 
 ## `tests/setup.ts`
 
-Load DOM matchers and global test fixtures once:
+Load shared matchers and register repeatable hooks:
 
 ```ts
 import "@testing-library/jest-dom/vitest";
+import { afterEach, vi } from "vitest";
 
-vi.stubEnv("VITE_API_BASE_URL", "https://example.test");
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.unstubAllGlobals();
+});
 ```
 
-Put browser polyfills here only when many tests need them. Put one-off mocks in
-the test file.
+Vitest executes setup files before each test file in the same worker. Keep setup idempotent, put
+shared cleanup in hooks, and avoid starting the same heavy process repeatedly. Put one-off mocks,
+environment values, and polyfills in the test file that needs them.
 
 ## `tsconfig.test.json`
 
-Extend the app config, include tests and source, and add Vitest globals:
+Extend the app config and include tests and source:
 
 ```json
 {
   "extends": "./tsconfig.app.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.test.tsbuildinfo",
-    "types": ["vite/client", "vitest/globals"]
+    "types": ["vite/client"]
   },
   "include": ["tests", "src"]
 }
 ```
 
-Add package-specific types only when setup or tests need them globally.
+Add `vitest/globals` only when `globals: true` is enabled. Add other package-specific types only
+when setup or tests need them globally.
+
+## Sources
+
+- [Vitest setup files](https://vitest.dev/config/setupfiles.html)
+- [Vitest globals](https://vitest.dev/guide/learn/writing-tests.html#using-global-imports)
+- [Vitest test environments](https://vitest.dev/guide/environment.html)
+- [Vitest coverage](https://vitest.dev/guide/coverage.html)

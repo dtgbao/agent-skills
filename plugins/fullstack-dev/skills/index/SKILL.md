@@ -29,8 +29,10 @@ Task arrives
     │   │   └── PostgreSQL schema, query, or configuration? ─────→ supabase-postgres-best-practices
     │   ├── API or public contract work? ────────────────────────→ api-and-interface-design
     │   └── UI work? ────────────────────────────────────────────→ frontend-ui-engineering
-    │       └── React TypeScript architecture or tests? ─────────→ react-best-practices
-    ├── Writing/running tests? ──────────────────────────────────→ test-driven-development
+    │       └── React TypeScript best practices? ────────────────→ react-best-practices
+    ├── Writing or running tests?
+    │   ├── Changing behavior or fixing a bug test-first? ───────→ test-driven-development
+    │   └── Configuring or using Vitest? ────────────────────────→ vitest-best-practices
     ├── Something broke? ────────────────────────────────────────→ debugging-and-error-recovery
     ├── Reviewing code? ─────────────────────────────────────────→ code-review-and-quality
     │   ├── Too complex? ────────────────────────────────────────→ code-simplification
@@ -150,7 +152,9 @@ Per-skill verification is the local check. The project-wide bar that applies to 
    whenever their triggers match.
 7. On failure, switch to `debugging-and-error-recovery`; resume the interrupted workflow only after
    its verification passes.
-8. Map concerns not covered by a sibling skill to an explicitly named repository-native process.
+8. Use `vitest-best-practices` when configuring Vitest or writing, reviewing, or stabilizing Vitest
+   tests, including component testing and MSW integrations.
+9. Map concerns not covered by a sibling skill to an explicitly named repository-native process.
 
 ## Lifecycle Sequence
 
@@ -166,8 +170,9 @@ For a complete feature, the typical skill sequence is:
     supabase-postgres-best-practices       → Design PostgreSQL concerns when the project uses PostgreSQL
 7.  api-and-interface-design               → Establish applicable API and public contracts
 8.  frontend-ui-engineering                → Build applicable UI slices
-    react-best-practices                   → Apply React TypeScript architecture and testing practices when relevant
+    react-best-practices                   → Apply React TypeScript architecture practices when relevant
 9.  test-driven-development                → Prove each behavior change while implementing slices
+    vitest-best-practices                  → Configure and apply Vitest, component testing, and MSW practices when relevant
 10. debugging-and-error-recovery           → Diagnose failures and recover the interrupted workflow when needed
 11. code-review-and-quality                → Review the completed change across quality dimensions
     code-simplification                    → Remove warranted complexity without changing verified behavior
