@@ -1,0 +1,4 @@
+interface:
+  display_name: "NestJS Best Practices"
+  short_description: "Build production-ready NestJS applications"
+  default_prompt: "Use $nestjs-best-practices to write, review, or refactor production-ready NestJS code."

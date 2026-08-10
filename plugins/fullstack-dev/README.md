@@ -1,8 +1,8 @@
 # Fullstack Dev Plugin
 
 Guide full-stack application development from focused context, decision discovery, requirements,
-and planning through architecture, data, APIs, source-verified implementation, frontend delivery,
-operations, migration, review, and launch.
+and planning through architecture, design patterns, data, APIs, NestJS services, source-verified
+implementation, frontend delivery, operations, migration, review, and launch.
 
 ## Install
 
@@ -26,8 +26,10 @@ Start a new Codex task after installation so all bundled skills are available.
 | Definition    | [`spec-driven-development`](skills/spec-driven-development/SKILL.md)                   | Define approved requirements, boundaries, and success criteria. |
 | Planning      | [`planning-and-task-breakdown`](skills/planning-and-task-breakdown/SKILL.md)           | Create dependency-ordered, verifiable implementation tasks.     |
 | Architecture  | [`codebase-design`](skills/codebase-design/SKILL.md)                                   | Choose deep modules, small interfaces, seams, and adapters.     |
+| ↳ Patterns    | [`design-pattern`](skills/design-pattern/SKILL.md)                                     | Apply GoF patterns to object-oriented TypeScript when warranted. |
 | Database      | [`supabase-postgres-best-practices`](skills/supabase-postgres-best-practices/SKILL.md) | Apply specialized database guidance when its engine matches.    |
-| Backend       | [`api-and-interface-design`](skills/api-and-interface-design/SKILL.md)                 | Define service boundaries and typed API contracts.              |
+| Interfaces    | [`api-and-interface-design`](skills/api-and-interface-design/SKILL.md)                 | Define service boundaries and typed API contracts.              |
+| Backend       | [`nestjs-best-practices`](skills/nestjs-best-practices/SKILL.md)                       | Apply production-ready NestJS architecture and practices.       |
 | Testing       | [`test-driven-development`](skills/test-driven-development/SKILL.md)                   | Drive every behavior change through a failing test.             |
 | ↳ Vitest      | [`vitest-best-practices`](skills/vitest-best-practices/SKILL.md)                       | Write reliable Vitest and component tests.                       |
 | Frontend      | [`frontend-ui-engineering`](skills/frontend-ui-engineering/SKILL.md)                   | Build accessible, responsive interfaces against contracts.      |

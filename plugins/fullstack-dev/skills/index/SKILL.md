@@ -26,8 +26,12 @@ Task arrives
     │   ├── Context missing, stale, or overloaded? ──────────────→ context-engineering
     │   ├── Need documentation-verified code? ───────────────────→ source-driven-development
     │   ├── Designing architecture, modules, interfaces? ────────→ codebase-design
-    │   │   └── PostgreSQL schema, query, or configuration? ─────→ supabase-postgres-best-practices
+    │   │   └── Selecting an object-oriented design pattern? ────→ design-pattern
+    │   ├── Database or persistence work?
+    │   │   └── Using PostgreSQL? ───────────────────────────────→ supabase-postgres-best-practices
     │   ├── API or public contract work? ────────────────────────→ api-and-interface-design
+    │   ├── Backend service work?
+    │   │   └── Using NestJS? ───────────────────────────────────→ nestjs-best-practices
     │   └── UI work? ────────────────────────────────────────────→ frontend-ui-engineering
     │       └── React TypeScript best practices? ────────────────→ react-best-practices
     ├── Writing or running tests?
@@ -48,6 +52,8 @@ Task arrives
 
 Use `supabase-postgres-best-practices` only when the project's database matches. For another engine,
 follow the repository's native database guidance and continue routing the remaining concerns.
+Use `design-pattern` only when object-oriented TypeScript code has a concrete design pressure that a
+pattern addresses. Use `nestjs-best-practices` only when the backend service uses NestJS.
 
 ## Core Operating Behaviors
 
@@ -154,7 +160,11 @@ Per-skill verification is the local check. The project-wide bar that applies to 
    its verification passes.
 8. Use `vitest-best-practices` when configuring Vitest or writing, reviewing, or stabilizing Vitest
    tests, including component testing and MSW integrations.
-9. Map concerns not covered by a sibling skill to an explicitly named repository-native process.
+9. Use `design-pattern` when selecting, implementing, comparing, or reviewing Gang of Four patterns
+   in object-oriented TypeScript code. Do not introduce a pattern for hypothetical flexibility.
+10. Use `nestjs-best-practices` when writing, reviewing, or refactoring a NestJS backend, alongside
+    other matched API, testing, security, performance, database, observability, or delivery skills.
+11. Map concerns not covered by a sibling skill to an explicitly named repository-native process.
 
 ## Lifecycle Sequence
 
@@ -167,23 +177,25 @@ For a complete feature, the typical skill sequence is:
 4.  context-engineering                    → Load and refresh the focused context needed for implementation
 5.  source-driven-development              → Verify version-sensitive decisions against official documentation
 6.  codebase-design                        → Establish architecture, modules, interfaces, and seams
-    supabase-postgres-best-practices       → Design PostgreSQL concerns when the project uses PostgreSQL
-7.  api-and-interface-design               → Establish applicable API and public contracts
-8.  frontend-ui-engineering                → Build applicable UI slices
+    design-pattern                         → Apply a GoF pattern when object-oriented TypeScript design pressures warrant it
+7.  supabase-postgres-best-practices       → Handle PostgreSQL schema, query, configuration, and operational concerns
+8.  api-and-interface-design               → Establish applicable API and public contracts
+9.  nestjs-best-practices                  → Apply NestJS architecture and implementation guidance when applicable
+10. frontend-ui-engineering                → Build applicable UI slices
     react-best-practices                   → Apply React TypeScript architecture practices when relevant
-9.  test-driven-development                → Prove each behavior change while implementing slices
+11. test-driven-development                → Prove each behavior change while implementing slices
     vitest-best-practices                  → Configure and apply Vitest, component testing, and MSW practices when relevant
-10. debugging-and-error-recovery           → Diagnose failures and recover the interrupted workflow when needed
-11. code-review-and-quality                → Review the completed change across quality dimensions
+12. debugging-and-error-recovery           → Diagnose failures and recover the interrupted workflow when needed
+13. code-review-and-quality                → Review the completed change across quality dimensions
     code-simplification                    → Remove warranted complexity without changing verified behavior
     security-and-hardening                 → Apply matched security constraints during implementation and review
     performance-optimization               → Measure and address relevant performance constraints
-12. git-workflow-and-versioning            → Prepare authorized commits, versions, tags, or changelogs
-13. ci-cd-and-automation                   → Enforce the applicable repository checks
-14. deprecation-and-migration              → Retire or replace affected systems safely when needed
-15. documentation-and-adrs                 → Record decisions and document the change as it evolves
-16. observability-and-instrumentation      → Add applicable logs, metrics, traces, and alerts
-17. shipping-and-launch                    → Complete authorized rollout, monitoring, and recovery work
+14. git-workflow-and-versioning            → Prepare authorized commits, versions, tags, or changelogs
+15. ci-cd-and-automation                   → Enforce the applicable repository checks
+16. deprecation-and-migration              → Retire or replace affected systems safely when needed
+17. documentation-and-adrs                 → Record decisions and document the change as it evolves
+18. observability-and-instrumentation      → Add applicable logs, metrics, traces, and alerts
+19. shipping-and-launch                    → Complete authorized rollout, monitoring, and recovery work
 ```
 
 Not every task needs every skill. Run matched cross-cutting skills alongside implementation rather

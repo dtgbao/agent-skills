@@ -1,8 +1,8 @@
 {
 	"$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
 	"name": "fullstack-dev",
-	"version": "1.1.0",
-	"description": "End-to-end guidance for full-stack applications, from focused context, requirements, and planning through architecture, data, APIs, source-verified implementation, React and frontend delivery, and launch.",
+	"version": "1.2.0",
+	"description": "End-to-end guidance for full-stack applications, from focused context, requirements, and planning through architecture, design patterns, data, APIs, NestJS services, source-verified implementation, React and frontend delivery, and launch.",
 	"author": {
 		"name": "Bao Dang",
 		"url": "https://github.com/dtgbao"
@@ -17,9 +17,11 @@
 		"task-breakdown",
 		"architecture",
 		"module-design",
+		"design-patterns",
 		"database",
 		"backend",
 		"backend-services",
+		"nestjs",
 		"api",
 		"frontend",
 		"react",
@@ -41,7 +43,7 @@
 			"interface": {
 				"displayName": "Fullstack Development",
 				"shortDescription": "Coordinate full-stack work from context through launch.",
-				"longDescription": "Coordinate focused context curation, decision discovery, spec-driven definition, implementation planning, architecture, data, APIs, frontend UI and React architecture, source-verified and test-driven implementation, security, performance, observability, documentation, CI/CD, debugging, migration, simplification, review, versioning, and staged launch.",
+				"longDescription": "Coordinate focused context curation, decision discovery, spec-driven definition, implementation planning, architecture, design patterns, data, APIs, NestJS services, frontend UI and React architecture, source-verified and test-driven implementation, security, performance, observability, documentation, CI/CD, debugging, migration, simplification, review, versioning, and staged launch.",
 				"developerName": "dtgbao",
 				"category": "Productivity",
 				"capabilities": ["Interactive", "Read", "Write"],

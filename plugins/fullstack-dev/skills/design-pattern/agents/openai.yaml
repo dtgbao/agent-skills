@@ -1,0 +1,4 @@
+interface:
+  display_name: "TypeScript Design Patterns"
+  short_description: "Apply the 22 GoF patterns in TypeScript"
+  default_prompt: "Use $design-pattern to select, implement, or review a TypeScript design pattern."
