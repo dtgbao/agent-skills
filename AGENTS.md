@@ -11,6 +11,62 @@ same change.
 - Do not edit unrelated README content when the change has no documentation impact.
 - Before finishing, verify that documented names match the filesystem and that changed links resolve.
 
+## Skill and Plugin Dependency Graph
+
+Standalone skills and plugin-bundled skills are separate deliverables. Solid arrows below are
+router or workflow handoffs. Dotted arrows mark optional use or shared lineage; they are not runtime
+imports and do not synchronize files automatically.
+
+```mermaid
+flowchart LR
+    subgraph Standalone["skills/ — standalone skills"]
+        SDesign["design-pattern"]
+        SScaffold["frontend-scaffold"]
+        SUI["frontend-ui-engineering"]
+        SReact["react-best-practices"]
+        SWeb["web-search"]
+        SOrchestrator["orchestrator (independent)"]
+    end
+
+    subgraph Fullstack["plugins/fullstack-dev/skills/"]
+        FIndex["index router"]
+        FCodebase["codebase-design"]
+        FDesign["design-pattern"]
+        FUI["frontend-ui-engineering"]
+        FReact["react-best-practices"]
+        FTesting["test-driven-development → vitest-best-practices"]
+        FOther["database, backend, API, operations, and delivery skills"]
+
+        FIndex --> FCodebase --> FDesign
+        FIndex --> FUI --> FReact
+        FIndex --> FTesting
+        FIndex --> FOther
+    end
+
+    subgraph Spec["plugins/spec-workflow/skills/"]
+        PNew["spec-new router"]
+        PPhases["requirements / design / bugfix / quick"]
+        PTasks["spec-tasks"]
+        PExecute["spec-execute"]
+        PSteering["steering-setup"]
+        PStatus["spec-status"]
+
+        PNew --> PPhases --> PTasks --> PExecute
+        PSteering -. "optional project context" .-> PPhases
+        PStatus -. "observes artifacts and progress" .-> PPhases
+    end
+
+    subgraph Wiki["plugins/swe-wiki/skills/"]
+        SWiki["swe-wiki (self-contained)"]
+    end
+
+    SScaffold -. "optional research handoff" .-> SWeb
+    SDesign -. "bundled variant" .-> FDesign
+    SUI -. "bundled variant" .-> FUI
+    SReact -. "architecture subset; tests split out" .-> FReact
+    SReact -. "testing concerns" .-> FTesting
+```
+
 ## Plugin Versions
 
 When a plugin is updated, bump the `version` in that plugin's root `plugin.json` in the same change.

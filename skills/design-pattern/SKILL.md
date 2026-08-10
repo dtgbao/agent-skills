@@ -58,10 +58,10 @@ Reference these guidelines when:
 Read the individual rule that matches the design pressure:
 
 ```text
-rules/create-builder.md
-rules/struct-adapter.md
-rules/behavior-strategy.md
-rules/_sections.md
+references/create-builder.md
+references/struct-adapter.md
+references/behavior-strategy.md
+references/_sections.md
 ```
 
 Each rule contains:
