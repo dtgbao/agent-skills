@@ -1,0 +1,4 @@
+interface:
+  display_name: "Refactoring"
+  short_description: "Diagnose smells and refactor safely"
+  default_prompt: "Use $refactoring to diagnose code smells and apply behavior-preserving refactoring techniques safely."

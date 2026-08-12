@@ -25,6 +25,7 @@ Task arrives
     ├── Implementing code?
     │   ├── Context missing, stale, or overloaded? ──────────────→ context-engineering
     │   ├── Need documentation-verified code? ───────────────────→ source-driven-development
+    │   ├── Refactoring behavior or resolving code smells? ──────→ refactoring
     │   ├── Designing architecture, modules, interfaces? ────────→ codebase-design
     │   │   └── Selecting an object-oriented design pattern? ────→ design-pattern
     │   ├── Database or persistence work?
@@ -37,10 +38,11 @@ Task arrives
     │       └── React TypeScript best practices? ────────────────→ react-best-practices
     ├── Writing or running tests?
     │   ├── Changing behavior or fixing a bug test-first? ───────→ test-driven-development
-    │   ├── Using Python, pytest, or testing FastAPI? ────────────→ python-testing-best-practices
+    │   ├── Using Python, pytest, or testing FastAPI? ───────────→ python-testing-best-practices
     │   └── Configuring or using Vitest? ────────────────────────→ vitest-best-practices
     ├── Something broke? ────────────────────────────────────────→ debugging-and-error-recovery
     ├── Reviewing code? ─────────────────────────────────────────→ code-review-and-quality
+    │   ├── Named refactoring or code smell? ────────────────────→ refactoring
     │   ├── Too complex? ────────────────────────────────────────→ code-simplification
     │   ├── Security concerns? ──────────────────────────────────→ security-and-hardening
     │   └── Performance concerns? ───────────────────────────────→ performance-optimization
@@ -55,7 +57,9 @@ Task arrives
 Use `supabase-postgres-best-practices` only when the project's database matches. For another engine,
 follow the repository's native database guidance and continue routing the remaining concerns.
 Use `design-pattern` only when object-oriented TypeScript code has a concrete design pressure that a
-pattern addresses. Use `nestjs-best-practices` only when the backend service uses NestJS. Use
+pattern addresses. Use `refactoring` for smell-driven or named, behavior-preserving transformations;
+use `code-simplification` for general clarity and complexity reduction, and load both when both
+concerns apply. Use `nestjs-best-practices` only when the backend service uses NestJS. Use
 `fastapi-best-practices` only when the backend service uses FastAPI; detect Python, FastAPI,
 Pydantic, ORM, and ASGI server versions before loading version-sensitive rules. Use
 `python-testing-best-practices` for Python and pytest suites, including FastAPI application tests;
@@ -169,13 +173,16 @@ Per-skill verification is the local check. The project-wide bar that applies to 
 9. Use `python-testing-best-practices` when configuring pytest or writing, reviewing, or stabilizing
    Python tests, including FastAPI application, dependency, ASGI transport, and lifespan tests.
 10. Use `design-pattern` when selecting, implementing, comparing, or reviewing Gang of Four patterns
-   in object-oriented TypeScript code. Do not introduce a pattern for hypothetical flexibility.
+    in object-oriented TypeScript code. Do not introduce a pattern for hypothetical flexibility.
 11. Use `nestjs-best-practices` when writing, reviewing, or refactoring a NestJS backend, alongside
     other matched API, testing, security, performance, database, observability, or delivery skills.
 12. Use `fastapi-best-practices` when writing, reviewing, or refactoring a FastAPI backend,
     alongside source verification and other matched API, testing, security, performance, database,
     observability, or delivery skills.
-13. Map concerns not covered by a sibling skill to an explicitly named repository-native process.
+13. Use `refactoring` when diagnosing code smells, selecting a named refactoring technique, or
+    restructuring existing code without changing observable behavior. Combine it with
+    `code-simplification` when the goal also includes broad clarity or complexity reduction.
+14. Map concerns not covered by a sibling skill to an explicitly named repository-native process.
 
 ## Lifecycle Sequence
 
@@ -200,6 +207,7 @@ For a complete feature, the typical skill sequence is:
     vitest-best-practices                  → Configure and apply Vitest, component testing, and MSW practices when relevant
 12. debugging-and-error-recovery           → Diagnose failures and recover the interrupted workflow when needed
 13. code-review-and-quality                → Review the completed change across quality dimensions
+    refactoring                            → Diagnose smells and apply named behavior-preserving transformations
     code-simplification                    → Remove warranted complexity without changing verified behavior
     security-and-hardening                 → Apply matched security constraints during implementation and review
     performance-optimization               → Measure and address relevant performance constraints

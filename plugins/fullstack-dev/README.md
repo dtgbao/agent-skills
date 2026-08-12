@@ -2,8 +2,8 @@
 
 Guide full-stack application development from focused context, decision discovery, requirements,
 and planning through architecture, design patterns, data, APIs, NestJS and FastAPI services,
-source-verified implementation, Python and frontend testing, operations, migration, review, and
-launch.
+source-verified implementation, Python and frontend testing, behavior-preserving refactoring,
+operations, migration, review, and launch.
 
 ## Install
 
@@ -35,6 +35,7 @@ Start a new Codex task after installation so all bundled skills are available.
 | Testing       | [`test-driven-development`](skills/test-driven-development/SKILL.md)                   | Drive every behavior change through a failing test.             |
 | ↳ Python      | [`python-testing-best-practices`](skills/python-testing-best-practices/SKILL.md)       | Apply reliable Python, pytest, and FastAPI testing patterns.     |
 | ↳ Vitest      | [`vitest-best-practices`](skills/vitest-best-practices/SKILL.md)                       | Write reliable Vitest and component tests.                       |
+| Refactoring   | [`refactoring`](skills/refactoring/SKILL.md)                                           | Diagnose code smells and apply behavior-preserving techniques.   |
 | Frontend      | [`frontend-ui-engineering`](skills/frontend-ui-engineering/SKILL.md)                   | Build accessible, responsive interfaces against contracts.      |
 | ↳ React       | [`react-best-practices`](skills/react-best-practices/SKILL.md)                         | Apply React architecture guidance within frontend work.         |
 | Automation    | [`ci-cd-and-automation`](skills/ci-cd-and-automation/SKILL.md)                         | Automate repository quality and deployment gates.               |
@@ -55,8 +56,10 @@ Apply these skills wherever their concern appears:
   builds, and runtime behavior.
 - [`deprecation-and-migration`](skills/deprecation-and-migration/SKILL.md) for replacing or removing
   existing systems safely.
+- [`refactoring`](skills/refactoring/SKILL.md) for diagnosing code smells and selecting named,
+  behavior-preserving transformations.
 - [`code-simplification`](skills/code-simplification/SKILL.md) for focused,
-  behavior-preserving clarity improvements.
+  behavior-preserving clarity improvements; use it with `refactoring` when both concerns apply.
 - [`code-review-and-quality`](skills/code-review-and-quality/SKILL.md) before merge or release.
 
 Use the bundled database skill when it matches the project's engine. Otherwise, follow the
