@@ -34,7 +34,8 @@ Start a new Codex task after installation so all bundled skills are available.
 | ↳ FastAPI     | [`fastapi-best-practices`](skills/fastapi-best-practices/SKILL.md)                     | Apply source-verified Python and FastAPI production practices.   |
 | Testing       | [`test-driven-development`](skills/test-driven-development/SKILL.md)                   | Drive every behavior change through a failing test.             |
 | ↳ Python      | [`python-testing-best-practices`](skills/python-testing-best-practices/SKILL.md)       | Apply reliable Python, pytest, and FastAPI testing patterns.     |
-| ↳ Vitest      | [`vitest-best-practices`](skills/vitest-best-practices/SKILL.md)                       | Write reliable Vitest and component tests.                       |
+| ↳ Vitest API  | [`vitest`](skills/vitest/SKILL.md)                                                     | Look up current Vitest APIs, configuration, and CLI behavior.    |
+| ↳ Practices   | [`vitest-best-practices`](skills/vitest-best-practices/SKILL.md)                       | Write reliable Vitest and component tests.                       |
 | Refactoring   | [`refactoring`](skills/refactoring/SKILL.md)                                           | Diagnose code smells and apply behavior-preserving techniques.   |
 | Frontend      | [`frontend-ui-engineering`](skills/frontend-ui-engineering/SKILL.md)                   | Build accessible, responsive interfaces against contracts.      |
 | ↳ React       | [`react-best-practices`](skills/react-best-practices/SKILL.md)                         | Apply React architecture guidance within frontend work.         |

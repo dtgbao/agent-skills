@@ -39,7 +39,9 @@ Task arrives
     ├── Writing or running tests?
     │   ├── Changing behavior or fixing a bug test-first? ───────→ test-driven-development
     │   ├── Using Python, pytest, or testing FastAPI? ───────────→ python-testing-best-practices
-    │   └── Configuring or using Vitest? ────────────────────────→ vitest-best-practices
+    │   └── Using Vitest?
+    │       ├── Need API details or config? ─────────────────────→ vitest
+    │       └── Writing, reviewing, or stabilizing tests? ───────→ vitest-best-practices
     ├── Something broke? ────────────────────────────────────────→ debugging-and-error-recovery
     ├── Reviewing code? ─────────────────────────────────────────→ code-review-and-quality
     │   ├── Named refactoring or code smell? ────────────────────→ refactoring
@@ -152,37 +154,9 @@ Per-skill verification is the local check. The project-wide bar that applies to 
 
 ## Skill Rules
 
-1. Use `grilling` when requirements are too vague to specify safely, materially different
-   interpretations remain, or the user asks to stress-test their thinking. Ask one question at a
-   time and continue only after the user confirms shared understanding.
-2. Start with `spec-driven-development` when a non-trivial feature or complex defect lacks approved,
-   repository-grounded requirements. Do not force a full spec onto a trivial local edit.
-3. Use `planning-and-task-breakdown` after requirements are clear when implementation work needs
-   dependency ordering, vertical slices, task sizing, or explicit checkpoints.
-4. Use `context-engineering` before implementation when context is missing, stale, or overloaded.
-   Load only the relevant rules, requirements, source, tests, and failure evidence, then refresh that
-   context when the task changes.
-5. Use `source-driven-development` before implementation decisions that depend on version-sensitive
-   frameworks, APIs, or external systems, and verify those decisions against official sources.
-6. Apply security, performance, observability, and documentation alongside the implementation phase
-   whenever their triggers match.
-7. On failure, switch to `debugging-and-error-recovery`; resume the interrupted workflow only after
-   its verification passes.
-8. Use `vitest-best-practices` when configuring Vitest or writing, reviewing, or stabilizing Vitest
-   tests, including component testing and MSW integrations.
-9. Use `python-testing-best-practices` when configuring pytest or writing, reviewing, or stabilizing
-   Python tests, including FastAPI application, dependency, ASGI transport, and lifespan tests.
-10. Use `design-pattern` when selecting, implementing, comparing, or reviewing Gang of Four patterns
-    in object-oriented TypeScript code. Do not introduce a pattern for hypothetical flexibility.
-11. Use `nestjs-best-practices` when writing, reviewing, or refactoring a NestJS backend, alongside
-    other matched API, testing, security, performance, database, observability, or delivery skills.
-12. Use `fastapi-best-practices` when writing, reviewing, or refactoring a FastAPI backend,
-    alongside source verification and other matched API, testing, security, performance, database,
-    observability, or delivery skills.
-13. Use `refactoring` when diagnosing code smells, selecting a named refactoring technique, or
-    restructuring existing code without changing observable behavior. Combine it with
-    `code-simplification` when the goal also includes broad clarity or complexity reduction.
-14. Map concerns not covered by a sibling skill to an explicitly named repository-native process.
+1. **Check for an applicable skill before starting work.** Skills encode processes that prevent common mistakes.
+2. **Skills are workflows, not suggestions.** Follow the steps in order. Don't skip verification steps.
+3. **Multiple skills can apply.** A feature implementation might involve `grilling` → `spec-driven-development` → `planning-and-task-breakdown` → `test-driven-development` → `code-review-and-quality` → `refactoring`, `code-simplification` → `shipping-and-launch` in sequence.
 
 ## Lifecycle Sequence
 
@@ -204,6 +178,7 @@ For a complete feature, the typical skill sequence is:
     react-best-practices                   → Apply React TypeScript architecture practices when relevant
 11. test-driven-development                → Prove each behavior change while implementing slices
     python-testing-best-practices          → Apply Python, pytest, and FastAPI testing practices when relevant
+    vitest                                 → Look up exact Vitest APIs, configuration, and version-specific behavior
     vitest-best-practices                  → Configure and apply Vitest, component testing, and MSW practices when relevant
 12. debugging-and-error-recovery           → Diagnose failures and recover the interrupted workflow when needed
 13. code-review-and-quality                → Review the completed change across quality dimensions

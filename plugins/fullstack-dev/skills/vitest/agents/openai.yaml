@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vitest"
+  short_description: "Look up Vitest APIs and configuration"
+  default_prompt: "Use $vitest to verify and apply current Vitest APIs, CLI options, configuration, mocking, coverage, and project behavior."
