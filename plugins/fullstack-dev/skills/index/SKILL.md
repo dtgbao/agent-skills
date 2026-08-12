@@ -13,8 +13,7 @@ orders dependencies, and maps concerns outside the bundle to repository-native p
 
 ## Skill Discovery
 
-When a task arrives, identify its phase and concerns, then read every matching sibling skill before
-acting:
+When a task arrives, identify its phase and concerns, then read every matching sibling skill before acting:
 
 ```text
 Task arrives
@@ -55,17 +54,6 @@ Task arrives
     ├── Adding logs, metrics, traces, or alerts? ────────────────→ observability-and-instrumentation
     └── Deploying or launching? ─────────────────────────────────→ shipping-and-launch
 ```
-
-Use `supabase-postgres-best-practices` only when the project's database matches. For another engine,
-follow the repository's native database guidance and continue routing the remaining concerns.
-Use `design-pattern` only when object-oriented TypeScript code has a concrete design pressure that a
-pattern addresses. Use `refactoring` for smell-driven or named, behavior-preserving transformations;
-use `code-simplification` for general clarity and complexity reduction, and load both when both
-concerns apply. Use `nestjs-best-practices` only when the backend service uses NestJS. Use
-`fastapi-best-practices` only when the backend service uses FastAPI; detect Python, FastAPI,
-Pydantic, ORM, and ASGI server versions before loading version-sensitive rules. Use
-`python-testing-best-practices` for Python and pytest suites, including FastAPI application tests;
-detect the test tools and their versions before loading conditional rules.
 
 ## Core Operating Behaviors
 
@@ -197,6 +185,3 @@ For a complete feature, the typical skill sequence is:
 Not every task needs every skill. Run matched cross-cutting skills alongside implementation rather
 than waiting until the numbered position. A focused bug fix may need only
 `debugging-and-error-recovery` → `test-driven-development` → `code-review-and-quality`.
-
-Routing is complete when every task concern maps to a sibling skill or a named repository-native
-process.
