@@ -1,0 +1,4 @@
+interface:
+  display_name: "FastAPI Best Practices"
+  short_description: "Build robust Python 3.11+ FastAPI services"
+  default_prompt: "Use $fastapi-best-practices to write, review, or refactor a production FastAPI service."

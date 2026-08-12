@@ -1,0 +1,4 @@
+interface:
+  display_name: "Python Testing Best Practices"
+  short_description: "Build reliable Python and FastAPI test suites"
+  default_prompt: "Use $python-testing-best-practices to write, review, or improve a Python test suite."

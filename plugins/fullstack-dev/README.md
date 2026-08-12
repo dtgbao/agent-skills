@@ -1,8 +1,9 @@
 # Fullstack Dev Plugin
 
 Guide full-stack application development from focused context, decision discovery, requirements,
-and planning through architecture, design patterns, data, APIs, NestJS services, source-verified
-implementation, frontend delivery, operations, migration, review, and launch.
+and planning through architecture, design patterns, data, APIs, NestJS and FastAPI services,
+source-verified implementation, Python and frontend testing, operations, migration, review, and
+launch.
 
 ## Install
 
@@ -30,7 +31,9 @@ Start a new Codex task after installation so all bundled skills are available.
 | Database      | [`supabase-postgres-best-practices`](skills/supabase-postgres-best-practices/SKILL.md) | Apply specialized database guidance when its engine matches.    |
 | Interfaces    | [`api-and-interface-design`](skills/api-and-interface-design/SKILL.md)                 | Define service boundaries and typed API contracts.              |
 | Backend       | [`nestjs-best-practices`](skills/nestjs-best-practices/SKILL.md)                       | Apply production-ready NestJS architecture and practices.       |
+| ↳ FastAPI     | [`fastapi-best-practices`](skills/fastapi-best-practices/SKILL.md)                     | Apply source-verified Python and FastAPI production practices.   |
 | Testing       | [`test-driven-development`](skills/test-driven-development/SKILL.md)                   | Drive every behavior change through a failing test.             |
+| ↳ Python      | [`python-testing-best-practices`](skills/python-testing-best-practices/SKILL.md)       | Apply reliable Python, pytest, and FastAPI testing patterns.     |
 | ↳ Vitest      | [`vitest-best-practices`](skills/vitest-best-practices/SKILL.md)                       | Write reliable Vitest and component tests.                       |
 | Frontend      | [`frontend-ui-engineering`](skills/frontend-ui-engineering/SKILL.md)                   | Build accessible, responsive interfaces against contracts.      |
 | ↳ React       | [`react-best-practices`](skills/react-best-practices/SKILL.md)                         | Apply React architecture guidance within frontend work.         |

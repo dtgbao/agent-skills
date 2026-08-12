@@ -31,11 +31,13 @@ Task arrives
     │   │   └── Using PostgreSQL? ───────────────────────────────→ supabase-postgres-best-practices
     │   ├── API or public contract work? ────────────────────────→ api-and-interface-design
     │   ├── Backend service work?
-    │   │   └── Using NestJS? ───────────────────────────────────→ nestjs-best-practices
+    │   │   ├── Using NestJS? ───────────────────────────────────→ nestjs-best-practices
+    │   │   └── Using FastAPI? ──────────────────────────────────→ fastapi-best-practices
     │   └── UI work? ────────────────────────────────────────────→ frontend-ui-engineering
     │       └── React TypeScript best practices? ────────────────→ react-best-practices
     ├── Writing or running tests?
     │   ├── Changing behavior or fixing a bug test-first? ───────→ test-driven-development
+    │   ├── Using Python, pytest, or testing FastAPI? ────────────→ python-testing-best-practices
     │   └── Configuring or using Vitest? ────────────────────────→ vitest-best-practices
     ├── Something broke? ────────────────────────────────────────→ debugging-and-error-recovery
     ├── Reviewing code? ─────────────────────────────────────────→ code-review-and-quality
@@ -53,7 +55,11 @@ Task arrives
 Use `supabase-postgres-best-practices` only when the project's database matches. For another engine,
 follow the repository's native database guidance and continue routing the remaining concerns.
 Use `design-pattern` only when object-oriented TypeScript code has a concrete design pressure that a
-pattern addresses. Use `nestjs-best-practices` only when the backend service uses NestJS.
+pattern addresses. Use `nestjs-best-practices` only when the backend service uses NestJS. Use
+`fastapi-best-practices` only when the backend service uses FastAPI; detect Python, FastAPI,
+Pydantic, ORM, and ASGI server versions before loading version-sensitive rules. Use
+`python-testing-best-practices` for Python and pytest suites, including FastAPI application tests;
+detect the test tools and their versions before loading conditional rules.
 
 ## Core Operating Behaviors
 
@@ -160,11 +166,16 @@ Per-skill verification is the local check. The project-wide bar that applies to 
    its verification passes.
 8. Use `vitest-best-practices` when configuring Vitest or writing, reviewing, or stabilizing Vitest
    tests, including component testing and MSW integrations.
-9. Use `design-pattern` when selecting, implementing, comparing, or reviewing Gang of Four patterns
+9. Use `python-testing-best-practices` when configuring pytest or writing, reviewing, or stabilizing
+   Python tests, including FastAPI application, dependency, ASGI transport, and lifespan tests.
+10. Use `design-pattern` when selecting, implementing, comparing, or reviewing Gang of Four patterns
    in object-oriented TypeScript code. Do not introduce a pattern for hypothetical flexibility.
-10. Use `nestjs-best-practices` when writing, reviewing, or refactoring a NestJS backend, alongside
+11. Use `nestjs-best-practices` when writing, reviewing, or refactoring a NestJS backend, alongside
     other matched API, testing, security, performance, database, observability, or delivery skills.
-11. Map concerns not covered by a sibling skill to an explicitly named repository-native process.
+12. Use `fastapi-best-practices` when writing, reviewing, or refactoring a FastAPI backend,
+    alongside source verification and other matched API, testing, security, performance, database,
+    observability, or delivery skills.
+13. Map concerns not covered by a sibling skill to an explicitly named repository-native process.
 
 ## Lifecycle Sequence
 
@@ -181,9 +192,11 @@ For a complete feature, the typical skill sequence is:
 7.  supabase-postgres-best-practices       → Handle PostgreSQL schema, query, configuration, and operational concerns
 8.  api-and-interface-design               → Establish applicable API and public contracts
 9.  nestjs-best-practices                  → Apply NestJS architecture and implementation guidance when applicable
+    fastapi-best-practices                 → Apply Python and FastAPI guidance when applicable
 10. frontend-ui-engineering                → Build applicable UI slices
     react-best-practices                   → Apply React TypeScript architecture practices when relevant
 11. test-driven-development                → Prove each behavior change while implementing slices
+    python-testing-best-practices          → Apply Python, pytest, and FastAPI testing practices when relevant
     vitest-best-practices                  → Configure and apply Vitest, component testing, and MSW practices when relevant
 12. debugging-and-error-recovery           → Diagnose failures and recover the interrupted workflow when needed
 13. code-review-and-quality                → Review the completed change across quality dimensions

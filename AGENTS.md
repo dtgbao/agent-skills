@@ -13,10 +13,6 @@ same change.
 
 ## Skill and Plugin Dependency Graph
 
-Standalone skills and plugin-bundled skills are separate deliverables. Solid arrows below are
-router or workflow handoffs. Dotted arrows mark optional use or shared lineage; they are not runtime
-imports and do not synchronize files automatically.
-
 ```mermaid
 flowchart LR
     subgraph Standalone["skills/ — standalone skills"]
@@ -78,6 +74,7 @@ Use Semantic Versioning:
 | Minor   | Backward-compatible feature | New behavior without breaking existing clients or users. |
 | Patch   | Backward-compatible fix     | Corrective change without intended behavioral break.     |
 
-Repository-only changes that do not alter a packaged plugin do not require a plugin version bump.
-Before finishing a plugin change, verify that its version increased from the previous committed
-value and that the manifest still passes the Agent Plugins schema.
+- Repository-only changes that do not alter a packaged plugin or its current changes are unstaged
+  **do not require a plugin version bump**.
+- Before finishing a plugin change, verify that its version increased from the previous committed
+  value and that the manifest still passes the Agent Plugins schema.
