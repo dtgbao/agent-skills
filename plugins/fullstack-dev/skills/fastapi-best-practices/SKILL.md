@@ -55,7 +55,7 @@ deployment-specific rules only when the project uses those tools.
 
 ### Dependency Injection
 
-- `di-declare-annotated-dependencies` - Compose reusable `Annotated` sub-dependency graphs.
+- `di-use-request-scoped-unit-of-work` - Commit one shared Unit of Work at the request boundary.
 - `di-use-yield-for-cleanup` - Use generator dependencies for request-scoped cleanup.
 - `di-understand-cache-and-scope` - Choose dependency cache and teardown scope deliberately.
 
