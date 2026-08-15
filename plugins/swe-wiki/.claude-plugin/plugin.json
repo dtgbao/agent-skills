@@ -1,0 +1,18 @@
+{
+	"$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+	"name": "swe-wiki",
+	"displayName": "SWE Wiki",
+	"version": "0.3.0",
+	"description": "Maintain a persistent, domain-first Markdown knowledge base for software engineering decisions, blueprints, practices, conventions, systems, and reusable answers.",
+	"author": {
+		"name": "Bao Dang",
+		"url": "https://github.com/dtgbao"
+	},
+	"repository": "https://github.com/dtgbao/agent-skills",
+	"keywords": [
+		"software-engineering",
+		"knowledge-base",
+		"wiki",
+		"git"
+	]
+}

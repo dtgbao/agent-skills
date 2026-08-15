@@ -1,0 +1,23 @@
+{
+	"$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+	"name": "bao-plugins",
+	"description": "Reusable software-engineering workflows and knowledge tools for Claude Code.",
+	"owner": {
+		"name": "Bao Dang",
+		"url": "https://github.com/dtgbao"
+	},
+	"plugins": [
+		{
+			"name": "fullstack-dev",
+			"source": "./plugins/fullstack-dev"
+		},
+		{
+			"name": "spec-workflow",
+			"source": "./plugins/spec-workflow"
+		},
+		{
+			"name": "swe-wiki",
+			"source": "./plugins/swe-wiki"
+		}
+	]
+}

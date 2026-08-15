@@ -1,0 +1,22 @@
+{
+	"$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+	"name": "fullstack-dev",
+	"displayName": "Fullstack Development",
+	"version": "1.6.0",
+	"description": "End-to-end guidance for full-stack applications, from focused context, requirements, and planning through architecture, design patterns, data, APIs, NestJS and FastAPI services, source-verified implementation, behavior-preserving refactoring, testing, React delivery, and launch.",
+	"author": {
+		"name": "Bao Dang",
+		"url": "https://github.com/dtgbao"
+	},
+	"repository": "https://github.com/dtgbao/agent-skills",
+	"keywords": [
+		"fullstack",
+		"requirements",
+		"planning",
+		"architecture",
+		"backend",
+		"frontend",
+		"testing",
+		"delivery"
+	]
+}

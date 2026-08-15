@@ -1,6 +1,6 @@
 # Agent Skills
 
-Small collection of Codex-oriented skills, plugins, and local agent presets.
+Small collection of reusable skills, plugins, and local agent presets for Codex and Claude Code.
 
 This repo is a source tree for reusable instruction bundles. Standalone skills live under `skills/`, while installable plugins live under `plugins/` and can bundle multiple related skills.
 
@@ -23,6 +23,22 @@ This repo is a source tree for reusable instruction bundles. Standalone skills l
 | [`spec-workflow`](plugins/spec-workflow/README.md) | Guide requirements, design, bug-fix, quick-spec, task-planning, and execution workflows.                                 | `spec-new`, spec phases, execution, status, and `steering-setup` |
 | [`swe-wiki`](plugins/swe-wiki/README.md)           | Maintain a domain-first, Git-synced software engineering knowledge base across computers.                                | `swe-wiki`                                                       |
 
+## Install plugins with Claude Code
+
+Add the GitHub repository as a marketplace:
+
+```text
+/plugin marketplace add dtgbao/agent-skills
+```
+
+Then install any bundled plugin:
+
+```text
+/plugin install fullstack-dev@bao-plugins
+/plugin install spec-workflow@bao-plugins
+/plugin install swe-wiki@bao-plugins
+```
+
 ## Agent presets
 
 The `.codex/agents/` directory currently contains:
@@ -37,6 +53,8 @@ The `.codex/agents/` directory currently contains:
 
 ```text
 .
+├── .claude-plugin/
+│   └── marketplace.json # Claude Code marketplace metadata
 ├── .agents/
 │   └── plugins/         # Local plugin marketplace metadata
 ├── .codex/
@@ -44,8 +62,9 @@ The `.codex/agents/` directory currently contains:
 ├── plugins/
 │   └── <plugin>/
 │       ├── plugin.json       # Portable Agent Plugins manifest
-│       ├── .claude-plugin/   # Optional Claude-specific compatibility metadata
-│       └── skills/      # Skills bundled by the plugin
+│       ├── .claude-plugin/   # Claude Code plugin metadata
+│       ├── commands/         # Optional Claude Code command entrypoints
+│       └── skills/           # Skills bundled by the plugin
 └── skills/
     ├── <skill>/SKILL.md # Main instructions
     ├── <skill>/references/

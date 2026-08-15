@@ -33,6 +33,13 @@ SPECIFY ──→ PLAN ──→ TASKS ──→ IMPLEMENT
 
 ### Phase 1: Specify
 
+Before asking clarifying questions or drafting the spec, read
+[`references/show-me.md`](references/show-me.md) in full. Treat it as a presentation layer over the
+required spec content, not as a replacement for that content. Apply its smallest-useful-view
+guidance both while discussing the spec with the human and in the saved `spec.md`. Add a visual only
+when it materially improves understanding, place it next to the short text it supports, and prefer
+prose when a visual would add noise.
+
 Start with a high-level vision. Ask the human clarifying questions until requirements are concrete.
 
 **Surface assumptions immediately.** Before writing any spec content, list what you're assuming:
@@ -100,11 +107,11 @@ Don't silently fill in ambiguous requirements. The spec's entire purpose is to s
 
 ## Project/Feature Structure
 
-[Directory layout with descriptions]
+[Directory layout with descriptions. Use a shallow file tree when it makes ownership clearer.]
 
 ## Code Style
 
-[Example snippet + key conventions]
+[Whole-block example or focused diff, whichever makes the intended style clearer, plus key conventions]
 
 ## Testing Strategy
 
@@ -224,3 +231,5 @@ Before proceeding to implementation, confirm:
 - [ ] Success criteria are specific and testable
 - [ ] Boundaries (Always/Ask First/Never) are defined
 - [ ] The spec is saved to `docs/tasks/<work-slug>/spec.md`
+- [ ] Any visuals use the smallest useful form, sit beside the text they support, and omit irrelevant
+      detail; a prose-only spec is valid when prose is clearer

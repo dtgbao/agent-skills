@@ -2,7 +2,7 @@
 
 Maintain a persistent, domain-first Markdown knowledge base for software engineering decisions, blueprints, practices, conventions, systems, and reusable answers. The wiki lives in a dedicated Git repository so it can be synchronized safely across computers.
 
-## Install
+## Install with Codex
 
 Add this repository as a Codex marketplace, then install the bundled plugin:
 
@@ -13,9 +13,18 @@ codex plugin add swe-wiki@bao-plugins
 
 Start a new Codex task after installation so the bundled skill is available.
 
+## Install with Claude Code
+
+Add this repository as a marketplace, then install the plugin:
+
+```text
+/plugin marketplace add dtgbao/agent-skills
+/plugin install swe-wiki@bao-plugins
+```
+
 ## First Use
 
-Ask Codex to set up the SWE wiki. It will ask for:
+Ask Codex or Claude Code to set up the SWE wiki. It will ask for:
 
 1. A local wiki directory, defaulting to `~/.swe-wiki`.
 2. An existing Git repository used for synchronization.
@@ -56,7 +65,7 @@ raw/
         └── source-files
 ```
 
-The root index links top-level domains; every nested wiki directory has its own local index. Page kind remains frontmatter metadata. Before ingestion, Codex reads the source, recommends a primary domain and alternatives, and waits for approval.
+The root index links top-level domains; every nested wiki directory has its own local index. Page kind remains frontmatter metadata. Before ingestion, the agent reads the source, recommends a primary domain and alternatives, and waits for approval.
 
 The CLI requires that approved domain explicitly:
 

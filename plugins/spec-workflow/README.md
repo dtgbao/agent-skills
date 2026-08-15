@@ -16,6 +16,15 @@ tells Claude to read and follow the matching skill — commands exist purely
 for discoverable, predictable `/name` invocation; all the actual instructions
 live in one place.
 
+## Install with Claude Code
+
+Add this repository as a marketplace, then install the plugin:
+
+```text
+/plugin marketplace add dtgbao/agent-skills
+/plugin install spec-workflow@bao-plugins
+```
+
 ## Start here: `/spec-new`
 
 If you're not sure which workflow fits, run `/spec-new <what you want to
