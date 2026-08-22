@@ -6,14 +6,16 @@ This repo is a source tree for reusable instruction bundles. Standalone skills l
 
 ## Standalone skills
 
-| Skill                     | Purpose                                                                                      |
-| ------------------------- | -------------------------------------------------------------------------------------------- |
-| `design-pattern`          | Provide TypeScript implementations and tradeoffs for the 22 Gang of Four design patterns.    |
-| `frontend-scaffold`       | Guide framework-agnostic frontend architecture, tooling choices, and project scaffolding.    |
-| `frontend-ui-engineering` | Build accessible, responsive, production-quality interfaces and components.                  |
-| `orchestrator`            | Plan multi-step work and delegate clean, reviewable subtasks.                                |
-| `react-best-practices`    | Provide focused React and TypeScript architecture, state, composition, and testing guidance. |
-| `web-search`              | Research current technical guidance and return concise, source-backed summaries.             |
+| Skill                     | Purpose                                                                                              |
+| ------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `design-pattern`          | Provide TypeScript implementations and tradeoffs for the 22 Gang of Four design patterns.            |
+| `code-architect`          | Design decisive feature architectures and implementation blueprints from existing codebase patterns. |
+| `code-explore`            | Trace feature execution paths, architecture layers, dependencies, and implementation details.        |
+| `frontend-scaffold`       | Guide framework-agnostic frontend architecture, tooling choices, and project scaffolding.            |
+| `frontend-ui-engineering` | Build accessible, responsive, production-quality interfaces and components.                          |
+| `orchestrator`            | Plan multi-step work and delegate clean, reviewable subtasks.                                        |
+| `react-best-practices`    | Provide focused React and TypeScript architecture, state, composition, and testing guidance.         |
+| `web-search`              | Research current technical guidance and return concise, source-backed summaries.                     |
 
 ## Plugins
 
@@ -43,9 +45,6 @@ Then install any bundled plugin:
 
 The `.codex/agents/` directory currently contains:
 
-- `code_architect` for feature architecture and implementation planning
-- `code_explorer` for read-only codebase analysis
-- `code_reviewer` for focused code review
 - `jira_explorer` for read-only Jira issue exploration
 - `web_searcher` for invoking the web-search workflow
 

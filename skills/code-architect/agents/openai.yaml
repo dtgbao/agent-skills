@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Architect"
+  short_description: "Designs feature architectures by analyzing existing codebase patterns and conventions, then providing comprehensive implementation blueprints with specific files to create/modify, component designs, data flows, and build sequences"
+  default_prompt: "Use $code-architect to design the architecture and implementation blueprint for this feature."
