@@ -1,7 +1,7 @@
 # Agent Skills
 
-Small collection of reusable skills, plugins, and local agent presets for Codex, Claude Code, and
-GitHub Copilot.
+Small collection of reusable skills, plugins, and local agent presets for Codex, Cursor, Claude
+Code, and GitHub Copilot.
 
 This repo is a source tree for reusable instruction bundles. Standalone skills live under `skills/`, while installable plugins live under `plugins/` and can bundle multiple related skills.
 
@@ -58,6 +58,15 @@ copilot plugin install spec-workflow@bao-plugins
 copilot plugin install swe-wiki@bao-plugins
 ```
 
+## Use plugins with Cursor
+
+Cursor supports the root Agent Plugins manifests in this repository without conversion. To use the
+collection as a Cursor team marketplace, open **Dashboard → Plugins**, add a marketplace, choose
+**Import from Repo**, and enter `https://github.com/dtgbao/agent-skills`.
+
+To publish a plugin in Cursor's public marketplace, submit this repository for review at
+[cursor.com/marketplace/publish](https://cursor.com/marketplace/publish).
+
 ## Agent presets
 
 The `.codex/agents/` directory currently contains:
@@ -71,6 +80,8 @@ The `.codex/agents/` directory currently contains:
 .
 ├── .claude-plugin/
 │   └── marketplace.json # Claude Code marketplace metadata
+├── .cursor-plugin/
+│   └── marketplace.json # Cursor marketplace metadata
 ├── .github/
 │   └── plugin/
 │       └── marketplace.json # GitHub Copilot marketplace metadata
