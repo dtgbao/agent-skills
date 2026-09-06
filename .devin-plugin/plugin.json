@@ -1,0 +1,32 @@
+{
+	"name": "bao-plugins",
+	"version": "1.0.0",
+	"description": "Meta-plugin that installs Bao's reusable software-engineering workflows and knowledge tools.",
+	"author": {
+		"name": "Bao Dang"
+	},
+	"repository": "https://github.com/dtgbao/agent-skills",
+	"keywords": [
+		"devin",
+		"software-engineering",
+		"skills",
+		"marketplace"
+	],
+	"requiredPlugins": [
+		{
+			"source": "git-subdir",
+			"url": "https://github.com/dtgbao/agent-skills.git",
+			"path": "plugins/fullstack-dev"
+		},
+		{
+			"source": "git-subdir",
+			"url": "https://github.com/dtgbao/agent-skills.git",
+			"path": "plugins/spec-workflow"
+		},
+		{
+			"source": "git-subdir",
+			"url": "https://github.com/dtgbao/agent-skills.git",
+			"path": "plugins/swe-wiki"
+		}
+	]
+}

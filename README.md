@@ -1,7 +1,7 @@
 # Agent Skills
 
 Small collection of reusable skills, plugins, and local agent presets for Codex, Cursor, Claude
-Code, and GitHub Copilot.
+Code, Devin, and GitHub Copilot.
 
 This repo is a source tree for reusable instruction bundles. Standalone skills live under `skills/`, while installable plugins live under `plugins/` and can bundle multiple related skills.
 
@@ -67,6 +67,19 @@ collection as a Cursor team marketplace, open **Dashboard → Plugins**, add a m
 To publish a plugin in Cursor's public marketplace, submit this repository for review at
 [cursor.com/marketplace/publish](https://cursor.com/marketplace/publish).
 
+## Install plugins with Devin
+
+Devin plugin support is currently a closed beta. After access is enabled, install the repository's
+meta-plugin to install all three bundled plugins:
+
+```bash
+devin plugins install dtgbao/agent-skills
+```
+
+For managed distribution, add `"dtgbao/agent-skills"` to `requiredPlugins` under
+**Settings → Resources → Plugins**. The root Devin meta-plugin pulls in each plugin from its
+repository subdirectory.
+
 ## Agent presets
 
 The `.codex/agents/` directory currently contains:
@@ -82,6 +95,8 @@ The `.codex/agents/` directory currently contains:
 │   └── marketplace.json # Claude Code marketplace metadata
 ├── .cursor-plugin/
 │   └── marketplace.json # Cursor marketplace metadata
+├── .devin-plugin/
+│   └── plugin.json      # Devin marketplace meta-plugin
 ├── .github/
 │   └── plugin/
 │       └── marketplace.json # GitHub Copilot marketplace metadata
