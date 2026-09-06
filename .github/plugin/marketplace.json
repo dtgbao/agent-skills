@@ -1,0 +1,30 @@
+{
+	"name": "bao-plugins",
+	"owner": {
+		"name": "Bao Dang"
+	},
+	"metadata": {
+		"description": "Reusable software-engineering workflows and knowledge tools for GitHub Copilot.",
+		"version": "1.0.0"
+	},
+	"plugins": [
+		{
+			"name": "fullstack-dev",
+			"description": "End-to-end guidance for full-stack applications, from focused context, requirements, and planning through architecture, implementation, testing, and launch.",
+			"version": "1.6.0",
+			"source": "./plugins/fullstack-dev"
+		},
+		{
+			"name": "spec-workflow",
+			"description": "Spec-driven development workflows for requirements, design, bug fixes, quick specs, task planning, and execution.",
+			"version": "2.0.6",
+			"source": "./plugins/spec-workflow"
+		},
+		{
+			"name": "swe-wiki",
+			"description": "Domain-first, Git-synced software engineering knowledge base for coding agents.",
+			"version": "0.3.0",
+			"source": "./plugins/swe-wiki"
+		}
+	]
+}

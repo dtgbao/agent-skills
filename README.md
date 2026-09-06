@@ -1,6 +1,7 @@
 # Agent Skills
 
-Small collection of reusable skills, plugins, and local agent presets for Codex and Claude Code.
+Small collection of reusable skills, plugins, and local agent presets for Codex, Claude Code, and
+GitHub Copilot.
 
 This repo is a source tree for reusable instruction bundles. Standalone skills live under `skills/`, while installable plugins live under `plugins/` and can bundle multiple related skills.
 
@@ -41,6 +42,22 @@ Then install any bundled plugin:
 /plugin install swe-wiki@bao-plugins
 ```
 
+## Install plugins with GitHub Copilot
+
+Add the GitHub repository as a Copilot plugin marketplace:
+
+```bash
+copilot plugin marketplace add dtgbao/agent-skills
+```
+
+Then install any bundled plugin:
+
+```bash
+copilot plugin install fullstack-dev@bao-plugins
+copilot plugin install spec-workflow@bao-plugins
+copilot plugin install swe-wiki@bao-plugins
+```
+
 ## Agent presets
 
 The `.codex/agents/` directory currently contains:
@@ -54,6 +71,9 @@ The `.codex/agents/` directory currently contains:
 .
 ├── .claude-plugin/
 │   └── marketplace.json # Claude Code marketplace metadata
+├── .github/
+│   └── plugin/
+│       └── marketplace.json # GitHub Copilot marketplace metadata
 ├── .agents/
 │   └── plugins/         # Local plugin marketplace metadata
 ├── .codex/
