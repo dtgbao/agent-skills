@@ -12,7 +12,7 @@
 		"skills",
 		"marketplace"
 	],
-	"requiredPlugins": [
+	"optionalPlugins": [
 		{
 			"source": "git-subdir",
 			"url": "https://github.com/dtgbao/agent-skills.git",
