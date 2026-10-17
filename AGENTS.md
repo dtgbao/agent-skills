@@ -39,19 +39,6 @@ flowchart LR
         FIndex --> FOther
     end
 
-    subgraph Spec["plugins/spec-workflow/skills/"]
-        PNew["spec-new router"]
-        PPhases["requirements / design / bugfix / quick"]
-        PTasks["spec-tasks"]
-        PExecute["spec-execute"]
-        PSteering["steering-setup"]
-        PStatus["spec-status"]
-
-        PNew --> PPhases --> PTasks --> PExecute
-        PSteering -. "optional project context" .-> PPhases
-        PStatus -. "observes artifacts and progress" .-> PPhases
-    end
-
     subgraph Wiki["plugins/swe-wiki/skills/"]
         SWiki["swe-wiki (self-contained)"]
     end

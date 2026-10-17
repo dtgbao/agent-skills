@@ -21,11 +21,6 @@
 		{
 			"source": "git-subdir",
 			"url": "https://github.com/dtgbao/agent-skills.git",
-			"path": "plugins/spec-workflow"
-		},
-		{
-			"source": "git-subdir",
-			"url": "https://github.com/dtgbao/agent-skills.git",
 			"path": "plugins/swe-wiki"
 		}
 	]

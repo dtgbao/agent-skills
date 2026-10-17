@@ -12,10 +12,6 @@
 			"source": "./plugins/fullstack-dev"
 		},
 		{
-			"name": "spec-workflow",
-			"source": "./plugins/spec-workflow"
-		},
-		{
 			"name": "swe-wiki",
 			"source": "./plugins/swe-wiki"
 		}
