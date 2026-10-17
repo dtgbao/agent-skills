@@ -1,0 +1,19 @@
+{
+	"$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+	"name": "sdd",
+	"version": "0.1.0",
+	"description": "Spec-driven development: requirements or bugfix to design to tasks, with approval gates, requirements analysis, file sync, and wave execution.",
+	"author": {
+		"name": "Bao Dang",
+		"url": "https://github.com/dtgbao"
+	},
+	"repository": "https://github.com/dtgbao/agent-skills",
+	"keywords": [
+		"sdd",
+		"spec-driven",
+		"requirements",
+		"EARS",
+		"property-based-testing",
+		"subagents"
+	]
+}

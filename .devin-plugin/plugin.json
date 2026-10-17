@@ -21,6 +21,11 @@
 		{
 			"source": "git-subdir",
 			"url": "https://github.com/dtgbao/agent-skills.git",
+			"path": "plugins/sdd"
+		},
+		{
+			"source": "git-subdir",
+			"url": "https://github.com/dtgbao/agent-skills.git",
 			"path": "plugins/swe-wiki"
 		}
 	]

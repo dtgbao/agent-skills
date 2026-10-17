@@ -39,6 +39,16 @@ flowchart LR
         FIndex --> FOther
     end
 
+    subgraph SDD["plugins/sdd/skills/"]
+        DNew["spec-new"]
+        DAnalyze["spec-analyze"]
+        DSync["spec-sync"]
+        DRun["spec-run"]
+
+        DNew --> DAnalyze --> DRun
+        DSync -. "realigns tasks.md" .-> DRun
+    end
+
     subgraph Wiki["plugins/swe-wiki/skills/"]
         SWiki["swe-wiki (self-contained)"]
     end

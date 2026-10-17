@@ -12,6 +12,10 @@
 			"source": "./plugins/fullstack-dev"
 		},
 		{
+			"name": "sdd",
+			"source": "./plugins/sdd"
+		},
+		{
 			"name": "swe-wiki",
 			"source": "./plugins/swe-wiki"
 		}

@@ -15,6 +15,12 @@
 			"source": "./plugins/fullstack-dev"
 		},
 		{
+			"name": "sdd",
+			"description": "Spec-driven development: requirements or bugfix to design to tasks, with approval gates, analysis, sync, and wave execution.",
+			"version": "0.1.0",
+			"source": "./plugins/sdd"
+		},
+		{
 			"name": "swe-wiki",
 			"description": "Domain-first, Git-synced software engineering knowledge base for coding agents.",
 			"version": "0.3.0",
