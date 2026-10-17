@@ -25,7 +25,7 @@ skills/spec-{new,analyze,sync,run}/SKILL.md   user-invoked, zero context load
 agents/spec-task-runner.md                    one task per dispatch
 agents/spec-analyst.md                        read-only requirements review
 shared/                                       plain files, any skill points at them
-  state.md  gate.md  ears.md  correctness.md
+  state.md  gate.md  ears.md  correctness.md  visuals.md
   workflows/  artifacts/
 ```
 

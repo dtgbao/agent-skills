@@ -5,6 +5,8 @@ Done when:
 - every external dependency has Error Handling entry
 - every component has interface sketch (signature or type)
 - ≥1 Mermaid diagram
+- File/Folder Structure shows the file tree as a `diff` block
+- every changed component shows its component tree or call tree (or call-stack change) as a `diff` block; views per `${CLAUDE_PLUGIN_ROOT}/shared/visuals.md`
 - Testing Strategy lists every property from `${CLAUDE_PLUGIN_ROOT}/shared/correctness.md`
 - every non-functional constraint (latency, security, compliance) has an owner component
 
@@ -24,11 +26,17 @@ Skeleton (feature):
 
 <mermaid diagram + request/data flow, numbered>
 
+## File/Folder Structure
+
+<file tree as `diff`, one-line role per entry>
+
 ## Components and Interfaces
 
 ### <Component> (`<path>`)
 
 <responsibility, interface sketch>
+
+<component tree or call tree / call-stack change as `diff`>
 
 _Requirements: x.y_
 
@@ -63,6 +71,10 @@ Skeleton (bugfix) — replace middle sections:
 ## Fix
 
 <change, affected components, constraints>
+
+### Call-tree change
+
+<`diff` of the failing call path per `${CLAUDE_PLUGIN_ROOT}/shared/visuals.md`>
 
 ## Validation Properties
 
