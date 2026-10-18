@@ -1,0 +1,461 @@
+diff --git a/shop/api.py b/shop/api.py
+index fe50a0e..497aaab 100644
+--- a/shop/api.py
++++ b/shop/api.py
+@@ -1,4 +1,5 @@
+-from shop.cart import Cart
++from shop.cart import AlreadyApplied, Cart
++from shop.discounts import is_expired
+ from shop.inventory import OutOfStock
+ 
+ 
+@@ -23,6 +24,31 @@ def handle(request: dict, ctx: dict) -> dict:
+             except OutOfStock:
+                 return {"status": 409, "body": {"error": "out of stock"}}
+             return {"status": 200, "body": {"subtotal_cents": cart.subtotal_cents()}}
++        if path.endswith("/code") and method == "POST":
++            code = body.get("code") if isinstance(body, dict) else None
++            if not isinstance(code, str):
++                return {"status": 400, "body": {"error": "bad code"}}
++            dc = ctx["codes"].get(code)
++            if dc is None:
++                return {"status": 404, "body": {"error": "unknown code"}}
++            today = ctx["today"]
++            if is_expired(dc, today):
++                return {"status": 410, "body": {"error": "code expired"}}
++            if cart.subtotal_cents() < dc.min_subtotal_cents:
++                return {"status": 422, "body": {"error": "minimum not met"}}
++            try:
++                cart.apply_code(dc)
++            except AlreadyApplied:
++                return {"status": 409, "body": {"error": "code already applied"}}
++            return {"status": 200, "body": {"code": dc.code, "discount_cents": cart.discount_cents(today),
++                                            "total_cents": cart.total_cents(today)}}
++        if path.endswith("/code") and method == "DELETE":
++            cart.clear_code()
++            return {"status": 200, "body": {}}
+         if method == "GET":
+-            return {"status": 200, "body": {"lines": cart.lines, "subtotal_cents": cart.subtotal_cents()}}
++            today = ctx["today"]
++            return {"status": 200, "body": {
++                "lines": cart.lines, "subtotal_cents": cart.subtotal_cents(),
++                "code": cart.applied_code.code if cart.applied_code else None,
++                "discount_cents": cart.discount_cents(today), "total_cents": cart.total_cents(today)}}
+     return {"status": 404, "body": {"error": "no route"}}
+diff --git a/shop/cart.py b/shop/cart.py
+index e857ed5..cf33bd7 100644
+--- a/shop/cart.py
++++ b/shop/cart.py
+@@ -1,11 +1,19 @@
++from datetime import date
++
+ from shop.catalog import CATALOG
++from shop.discounts import DiscountCode, discount_amount
+ from shop.inventory import Inventory
+ 
+ 
++class AlreadyApplied(Exception):
++    pass
++
++
+ class Cart:
+     def __init__(self, inventory: Inventory) -> None:
+         self.inventory = inventory
+         self.lines: dict[str, int] = {}
++        self.applied_code: DiscountCode | None = None
+ 
+     def add(self, sku: str, qty: int) -> None:
+         if sku not in CATALOG:
+@@ -20,3 +28,17 @@ class Cart:
+ 
+     def subtotal_cents(self) -> int:
+         return sum(CATALOG[sku].price_cents * qty for sku, qty in self.lines.items())
++
++    def apply_code(self, dc: DiscountCode) -> None:
++        if self.applied_code is not None:
++            raise AlreadyApplied(self.applied_code.code)
++        self.applied_code = dc
++
++    def clear_code(self) -> None:
++        self.applied_code = None
++
++    def discount_cents(self, today: date) -> int:
++        return discount_amount(self.applied_code, self.subtotal_cents(), today)
++
++    def total_cents(self, today: date) -> int:
++        return self.subtotal_cents() - self.discount_cents(today)
+diff --git a/shop/discounts.py b/shop/discounts.py
+new file mode 100644
+index 0000000..ffd3466
+--- /dev/null
++++ b/shop/discounts.py
+@@ -0,0 +1,63 @@
++import re
++from dataclasses import dataclass
++from datetime import date
++from typing import Literal
++
++CODE_RE = re.compile(r"[A-Z0-9-]{1,20}")
++PERCENT_MIN, PERCENT_MAX = 1, 50
++
++
++def _is_int(x: object) -> bool:
++    return isinstance(x, int) and not isinstance(x, bool)
++
++
++@dataclass(frozen=True)
++class DiscountCode:
++    code: str
++    kind: Literal["percent", "fixed"]
++    value: int
++    expires_on: date
++    min_subtotal_cents: int = 0
++
++    def __post_init__(self) -> None:
++        if not isinstance(self.code, str) or not CODE_RE.fullmatch(self.code):
++            raise ValueError(f"bad code format: {self.code!r}")
++        if self.kind not in ("percent", "fixed"):
++            raise ValueError(f"bad kind: {self.kind!r}")
++        if not _is_int(self.value):
++            raise ValueError(f"value must be an integer: {self.value!r}")
++        if self.kind == "percent" and not PERCENT_MIN <= self.value <= PERCENT_MAX:
++            raise ValueError(f"percent value out of range: {self.value}")
++        if self.kind == "fixed" and self.value < 1:
++            raise ValueError(f"fixed value must be >= 1: {self.value}")
++        if not _is_int(self.min_subtotal_cents) or self.min_subtotal_cents < 0:
++            raise ValueError(f"bad min_subtotal_cents: {self.min_subtotal_cents!r}")
++
++
++class CodeRegistry:
++    def __init__(self) -> None:
++        self._codes: dict[str, DiscountCode] = {}
++
++    def add(self, dc: DiscountCode) -> None:
++        if dc.code in self._codes:
++            raise ValueError(f"duplicate code: {dc.code}")
++        self._codes[dc.code] = dc
++
++    def get(self, code: str) -> DiscountCode | None:
++        return self._codes.get(code)
++
++
++def is_expired(dc: DiscountCode, today: date) -> bool:
++    return today > dc.expires_on
++
++
++def discount_amount(dc: DiscountCode | None, subtotal_cents: int, today: date) -> int:
++    if dc is None:
++        return 0
++    if subtotal_cents < dc.min_subtotal_cents:
++        return 0
++    if is_expired(dc, today):
++        return 0
++    if dc.kind == "percent":
++        return subtotal_cents * dc.value // 100
++    return min(dc.value, subtotal_cents)
+diff --git a/tests/test_api_codes.py b/tests/test_api_codes.py
+new file mode 100644
+index 0000000..08dba6c
+--- /dev/null
++++ b/tests/test_api_codes.py
+@@ -0,0 +1,124 @@
++# Feature: discount-codes, Property 6: POST code status follows the check order
++from datetime import date, timedelta
++
++from hypothesis import given, settings, strategies as st
++
++from shop.api import handle
++from shop.catalog import CATALOG
++from shop.discounts import CodeRegistry, DiscountCode
++from shop.inventory import Inventory
++
++SKU = next(iter(CATALOG))
++TODAY = date(2026, 6, 1)
++
++
++def make_ctx(codes=()):
++    reg = CodeRegistry()
++    for c in codes:
++        reg.add(c)
++    return {"carts": {}, "inventory": Inventory({s: 1000 for s in CATALOG}), "codes": reg, "today": TODAY}
++
++
++def req(ctx, method, path, body=None):
++    r = {"method": method, "path": path}
++    if body is not None:
++        r["body"] = body
++    return handle(r, ctx)
++
++
++def new_cart(ctx, qty=1):
++    cid = req(ctx, "POST", "/carts")["body"]["cart_id"]
++    if qty:
++        assert req(ctx, "POST", f"/carts/{cid}/lines", {"sku": SKU, "qty": qty})["status"] == 200
++    return cid
++
++
++def mk(code="SAVE", kind="percent", value=10, expires_on=TODAY, minimum=0):
++    return DiscountCode(code=code, kind=kind, value=value, expires_on=expires_on, min_subtotal_cents=minimum)
++
++
++@settings(max_examples=200, deadline=None)
++@given(
++    cart_known=st.booleans(),
++    body_kind=st.sampled_from(["valid", "missing", "nonstr"]),
++    code_known=st.booleans(),
++    expired=st.booleans(),
++    min_met=st.booleans(),
++    held=st.booleans(),
++)
++def test_property6_check_order(cart_known, body_kind, code_known, expired, min_met, held):
++    other = mk("OTHER")
++    ctx = make_ctx([other])
++    cid = new_cart(ctx)
++    sub = req(ctx, "GET", f"/carts/{cid}")["body"]["subtotal_cents"]
++    target = mk(
++        "TARGET",
++        expires_on=TODAY - timedelta(days=1) if expired else TODAY,
++        minimum=0 if min_met else sub + 1,
++    )
++    if code_known:
++        ctx["codes"].add(target)
++    if held:
++        ctx["carts"][cid].apply_code(other)
++    body = {"valid": {"code": "TARGET"}, "missing": {}, "nonstr": {"code": 5}}[body_kind]
++    path = f"/carts/{cid if cart_known else 'nope'}/code"
++    res = req(ctx, "POST", path, body)
++
++    if not cart_known:
++        exp = (404, "no cart")
++    elif body_kind != "valid":
++        exp = (400, "bad code")
++    elif not code_known:
++        exp = (404, "unknown code")
++    elif expired:
++        exp = (410, "code expired")
++    elif not min_met:
++        exp = (422, "minimum not met")
++    elif held:
++        exp = (409, "code already applied")
++    else:
++        exp = (200, None)
++    assert res["status"] == exp[0]
++    if exp[1]:
++        assert res["body"]["error"] == exp[1]
++    if cart_known:
++        applied = ctx["carts"][cid].applied_code
++        if exp[0] == 200:
++            assert applied is target
++        elif held:
++            assert applied is other
++        else:
++            assert applied is None
++
++
++def test_apply_then_get_shows_code_and_discount():
++    ctx = make_ctx([mk("SAVE", value=10)])
++    cid = new_cart(ctx)
++    sub = req(ctx, "GET", f"/carts/{cid}")["body"]["subtotal_cents"]
++    assert req(ctx, "POST", f"/carts/{cid}/code", {"code": "SAVE"})["status"] == 200
++    b = req(ctx, "GET", f"/carts/{cid}")["body"]
++    assert b["code"] == "SAVE"
++    assert b["discount_cents"] == sub * 10 // 100
++    assert b["total_cents"] == sub - b["discount_cents"]
++
++
++def test_delete_clears_code():
++    ctx = make_ctx([mk("SAVE")])
++    cid = new_cart(ctx)
++    req(ctx, "POST", f"/carts/{cid}/code", {"code": "SAVE"})
++    assert req(ctx, "DELETE", f"/carts/{cid}/code")["status"] == 200
++    b = req(ctx, "GET", f"/carts/{cid}")["body"]
++    assert b["code"] is None and b["discount_cents"] == 0
++
++
++def test_delete_without_code_returns_200():
++    ctx = make_ctx()
++    cid = new_cart(ctx)
++    before = req(ctx, "GET", f"/carts/{cid}")["body"]
++    assert req(ctx, "DELETE", f"/carts/{cid}/code")["status"] == 200
++    assert req(ctx, "GET", f"/carts/{cid}")["body"] == before
++
++
++def test_delete_unknown_cart_404():
++    res = req(make_ctx(), "DELETE", "/carts/nope/code")
++    assert res["status"] == 404 and res["body"]["error"] == "no cart"
+diff --git a/tests/test_cart_discount.py b/tests/test_cart_discount.py
+new file mode 100644
+index 0000000..60d0696
+--- /dev/null
++++ b/tests/test_cart_discount.py
+@@ -0,0 +1,84 @@
++from datetime import date, timedelta
++
++import pytest
++from hypothesis import given, settings, strategies as st
++
++from shop.cart import AlreadyApplied, Cart
++from shop.catalog import CATALOG
++from shop.discounts import PERCENT_MAX, PERCENT_MIN, DiscountCode
++from shop.inventory import Inventory
++
++SKUS = list(CATALOG)
++D0 = date(2026, 1, 1)
++
++codes = st.one_of(
++    st.builds(
++        DiscountCode,
++        code=st.just("CODE"),
++        kind=st.just("percent"),
++        value=st.integers(PERCENT_MIN, PERCENT_MAX),
++        expires_on=st.dates(date(2025, 1, 1), date(2027, 1, 1)),
++        min_subtotal_cents=st.integers(0, 5000),
++    ),
++    st.builds(
++        DiscountCode,
++        code=st.just("CODE"),
++        kind=st.just("fixed"),
++        value=st.integers(1, 100000),
++        expires_on=st.dates(date(2025, 1, 1), date(2027, 1, 1)),
++        min_subtotal_cents=st.integers(0, 5000),
++    ),
++)
++
++
++def make_cart(lines):
++    cart = Cart(Inventory({s: 1000 for s in SKUS}))
++    for sku, qty in lines.items():
++        cart.add(sku, qty)
++    return cart
++
++
++# Feature: discount-codes, Property 3: Total stays between 0 and subtotal
++@settings(max_examples=200)
++@given(
++    lines=st.dictionaries(st.sampled_from(SKUS), st.integers(1, 20)),
++    dc=st.one_of(st.none(), codes),
++    today=st.dates(date(2025, 1, 1), date(2027, 1, 1)),
++)
++def test_total_between_zero_and_subtotal(lines, dc, today):
++    cart = make_cart(lines)
++    if dc is not None:
++        cart.apply_code(dc)
++    sub = cart.subtotal_cents()
++    disc = cart.discount_cents(today)
++    assert cart.total_cents(today) == sub - disc
++    assert 0 <= cart.total_cents(today) <= sub
++    if dc is None:
++        assert disc == 0
++
++
++def test_second_apply_raises_and_keeps_first():
++    cart = make_cart({"TEA-01": 1})
++    a = DiscountCode("AAA", "percent", 10, D0 + timedelta(days=10))
++    b = DiscountCode("BBB", "fixed", 100, D0 + timedelta(days=10))
++    cart.apply_code(a)
++    with pytest.raises(AlreadyApplied):
++        cart.apply_code(b)
++    assert cart.applied_code == a
++
++
++def test_clear_code_on_empty_cart_is_noop():
++    cart = Cart(Inventory({}))
++    cart.clear_code()
++    assert cart.applied_code is None
++    assert cart.discount_cents(D0) == 0
++    assert cart.total_cents(D0) == 0
++
++
++def test_today_is_argument():
++    cart = make_cart({"MUG-01": 1})
++    cart.apply_code(DiscountCode("EXP", "fixed", 100, D0))
++    assert cart.discount_cents(D0) == 100
++    assert cart.total_cents(D0) == cart.subtotal_cents() - 100
++    assert cart.discount_cents(D0 + timedelta(days=1)) == 0
++    assert cart.total_cents(D0 + timedelta(days=1)) == cart.subtotal_cents()
+diff --git a/tests/test_discounts.py b/tests/test_discounts.py
+new file mode 100644
+index 0000000..f553f18
+--- /dev/null
++++ b/tests/test_discounts.py
+@@ -0,0 +1,80 @@
++import re
++from datetime import date, timedelta
++
++import pytest
++from hypothesis import given, settings, strategies as st
++
++from shop.discounts import CodeRegistry, DiscountCode, discount_amount
++
++N = 200
++CODE_ST = st.text(alphabet="ABCXYZ019-", min_size=1, max_size=20)
++DATE_ST = st.dates(min_value=date(2000, 1, 1), max_value=date(2100, 1, 1))
++CENTS = st.integers(min_value=0, max_value=10**9)
++
++
++@st.composite
++def valid_code(draw, kind=None):
++    k = kind or draw(st.sampled_from(["percent", "fixed"]))
++    v = draw(st.integers(1, 50) if k == "percent" else st.integers(1, 10**7))
++    return DiscountCode(draw(CODE_ST), k, v, draw(DATE_ST), draw(st.integers(0, 10**6)))
++
++
++# Feature: discount-codes, Property 1: Percent discount is floor of percent of subtotal
++@settings(max_examples=N)
++@given(valid_code("percent"), CENTS, st.integers(0, 365))
++def test_percent_floor(dc, extra, back):
++    sub = dc.min_subtotal_cents + extra
++    today = dc.expires_on - timedelta(days=back)
++    assert discount_amount(dc, sub, today) == sub * dc.value // 100
++
++
++# Feature: discount-codes, Property 2: Fixed discount is capped at subtotal
++@settings(max_examples=N)
++@given(valid_code("fixed"), CENTS, st.integers(0, 365))
++def test_fixed_capped(dc, extra, back):
++    sub = dc.min_subtotal_cents + extra
++    today = dc.expires_on - timedelta(days=back)
++    assert discount_amount(dc, sub, today) == min(dc.value, sub)
++
++
++# Feature: discount-codes, Property 4: Invalid applied code gives zero discount
++@settings(max_examples=N)
++@given(valid_code(), CENTS, st.integers(1, 365))
++def test_below_min_or_expired_is_zero(dc, sub, days):
++    assert discount_amount(dc, dc.min_subtotal_cents - 1, dc.expires_on) == 0
++    assert discount_amount(dc, sub + dc.min_subtotal_cents, dc.expires_on + timedelta(days=days)) == 0
++
++
++# Feature: discount-codes, Property 5: Code record validation
++@settings(max_examples=N)
++@given(
++    st.text(alphabet="ABZ09-az _", max_size=24),
++    st.sampled_from(["percent", "fixed"]),
++    st.integers(-5, 120),
++    st.integers(-5, 1000),
++)
++def test_record_validation(code, kind, value, minsub):
++    ok = (
++        re.fullmatch(r"[A-Z0-9-]{1,20}", code) is not None
++        and (1 <= value <= 50 if kind == "percent" else value >= 1)
++        and minsub >= 0
++    )
++    d = date(2030, 1, 1)
++    if ok:
++        dc = DiscountCode(code, kind, value, d, minsub)
++        reg = CodeRegistry()
++        reg.add(dc)
++        assert reg.get(code) == dc
++    else:
++        with pytest.raises(ValueError):
++            DiscountCode(code, kind, value, d, minsub)
++
++
++def test_duplicate_add_keeps_first():
++    reg = CodeRegistry()
++    a = DiscountCode("A1", "percent", 10, date(2030, 1, 1))
++    b = DiscountCode("A1", "fixed", 500, date(2031, 1, 1))
++    reg.add(a)
++    with pytest.raises(ValueError):
++        reg.add(b)
++    assert reg.get("A1") is a

@@ -1,0 +1,169 @@
+diff --git a/shop/inventory.py b/shop/inventory.py
+index c1764cd..4d918c2 100644
+--- a/shop/inventory.py
++++ b/shop/inventory.py
+@@ -15,7 +15,7 @@ class Inventory:
+     def reserve(self, sku: str, qty: int) -> None:
+         if qty < 1:
+             raise ValueError("qty must be >= 1")
+-        if qty > self._initial[sku]:
++        if qty > self.available(sku):
+             raise OutOfStock(sku)
+         self._reserved[sku] += qty
+ 
+diff --git a/tests/test_inventory_props.py b/tests/test_inventory_props.py
+new file mode 100644
+index 0000000..2e69e8d
+--- /dev/null
++++ b/tests/test_inventory_props.py
+@@ -0,0 +1,27 @@
++import pytest
++from hypothesis import given, settings, strategies as st
++
++from shop.inventory import Inventory, OutOfStock
++
++
++# Feature: cart-oversell, Property 1: Fix check
++@settings(max_examples=200)
++@given(
++    stock=st.integers(0, 50),
++    qtys=st.lists(st.integers(1, 20), min_size=1, max_size=20),
++)
++def test_reserve_never_oversells(stock, qtys):
++    inv = Inventory({"MUG-01": stock})
++    model = stock
++    for qty in qtys:
++        before = inv.available("MUG-01")
++        assert before == model
++        if qty > model:
++            with pytest.raises(OutOfStock):
++                inv.reserve("MUG-01", qty)
++            assert inv.available("MUG-01") == before
++        else:
++            inv.reserve("MUG-01", qty)
++            model -= qty
++            assert inv.available("MUG-01") == model
++        assert inv.available("MUG-01") >= 0
+diff --git a/tests/test_oversell_pin.py b/tests/test_oversell_pin.py
+new file mode 100644
+index 0000000..19a0d76
+--- /dev/null
++++ b/tests/test_oversell_pin.py
+@@ -0,0 +1,44 @@
++import pytest
++from shop import api
++from shop.cart import Cart
++from shop.inventory import Inventory, OutOfStock
++
++
++def test_second_cart_over_stock_raises():
++    inv = Inventory({"MUG-01": 5})
++    a, b = Cart(inv), Cart(inv)
++    a.add("MUG-01", 3)
++    with pytest.raises(OutOfStock):
++        b.add("MUG-01", 3)
++
++
++def test_available_stays_after_rejected_reserve():
++    inv = Inventory({"MUG-01": 5})
++    a, b = Cart(inv), Cart(inv)
++    a.add("MUG-01", 3)
++    with pytest.raises(OutOfStock):
++        b.add("MUG-01", 3)
++    assert inv.available("MUG-01") == 2
++
++
++def test_rejected_add_leaves_no_line():
++    inv = Inventory({"MUG-01": 5})
++    a, b = Cart(inv), Cart(inv)
++    a.add("MUG-01", 3)
++    with pytest.raises(OutOfStock):
++        b.add("MUG-01", 3)
++    assert "MUG-01" not in b.lines
++
++
++def test_api_second_cart_returns_409():
++    ctx = {"carts": {}, "inventory": Inventory({"MUG-01": 5})}
++    api.handle({"method": "POST", "path": "/carts"}, ctx)
++    api.handle({"method": "POST", "path": "/carts"}, ctx)
++    first = api.handle(
++        {"method": "POST", "path": "/carts/1/lines", "body": {"sku": "MUG-01", "qty": 3}}, ctx
++    )
++    assert first["status"] == 200
++    res = api.handle(
++        {"method": "POST", "path": "/carts/2/lines", "body": {"sku": "MUG-01", "qty": 3}}, ctx
++    )
++    assert res["status"] == 409
+diff --git a/tests/test_preservation_pin.py b/tests/test_preservation_pin.py
+new file mode 100644
+index 0000000..7c6d8ea
+--- /dev/null
++++ b/tests/test_preservation_pin.py
+@@ -0,0 +1,67 @@
++import pytest
++from hypothesis import given, settings, strategies as st
++from shop.cart import Cart
++from shop.inventory import Inventory, OutOfStock
++
++
++def test_single_reserve_over_stock_raises():  # 3.1
++    inv = Inventory({"MUG-01": 2})
++    with pytest.raises(OutOfStock):
++        inv.reserve("MUG-01", 3)
++
++
++@pytest.mark.parametrize("qty", [0, -1])
++def test_qty_below_one_raises(qty):  # 3.2
++    inv = Inventory({"MUG-01": 5})
++    with pytest.raises(ValueError):
++        inv.reserve("MUG-01", qty)
++
++
++def test_release_over_reserved_stays_le_initial():  # 3.3
++    inv = Inventory({"MUG-01": 5})
++    inv.reserve("MUG-01", 2)
++    inv.release("MUG-01", 10)
++    assert inv.available("MUG-01") <= 5
++
++
++def test_cart_remove_restores_available():  # 3.4
++    inv = Inventory({"MUG-01": 5})
++    c = Cart(inv)
++    c.add("MUG-01", 3)
++    c.remove("MUG-01")
++    assert inv.available("MUG-01") == 5
++
++
++def test_fit_exact_add_gives_zero():  # 3.5
++    inv = Inventory({"MUG-01": 5})
++    a, b = Cart(inv), Cart(inv)
++    a.add("MUG-01", 3)
++    b.add("MUG-01", 2)
++    assert inv.available("MUG-01") == 0
++
++
++def test_unknown_sku_raises_keyerror():  # 3.6
++    c = Cart(Inventory({"MUG-01": 5}))
++    with pytest.raises(KeyError):
++        c.add("NOPE-99", 1)
++
++
++# Feature: cart-oversell, Property 2: Preservation
++@settings(max_examples=100)
++@given(
++    stock=st.integers(1, 50),
++    ops=st.lists(
++        st.tuples(st.booleans(), st.integers(1, 60)), max_size=30
++    ),
++)
++def test_property_preservation(stock, ops):
++    inv = Inventory({"MUG-01": stock})
++    for is_reserve, qty in ops:
++        if is_reserve:
++            avail = inv.available("MUG-01")
++            if qty <= avail:
++                inv.reserve("MUG-01", qty)
++                assert inv.available("MUG-01") == avail - qty
++        else:
++            inv.release("MUG-01", qty)
++            assert inv.available("MUG-01") <= stock

@@ -1,0 +1,20 @@
+{
+  "name": "gift-cards",
+  "workflow": "requirements-first",
+  "order": [
+    "requirements",
+    "design",
+    "tasks"
+  ],
+  "phases": {
+    "requirements": "approved",
+    "design": "pending",
+    "tasks": "pending"
+  },
+  "hashes": {
+    "requirements": "d40eb22a68f98fc32b9bb138276db9f7bf89727ee749be781c8de217161487af",
+    "design": "",
+    "tasks": ""
+  },
+  "criteria": {}
+}

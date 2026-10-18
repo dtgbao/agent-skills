@@ -1,0 +1,35 @@
+{
+  "name": "cart-oversell",
+  "workflow": "bugfix",
+  "order": [
+    "requirements",
+    "design",
+    "tasks"
+  ],
+  "phases": {
+    "requirements": "approved",
+    "design": "approved",
+    "tasks": "approved"
+  },
+  "hashes": {
+    "requirements": "03e36d0c48773c6816b4f56c0a2e5967e4c9015d9e8decd9cdc3a1ddc212d826",
+    "design": "257ee5bdedd9c8f9b10801135b29f311e2187a7a4a5656061e7daedb16d2107a",
+    "tasks": "4e88ac37f56d5639e52c37c3c7b124c3ba1c2d60ac98f30df732d618707ddada"
+  },
+  "criteria": {
+    "1.1": "1.1 WHEN stock of MUG-01 is 5 and cart A holds 3 units and cart B adds 3 units of MUG-01 THEN the system accepts the add without raising OutOfStock",
+    "1.2": "1.2 WHEN stock of MUG-01 is 5 and cart A holds 3 units and cart B adds 3 units of MUG-01 THEN the system reports available of MUG-01 as -1",
+    "1.3": "1.3 WHEN stock of MUG-01 is 5 and cart A holds 3 units and cart B adds 3 units of MUG-01 THEN the system records 3 units of MUG-01 in cart B lines",
+    "1.4": "1.4 WHEN stock of MUG-01 is 5 and cart A holds 3 units and the API receives POST /carts/<B>/lines with sku MUG-01 and qty 3 THEN the system returns status 200",
+    "2.1": "2.1 WHEN stock of MUG-01 is 5 and cart A holds 3 units and cart B adds 3 units of MUG-01 THE SYSTEM SHALL raise OutOfStock",
+    "2.2": "2.2 WHEN stock of MUG-01 is 5 and cart A holds 3 units and cart B adds 3 units of MUG-01 THE SYSTEM SHALL keep available of MUG-01 at 2",
+    "2.3": "2.3 WHEN stock of MUG-01 is 5 and cart A holds 3 units and cart B adds 3 units of MUG-01 THE SYSTEM SHALL keep MUG-01 absent from cart B lines",
+    "2.4": "2.4 WHEN stock of MUG-01 is 5 and cart A holds 3 units and the API receives POST /carts/<B>/lines with sku MUG-01 and qty 3 THE SYSTEM SHALL return status 409",
+    "3.1": "3.1 WHEN one reserve asks for more units than the initial stock of an empty inventory THE SYSTEM SHALL CONTINUE TO raise OutOfStock",
+    "3.2": "3.2 WHEN a reserve asks for qty less than 1 THE SYSTEM SHALL CONTINUE TO raise ValueError",
+    "3.3": "3.3 WHEN release asks for more units than are reserved THE SYSTEM SHALL CONTINUE TO keep available at or below the initial stock",
+    "3.4": "3.4 WHEN Cart.remove is called for a sku the cart holds THE SYSTEM SHALL CONTINUE TO release all units of that line to the inventory",
+    "3.5": "3.5 WHEN stock of MUG-01 is 5 and cart A holds 3 units and cart B adds 2 units of MUG-01 THE SYSTEM SHALL CONTINUE TO accept the add and report available as 0",
+    "3.6": "3.6 WHEN a cart adds a sku that is not in the catalog THE SYSTEM SHALL CONTINUE TO raise KeyError"
+  }
+}

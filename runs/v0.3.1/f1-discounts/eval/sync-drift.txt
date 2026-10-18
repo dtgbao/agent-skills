@@ -1,0 +1,7 @@
+DRIFT requirements requirements.md
+STALE design
+STALE tasks
+CHANGED 1.2
+AFFECTS 1.2 -> 1.1 1.2
+SUSPECT 1.2 -> 3.2 tests/test_cart_discount.py:19 (90)
+RESULT: DRIFT

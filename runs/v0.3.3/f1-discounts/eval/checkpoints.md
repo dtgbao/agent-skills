@@ -1,0 +1,5 @@
+- Checkpoint 2: 10 passed → [x]
+- Checkpoint 4: 13 passed → [x]
+- Checkpoint 6 (final): 22 passed → [x]
+- Run 2, checkpoint 2: 1 failed (tests/test_cart_discount.py::test_apply_matches_model, ValueError invalid percent value from generator), 21 passed → deferred (failing file in Files of in-scope leaf 3.2, not yet run)
+- Run 2, checkpoint 2 (re-run after 3.2), 4, 6: 22 passed → [x]

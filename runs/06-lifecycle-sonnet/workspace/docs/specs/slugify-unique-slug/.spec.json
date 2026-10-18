@@ -1,0 +1,14 @@
+{
+  "name": "slugify-unique-slug",
+  "workflow": "quick-plan",
+  "order": [
+    "requirements",
+    "design",
+    "tasks"
+  ],
+  "phases": {
+    "requirements": "approved",
+    "design": "approved",
+    "tasks": "approved"
+  }
+}

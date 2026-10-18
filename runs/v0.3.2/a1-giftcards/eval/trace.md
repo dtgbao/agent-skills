@@ -1,0 +1,26 @@
+# Trace notes
+- spec-analyze step 1: `spec.py drift docs/specs/gift-cards` → `RESULT: NO DRIFT`. N0 = 12 criteria. Stack Python >=3.11, source root `shop/`. No Open Questions.
+- Round 1 apply (merged text in requirements.md). Log:
+  - F1 A supersedes 4.2 → 4.2 replaced. Part "balance unchanged" dropped: 4.1 covers it.
+  - F2 → Glossary Merchant_Portal + Actor; new 3.5 (403 `forbidden`, conservative owner value).
+  - F3 A supersedes 2.2 → replaced. F4 A supersedes 2.3 → replaced.
+  - F5 A → new 2.5 + 2.6 (option had 2 assertions; split per EARS one-assertion rule).
+  - F6a → 1.3 + 1.4 (split). F6b → 1.5 + 1.6 (split).
+  - F7a → 3.3. F7b → 3.4; part "write no ledger entry" dropped: 5.1 only logs on a change, so it covers it.
+  - F8 A → 5.3 (creation old value `null`). Part "actor `system` for system changes" dropped: after F1 A no system-initiated change remains.
+  - F9 → Glossary Ledger; 5.1/5.2 now use `Ledger`.
+  - EARS check: every changed criterion has one SHALL, ≤40 words, one assertion.
+  - `spec.py edited docs/specs/gift-cards requirements` run (phase was approved).
+- Round 2 apply: F10 → no change (owner keeps 2.3). F11 → Glossary Payment_Provider names `ctx["payments"]`, `charge`, `refund`; new 1.7 refund. EARS check 1.7: 1 SHALL, 26 words. `spec.py edited` run.
+- Round 3 apply: F12 A → 3.6. F13 A → 3.7 (renumbered from analyst's 3.6). EARS: 3.6 one SHALL, 30 words; 3.7 one SHALL, 29 words (Complex pattern). `spec.py edited` run.
+- VERIFY apply: F14 A → 2.7. F15 A supersedes 4.2 → replaced. F16 A → 1.8. F17 low → `## Open Questions`. No further recheck (skill rule). `spec.py edited` run.
+- Growth: N0 = 12 → N = 27 (+125 %). >50 % → recommend splitting the spec (e.g. purchase/payment, redemption, void+audit).
+- spec-new: step 1 Resume → drift NO DRIFT → first non-approved phase = design → workflow step 4.
+- design.md drafted; gate: `spec.py draft` → count line `design.md: 4 components, 12 properties` → Approve → `spec.py approve ... design`.
+- Orchestrator slip: first `SPEC` call used a shell variable; zsh did not word-split it (state.md warns about this). Re-ran as full lines. Not a plugin defect.
+- tasks.md drafted; `check-tasks` → RESULT: PASS (1 WARN: checkpoint 4 runs after later-layer leaf 5.1, shared wave 2). Gate count `tasks.md: 5 leaves, 4 waves` → Approve → `spec.py approve ... tasks`.
+- spec-new done: tell user `/sdd:spec-run gift-cards`.
+- spec-run step 1: drift → NO DRIFT, all phases approved. Step 2: `--mode waves`. Step 3: scope = 5 leaves (5.1 kept: `--optional`). Step 4: check-tasks PASS.
+- Checkpoint 2: pytest → 3 passed → [x].
+- Checkpoint 4: pytest → 15 passed → [x]. (WARN case: 5.1 landed in same wave as 3.1; suite still green.)
+- Checkpoint 6 (final): pytest → 23 passed → [x]. drift → NO DRIFT. No `[-]` left.

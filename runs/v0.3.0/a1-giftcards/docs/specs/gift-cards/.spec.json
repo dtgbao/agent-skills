@@ -1,0 +1,49 @@
+{
+  "name": "gift-cards",
+  "workflow": "requirements-first",
+  "order": [
+    "requirements",
+    "design",
+    "tasks"
+  ],
+  "phases": {
+    "requirements": "approved",
+    "design": "approved",
+    "tasks": "approved"
+  },
+  "hashes": {
+    "requirements": "165e6f3a5cf2017c767816f9b0169061cdb1b3c2601d0401f08b20b8cd6c5f2e",
+    "design": "e97d5a01e9c55e0ca8840bd70d91f405aab88390c6a562c740e177fd19c27efb",
+    "tasks": "be3ace71950b8345d18431f392ffeab6d116ab61f5fe2ed50666ce35719da836"
+  },
+  "criteria": {
+    "1.1": "WHEN a shopper buys a Gift_Card with a whole-dollar value from 10 to 500 dollars inclusive, THE Shop_API SHALL charge the Payment_Provider that value.",
+    "1.2": "WHEN a Gift_Card is created, THE Shop_API SHALL return its 16-character code.",
+    "1.3": "IF the Payment_Provider declines the charge or does not respond within 10 seconds, THEN THE Shop_API SHALL return HTTP 402 with error `payment_failed`.",
+    "1.4": "IF the Payment_Provider declines the charge or does not respond within 10 seconds, THEN THE Shop_API SHALL create no Gift_Card.",
+    "1.5": "WHEN the Payment_Provider charge for a Gift_Card purchase succeeds, THE Shop_API SHALL create an `active` Gift_Card with a balance equal to the charged value.",
+    "1.6": "IF the Payment_Provider does not respond within 10 seconds, THEN THE Shop_API SHALL cancel or refund any charge that the Payment_Provider later confirms for that purchase.",
+    "1.7": "IF the purchase value is not a whole-dollar value from 10 to 500 dollars inclusive, THEN THE Shop_API SHALL return HTTP 422 with error `invalid_request`.",
+    "1.8": "IF the purchase value is not a whole-dollar value from 10 to 500 dollars inclusive, THEN THE Shop_API SHALL not charge the Payment_Provider.",
+    "1.9": "WHEN the Shop_API receives a purchase request with an idempotency key that it already processed, THE Shop_API SHALL return the first result.",
+    "1.10": "WHEN the Shop_API receives a purchase request with an idempotency key that it already processed, THE Shop_API SHALL not charge the Payment_Provider again.",
+    "2.1": "WHEN a shopper applies an `active` Gift_Card code to a Cart with a subtotal not above the Gift_Card balance, THE Shop_API SHALL subtract the Cart subtotal from the Gift_Card balance.",
+    "2.2": "THE Shop_API SHALL respond to a redemption request within 2 seconds for 95 percent of requests.",
+    "2.3": "THE Shop_API SHALL accept Gift_Cards with a balance up to 500 dollars.",
+    "2.4": "IF the code is 16 characters and does not match any Gift_Card, THEN THE Shop_API SHALL return HTTP 404 with error `unknown_card`.",
+    "2.5": "WHEN the Cart subtotal exceeds the Gift_Card balance, THE Shop_API SHALL set the Gift_Card balance to 0.",
+    "2.6": "WHEN the Cart subtotal exceeds the Gift_Card balance, THE Shop_API SHALL return the remaining amount due in cents.",
+    "2.7": "THE Shop_API SHALL apply concurrent redemptions and voids on one Gift_Card in sequence, so that the balance never falls below 0.",
+    "2.8": "IF the code is not 16 characters or the Cart is not open, THEN THE Shop_API SHALL return HTTP 422 with error `invalid_request`.",
+    "2.9": "THE Shop_API SHALL check redemption requests in this order: `invalid_request` (422), `unknown_card` (404), `card_void` (409), and return the first error that applies.",
+    "3.1": "WHEN a staff member voids a Gift_Card through the Merchant_Portal, THE Shop_API SHALL set the Gift_Card status to `void`.",
+    "3.2": "WHILE a Gift_Card is `void`, THE Shop_API SHALL reject redemption with HTTP 409 and error `card_void`.",
+    "3.3": "IF a void request has no staff actor id or the actor id does not belong to a staff member, THEN THE Shop_API SHALL return HTTP 403 with error `forbidden`.",
+    "3.4": "IF a void request has no staff actor id or the actor id does not belong to a staff member, THEN THE Shop_API SHALL not change the Gift_Card.",
+    "4.1": "THE Shop_API SHALL keep Gift_Card balances forever; Gift_Cards never expire.",
+    "5.1": "WHEN a Gift_Card balance or status changes, THE Shop_API SHALL append a ledger entry with the code, old value, new value, actor id, and UTC timestamp.",
+    "5.2": "IF the ledger write fails, THEN THE Shop_API SHALL reject the change with HTTP 503 and error `ledger_unavailable`.",
+    "5.3": "IF the ledger write for a new Gift_Card fails after the Payment_Provider charge, THEN THE Shop_API SHALL refund the charge.",
+    "5.4": "IF the refund of a charge fails, THEN THE Shop_API SHALL record the charge for manual refund."
+  }
+}

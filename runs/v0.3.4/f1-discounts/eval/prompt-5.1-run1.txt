@@ -1,0 +1,24 @@
+Spec dir: /Users/baodang/Documents/code/sdd-mock/f1-discounts-v033/docs/specs/discount-codes
+Leaf id: 5.1
+Correctness rules path: /Users/baodang/Documents/code/agent-skills/plugins/sdd/shared/correctness.md
+
+Full leaf text:
+  - [-] 5.1 Add context guard and code routes to `handle`
+    - Files: `shop/api.py`
+    - Kind: code
+    - Size: M
+    - Do:
+      - Extend the `ctx` docstring with `"code_book": CodeBook, "today": date`. Add `_context_ok(ctx)` (`"code_book" in ctx` and `ctx.get("today")` is a `datetime.date`) and `_prices(cart, today)` (`subtotal_cents`, `discount_cents`, `amount_due_cents`).
+      - Inside the `/carts/` branch, before the cart lookup: when the path ends with `/code`, or the method is `GET`, and `not _context_ok(ctx)` → 500 `{"error": "bad_context"}`. `POST /carts` and `POST .../lines` get no guard.
+      - After the lookup: `PUT .../code` → 400 `invalid_body` if `body.get("code")` is not a `str`; `attach_code(...)`; `AttachRefused` → 422 `{"error": e.reason}`; else 200 `_prices`. `DELETE .../code` → `detach_code()`, 200 `_prices`. `GET` body → `lines`, `code` (`attached.code` or None), plus `_prices`.
+    - Verify: `uv run --no-project --with pytest --with hypothesis python -m pytest -q` stays green
+    - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7_
+
+Cited criterion text:
+- 5.1: WHEN the Handler gets `PUT /carts/<id>/code` with body `{"code": <string>}` and the attach succeeds, THE Handler SHALL answer status 200 with `subtotal_cents`, `discount_cents`, and `amount_due_cents`.
+- 5.2: IF the attach is refused, THEN THE Handler SHALL answer status 422 with body `{"error": <reason>}`.
+- 5.3: IF the body of `PUT /carts/<id>/code` lacks `code` or `code` is not a string, THEN THE Handler SHALL answer status 400 with body `{"error": "invalid_body"}`.
+- 5.4: WHEN the Handler gets `DELETE /carts/<id>/code`, THE Handler SHALL answer status 200 with `subtotal_cents`, `discount_cents`, and `amount_due_cents`.
+- 5.5: WHEN the Handler gets `GET /carts/<id>`, THE Handler SHALL add `code`, `discount_cents`, and `amount_due_cents` to the existing body, with `code` null when the Cart has no Attached_Code.
+- 5.6: IF `ctx["today"]` is missing or not a `datetime.date`, or `ctx["code_book"]` is missing, on a request to a route in Requirement 5, THEN THE Handler SHALL answer status 500 with body `{"error": "bad_context"}` before any body check.
+- 5.7: WHEN the Handler answers status 500 with `bad_context`, THE Handler SHALL leave every Cart's lines and Attached_Code unchanged.

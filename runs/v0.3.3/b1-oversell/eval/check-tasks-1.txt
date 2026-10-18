@@ -1,0 +1,25 @@
+PASS graph is last section
+PASS graph JSON parses
+PASS wave ids 0..n in order
+PASS graph ids are leaves
+PASS every leaf in exactly one wave
+PASS deps name leaves
+PASS deps in earlier waves
+PASS every leaf has Files
+PASS every leaf has Kind
+PASS every leaf has _Requirements:_
+PASS every leaf has Size S|M|L
+PASS every leaf has Verify
+PASS setup/code leaf has Do
+PASS optional * only on Kind test
+PASS same-wave leaves touch disjoint files
+PASS no same-wave read of another leaf's file (Do/Verify paths)
+PASS test leaf deps on a code leaf
+PASS pin leaf has Expect red|green
+PASS bugfix has pins
+PASS pins run before fix
+PASS every criterion cited
+PASS cited ids exist
+PASS every property has a leaf
+PASS final top-level task is checkpoint
+RESULT: PASS

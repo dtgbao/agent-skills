@@ -1,0 +1,6 @@
+{
+  "name": "account-auth",
+  "workflow": "requirements-first",
+  "order": ["requirements", "design", "tasks"],
+  "phases": { "requirements": "approved", "design": "stale", "tasks": "stale" }
+}

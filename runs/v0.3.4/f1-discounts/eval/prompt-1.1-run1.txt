@@ -1,0 +1,29 @@
+Spec dir: /Users/baodang/Documents/code/sdd-mock/f1-discounts-v033/docs/specs/discount-codes
+Leaf id: 1.1
+Correctness rules path: /Users/baodang/Documents/code/agent-skills/plugins/sdd/shared/correctness.md
+
+Full leaf text:
+  - [-] 1.1 Write `shop/discounts.py`
+    - Files: `shop/discounts.py`
+    - Kind: code
+    - Size: M
+    - Do:
+      - Define `CODE_FORMAT = re.compile(r"[A-Z0-9-]{3,16}")`, frozen dataclass `DiscountCode(code, kind, amount, min_subtotal, valid_until)`, and `AttachRefused(Exception)` with a `reason` attribute.
+      - `CodeBook.create(code, kind, amount, min_subtotal, valid_until) -> DiscountCode`: raise `ValueError` and store nothing when kind is not `percent`/`fixed`; amount is not an `int` (a `bool` is not an int); percent amount is outside 1–90; fixed amount is outside 1–1,000,000; code is not a `str` matching `CODE_FORMAT` in full; min_subtotal is not an `int` or is outside 0–1,000,000; valid_until is not a `datetime.date`; the code is already in the book. `CodeBook.get(code) -> DiscountCode | None`.
+      - `discount_for(dc, subtotal, today) -> int`: 0 when `dc` is None, `today > dc.valid_until`, or `subtotal < dc.min_subtotal`; percent → `subtotal * dc.amount // 100`; fixed → `min(dc.amount, subtotal)`.
+    - Verify: `uv run --no-project --with pytest --with hypothesis python -c "from datetime import date; from shop.discounts import *; b=CodeBook(); d=b.create('SPRING-10','percent',10,0,date(2031,3,1)); assert b.get('SPRING-10') is d and b.get('spring-10') is None; assert discount_for(d,2599,date(2031,3,1))==259 and discount_for(d,2599,date(2031,3,2))==0"`
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 4.1, 4.2, 4.3, 4.5, 4.6_
+
+Cited criterion text:
+- 1.1: WHEN the Operator creates a Discount_Code whose fields are all in range, THE Code_Book SHALL hold that Discount_Code under its Code.
+- 1.2: IF the Kind is `percent` and the Amount is outside 1–90, THEN THE Code_Book SHALL refuse the Discount_Code and stay unchanged.
+- 1.3: IF the Kind is `fixed` and the Amount is outside 1–1,000,000, THEN THE Code_Book SHALL refuse the Discount_Code and stay unchanged.
+- 1.4: IF the Code does not match the Code format, THEN THE Code_Book SHALL refuse the Discount_Code and stay unchanged.
+- 1.5: IF the Min_Subtotal is outside 0–1,000,000, THEN THE Code_Book SHALL refuse the Discount_Code and stay unchanged.
+- 1.6: IF the Code_Book already holds a Discount_Code with the same Code, THEN THE Code_Book SHALL refuse the new Discount_Code and keep the old one.
+- 1.7: IF the Kind is not `percent` or `fixed`, or the Amount is not an integer, THEN THE Code_Book SHALL refuse the Discount_Code and stay unchanged.
+- 4.1: WHILE the Attached_Code has Kind `percent`, THE Cart SHALL report Discount_Amount = floor(Subtotal × Amount / 100) cents.
+- 4.2: WHILE the Attached_Code has Kind `fixed`, THE Cart SHALL report Discount_Amount = min(Amount, Subtotal) cents.
+- 4.3: WHILE the Cart has no Attached_Code, THE Cart SHALL report Discount_Amount = 0 cents.
+- 4.5: WHILE the Subtotal is less than the Attached_Code's Min_Subtotal, THE Cart SHALL report Discount_Amount = 0 cents, overriding 4.1 and 4.2.
+- 4.6: WHILE Current_Date is after the Attached_Code's Valid_Until, THE Cart SHALL report Discount_Amount = 0 cents, overriding 4.1 and 4.2.

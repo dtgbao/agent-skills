@@ -1,0 +1,32 @@
+{
+  "name": "title-slugs",
+  "workflow": "quick-plan",
+  "order": [
+    "requirements",
+    "design",
+    "tasks"
+  ],
+  "phases": {
+    "requirements": "approved",
+    "design": "approved",
+    "tasks": "approved"
+  },
+  "hashes": {
+    "requirements": "e3d45f2647590e9794637edb234a2309a57c72c6f7cf304a0ae7fab64f887f60",
+    "design": "e3f9cd61eab8e6d45f355bb97be415fc567659ce22e96237e6bc46adfa827117",
+    "tasks": "50dc136947f39bbb0ec7fbb71220bc99d63725e4f9b6eeb529b6b4b581731488"
+  },
+  "criteria": {
+    "1.1": "a9dc00c4a1585af5",
+    "1.2": "54bf9d1f1d114c11",
+    "1.3": "714ee121b1a05a2e",
+    "1.4": "27d3312467df11dd",
+    "1.5": "3d1493a4322fca16",
+    "1.6": "5bee8c0efd16e440",
+    "2.1": "85fc81c861a66ac5",
+    "2.2": "fc2fc53ed6b804b6",
+    "2.3": "222af941091e8c71",
+    "2.4": "d440082083f09626",
+    "2.5": "b02a978bc77f0741"
+  }
+}

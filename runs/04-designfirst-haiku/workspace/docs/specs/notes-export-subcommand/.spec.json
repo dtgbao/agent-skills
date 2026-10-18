@@ -1,0 +1,6 @@
+{
+  "name": "notes-export-subcommand",
+  "workflow": "design-first",
+  "order": ["design", "requirements", "tasks"],
+  "phases": { "requirements": "stale", "design": "approved", "tasks": "approved" }
+}

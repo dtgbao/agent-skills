@@ -1,0 +1,23 @@
+Spec dir: /Users/baodang/Documents/code/sdd-mock/f1-discounts-v033/docs/specs/discount-codes
+Leaf id: 5.2
+Correctness rules path: /Users/baodang/Documents/code/agent-skills/plugins/sdd/shared/correctness.md
+
+Full leaf text:
+  - [-]* 5.2 Handler tests
+    - Files: `tests/test_api_codes.py`
+    - Kind: test
+    - Size: M
+    - **Property 7: Bad context gives 500 and changes nothing**
+    - **Validates: Requirements 5.6, 5.7**
+    - Do: Property 7 with Hypothesis (`max_examples` at least 100, tag comment). Plus one example test each for 5.1–5.5 through `handle` with a fixed `CodeBook` and `today`: 200 attach, 422 per reason, 400 `invalid_body` (missing and non-str), DELETE 200, GET keys with `code` null and set.
+    - Verify: `uv run --no-project --with pytest --with hypothesis python -m pytest -q tests/test_api_codes.py`
+    - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7_
+
+Cited criterion text:
+- 5.1: WHEN the Handler gets `PUT /carts/<id>/code` with body `{"code": <string>}` and the attach succeeds, THE Handler SHALL answer status 200 with `subtotal_cents`, `discount_cents`, and `amount_due_cents`.
+- 5.2: IF the attach is refused, THEN THE Handler SHALL answer status 422 with body `{"error": <reason>}`.
+- 5.3: IF the body of `PUT /carts/<id>/code` lacks `code` or `code` is not a string, THEN THE Handler SHALL answer status 400 with body `{"error": "invalid_body"}`.
+- 5.4: WHEN the Handler gets `DELETE /carts/<id>/code`, THE Handler SHALL answer status 200 with `subtotal_cents`, `discount_cents`, and `amount_due_cents`.
+- 5.5: WHEN the Handler gets `GET /carts/<id>`, THE Handler SHALL add `code`, `discount_cents`, and `amount_due_cents` to the existing body, with `code` null when the Cart has no Attached_Code.
+- 5.6: IF `ctx["today"]` is missing or not a `datetime.date`, or `ctx["code_book"]` is missing, on a request to a route in Requirement 5, THEN THE Handler SHALL answer status 500 with body `{"error": "bad_context"}` before any body check.
+- 5.7: WHEN the Handler answers status 500 with `bad_context`, THE Handler SHALL leave every Cart's lines and Attached_Code unchanged.

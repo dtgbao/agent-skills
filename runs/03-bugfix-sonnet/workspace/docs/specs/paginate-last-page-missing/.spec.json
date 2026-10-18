@@ -1,0 +1,14 @@
+{
+  "name": "paginate-last-page-missing",
+  "workflow": "bugfix",
+  "order": [
+    "requirements",
+    "design",
+    "tasks"
+  ],
+  "phases": {
+    "requirements": "approved",
+    "design": "approved",
+    "tasks": "approved"
+  }
+}

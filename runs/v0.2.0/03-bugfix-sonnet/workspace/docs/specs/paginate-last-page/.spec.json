@@ -1,0 +1,30 @@
+{
+  "name": "paginate-last-page",
+  "workflow": "bugfix",
+  "order": [
+    "requirements",
+    "design",
+    "tasks"
+  ],
+  "phases": {
+    "requirements": "approved",
+    "design": "approved",
+    "tasks": "approved"
+  },
+  "hashes": {
+    "requirements": "a2bfefd75d4c9e41b1ebcc8c64eecacc999e99a73228f8ef015161270d50ad24",
+    "design": "c09a8c7f711ba83f2a716728181b8595342a8ef087f0ee9d93926b0e1bc35aef",
+    "tasks": "241b7af031f3604be62451c90fccda59621701d36741f961e0046462eb951a8f"
+  },
+  "criteria": {
+    "1.1": "4b47b9b12a106987",
+    "1.2": "6e5dfdb61713645a",
+    "2.1": "36dbb98bf2847c63",
+    "2.2": "b16774be8ffef64b",
+    "3.1": "97085ded12c0f016",
+    "3.2": "19df95068a240dad",
+    "3.3": "28d69efcf8fdc9b2",
+    "3.4": "534ecc2aaf10918f",
+    "3.5": "3b2bd70ba6f960cc"
+  }
+}

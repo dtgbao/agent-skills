@@ -1,0 +1,785 @@
+diff --git a/shop/api.py b/shop/api.py
+index fe50a0e..5a702a2 100644
+--- a/shop/api.py
++++ b/shop/api.py
+@@ -1,10 +1,17 @@
+ from shop.cart import Cart
+ from shop.inventory import OutOfStock
++from shop import purchase, redeem, void
+ 
+ 
+ def handle(request: dict, ctx: dict) -> dict:
+     """request = {"method", "path", "body"}; ctx = {"carts": {id: Cart}, "inventory": Inventory}"""
+     method, path, body = request["method"], request["path"], request.get("body", {})
++    if method == "POST" and path == "/gift-cards":
++        return purchase.buy(body, ctx)
++    if method == "POST" and path == "/gift-cards/redeem":
++        return redeem.apply(body, ctx)
++    if method == "POST" and path.startswith("/gift-cards/") and path.endswith("/void"):
++        return void.void(path.split("/")[2], body, ctx)
+     if method == "POST" and path == "/carts":
+         cart_id = str(len(ctx["carts"]) + 1)
+         ctx["carts"][cart_id] = Cart(ctx["inventory"])
+diff --git a/shop/cart.py b/shop/cart.py
+index e857ed5..6cbe1ed 100644
+--- a/shop/cart.py
++++ b/shop/cart.py
+@@ -6,6 +6,7 @@ class Cart:
+     def __init__(self, inventory: Inventory) -> None:
+         self.inventory = inventory
+         self.lines: dict[str, int] = {}
++        self.open = True
+ 
+     def add(self, sku: str, qty: int) -> None:
+         if sku not in CATALOG:
+diff --git a/shop/giftcards.py b/shop/giftcards.py
+new file mode 100644
+index 0000000..bd07da0
+--- /dev/null
++++ b/shop/giftcards.py
+@@ -0,0 +1,47 @@
++"""Gift card model and in-memory store."""
++from __future__ import annotations
++
++import secrets
++import string
++import threading
++from dataclasses import dataclass
++
++MAX_BALANCE_CENTS = 50_000
++CODE_LEN = 16
++_ALPHABET = string.ascii_uppercase + string.digits
++
++
++@dataclass
++class GiftCard:
++    code: str
++    balance_cents: int
++    status: str = "active"
++
++
++class GiftCardStore:
++    def __init__(self) -> None:
++        self._cards: dict[str, GiftCard] = {}
++        self._locks: dict[str, threading.Lock] = {}
++        self._guard = threading.Lock()
++        self.idempotent: dict[str, dict] = {}
++
++    def new_code(self) -> str:
++        with self._guard:
++            while True:
++                code = "".join(secrets.choice(_ALPHABET) for _ in range(CODE_LEN))
++                if code not in self._cards:
++                    return code
++
++    def add(self, card: GiftCard) -> GiftCard:
++        if card.balance_cents < 0 or card.balance_cents > MAX_BALANCE_CENTS:
++            raise ValueError("balance out of range")
++        with self._guard:
++            self._cards[card.code] = card
++        return card
++
++    def get(self, code: str) -> GiftCard | None:
++        return self._cards.get(code)
++
++    def lock(self, code: str) -> threading.Lock:
++        with self._guard:
++            return self._locks.setdefault(code, threading.Lock())
+diff --git a/shop/ledger.py b/shop/ledger.py
+new file mode 100644
+index 0000000..371d498
+--- /dev/null
++++ b/shop/ledger.py
+@@ -0,0 +1,26 @@
++from dataclasses import dataclass
++from datetime import datetime
++from typing import Any
++
++
++class LedgerUnavailable(Exception):
++    pass
++
++
++@dataclass(frozen=True)
++class Entry:
++    code: str
++    field: str
++    old: Any
++    new: Any
++    actor_id: str
++    at: datetime
++
++
++class Ledger:
++    def __init__(self) -> None:
++        self.entries: list[Entry] = []
++        self.manual_refunds: list[dict] = []
++
++    def append(self, entry: Entry) -> None:
++        self.entries.append(entry)
+diff --git a/shop/payments.py b/shop/payments.py
+new file mode 100644
+index 0000000..1960968
+--- /dev/null
++++ b/shop/payments.py
+@@ -0,0 +1,16 @@
++from dataclasses import dataclass
++from typing import Literal, Protocol
++
++
++@dataclass(frozen=True)
++class ChargeResult:
++    status: Literal["ok", "declined", "timeout"]
++    charge_id: str | None = None
++
++
++class PaymentProvider(Protocol):
++    def charge(self, amount_cents: int, ref: str, timeout_s: float) -> ChargeResult: ...
++
++    def refund(self, charge_id: str) -> None: ...  # may raise
++
++    def cancel(self, ref: str) -> None: ...  # cancel or refund any later-confirmed charge for ref
+diff --git a/shop/purchase.py b/shop/purchase.py
+new file mode 100644
+index 0000000..fad0348
+--- /dev/null
++++ b/shop/purchase.py
+@@ -0,0 +1,58 @@
++"""Gift card purchase: charge, ledger, create, idempotency."""
++from __future__ import annotations
++
++import uuid
++from datetime import datetime, timezone
++
++from shop.giftcards import GiftCard
++from shop.ledger import Entry, LedgerUnavailable
++
++CHARGE_TIMEOUT_S = 10
++MIN_DOLLARS, MAX_DOLLARS = 10, 500
++
++
++def _err(status: int, error: str) -> dict:
++    return {"status": status, "body": {"error": error}}
++
++
++def _valid_value(v) -> bool:
++    return type(v) is int and MIN_DOLLARS <= v <= MAX_DOLLARS
++
++
++def buy(body: dict, ctx: dict) -> dict:
++    store, ledger, payments = ctx["giftcards"], ctx["ledger"], ctx["payments"]
++    body = body or {}
++    key = body.get("idempotency_key")
++    if key and key in store.idempotent:  # 1.9, 1.10
++        return store.idempotent[key]
++
++    value = body.get("value_dollars")
++    if not _valid_value(value):  # 1.7, 1.8
++        return _err(422, "invalid_request")
++    cents = value * 100
++
++    ref = f"gc_{uuid.uuid4().hex}"
++    result = payments.charge(cents, ref, CHARGE_TIMEOUT_S)  # 1.1
++    if result.status == "timeout":
++        payments.cancel(ref)  # 1.6
++    if result.status != "ok":
++        return _err(402, "payment_failed")  # 1.3, 1.4
++
++    code = store.new_code()
++    now = datetime.now(timezone.utc)
++    try:
++        ledger.append(Entry(code, "balance", None, cents, body.get("actor_id", ""), now))  # 5.1
++    except LedgerUnavailable:
++        try:
++            payments.refund(result.charge_id)  # 5.3
++        except Exception:
++            ledger.manual_refunds.append(  # 5.4
++                {"charge_id": result.charge_id, "amount_cents": cents, "at": datetime.now(timezone.utc)}
++            )
++        return _err(503, "ledger_unavailable")  # 5.2
++
++    store.add(GiftCard(code, cents))  # 1.5
++    response = {"status": 201, "body": {"code": code}}  # 1.2
++    if key:
++        store.idempotent[key] = response
++    return response
+diff --git a/shop/redeem.py b/shop/redeem.py
+new file mode 100644
+index 0000000..5048161
+--- /dev/null
++++ b/shop/redeem.py
+@@ -0,0 +1,34 @@
++"""Gift card redemption: checks, subtract, amount due."""
++from datetime import datetime, timezone
++
++from shop.giftcards import CODE_LEN
++from shop.ledger import Entry, LedgerUnavailable
++
++
++def _err(status: int, error: str) -> dict:
++    return {"status": status, "body": {"error": error}}
++
++
++def apply(body: dict, ctx: dict) -> dict:
++    body = body if isinstance(body, dict) else {}
++    code = body.get("code")
++    cart = ctx["carts"].get(str(body.get("cart_id")))
++    if not isinstance(code, str) or len(code) != CODE_LEN or cart is None or not getattr(cart, "open", False):
++        return _err(422, "invalid_request")  # 2.8, 2.9
++    store = ctx["giftcards"]
++    card = store.get(code)
++    if card is None:
++        return _err(404, "unknown_card")  # 2.4
++    with store.lock(code):  # 2.7
++        if card.status == "void":
++            return _err(409, "card_void")  # 3.2
++        s = cart.subtotal_cents()
++        b = card.balance_cents
++        new_b, due = (b - s, 0) if s <= b else (0, s - b)  # 2.1, 2.5, 2.6
++        entry = Entry(code, "balance", b, new_b, str(body.get("actor_id", "")), datetime.now(timezone.utc))
++        try:
++            ctx["ledger"].append(entry)  # 5.1
++        except LedgerUnavailable:
++            return _err(503, "ledger_unavailable")  # 5.2
++        card.balance_cents = new_b
++    return {"status": 200, "body": {"balance_cents": new_b, "amount_due_cents": due}}
+diff --git a/shop/void.py b/shop/void.py
+new file mode 100644
+index 0000000..1f4568d
+--- /dev/null
++++ b/shop/void.py
+@@ -0,0 +1,31 @@
++"""Void a gift card (staff only)."""
++from __future__ import annotations
++
++from datetime import datetime, timezone
++
++from shop.ledger import Entry, LedgerUnavailable
++
++
++def _err(status: int, code: str) -> dict:
++    return {"status": status, "body": {"error": code}}
++
++
++def void(code: str, body: dict, ctx: dict) -> dict:
++    actor = (body or {}).get("actor_id")
++    if not actor or actor not in ctx["staff_ids"]:
++        return _err(403, "forbidden")
++    store = ctx["giftcards"]
++    card = store.get(code)
++    if card is None:
++        return _err(404, "unknown_card")
++    with store.lock(code):
++        if card.status == "void":
++            return _err(409, "card_void")
++        try:
++            ctx["ledger"].append(
++                Entry(code, "status", card.status, "void", actor, datetime.now(timezone.utc))
++            )
++        except LedgerUnavailable:
++            return _err(503, "ledger_unavailable")
++        card.status = "void"
++    return {"status": 200, "body": {"code": code, "status": "void"}}
+diff --git a/tests/fakes.py b/tests/fakes.py
+new file mode 100644
+index 0000000..685938d
+--- /dev/null
++++ b/tests/fakes.py
+@@ -0,0 +1,47 @@
++"""Test fakes for ctx ports. No network."""
++from shop.cart import Cart  # noqa: F401  (re-export for callers)
++from shop.giftcards import GiftCardStore
++from shop.inventory import Inventory
++from shop.ledger import Ledger, LedgerUnavailable
++from shop.payments import ChargeResult
++
++
++class FakePaymentProvider:
++    def __init__(self, result: str = "ok", refund_fails: bool = False) -> None:
++        self.result = result
++        self.refund_fails = refund_fails
++        self.charges: list[tuple[int, str, float]] = []
++        self.refunds: list[str] = []
++        self.cancels: list[str] = []
++
++    def charge(self, amount_cents: int, ref: str, timeout_s: float) -> ChargeResult:
++        self.charges.append((amount_cents, ref, timeout_s))
++        if self.result == "ok":
++            return ChargeResult("ok", f"ch_{len(self.charges)}")
++        return ChargeResult(self.result, None)
++
++    def refund(self, charge_id: str) -> None:
++        self.refunds.append(charge_id)
++        if self.refund_fails:
++            raise RuntimeError("refund failed")
++
++    def cancel(self, ref: str) -> None:
++        self.cancels.append(ref)
++
++
++class FailingLedger(Ledger):
++    def append(self, entry) -> None:  # type: ignore[override]
++        raise LedgerUnavailable("ledger down")
++
++
++def make_ctx(**over) -> dict:
++    ctx = {
++        "carts": {},
++        "inventory": Inventory({"TEA-01": 10, "MUG-01": 2}),
++        "giftcards": GiftCardStore(),
++        "ledger": Ledger(),
++        "payments": FakePaymentProvider(),
++        "staff_ids": set(),
++    }
++    ctx.update(over)
++    return ctx
+diff --git a/tests/test_api_giftcards.py b/tests/test_api_giftcards.py
+new file mode 100644
+index 0000000..93cbf4e
+--- /dev/null
++++ b/tests/test_api_giftcards.py
+@@ -0,0 +1,51 @@
++"""API tests for gift-card routes. Requirements 1.2, 3.1."""
++from shop.api import handle
++from tests.fakes import make_ctx
++
++
++def _post(ctx, path, body=None):
++    return handle({"method": "POST", "path": path, "body": body or {}}, ctx)
++
++
++def _cart(ctx, sku, qty):
++    cid = _post(ctx, "/carts")["body"]["cart_id"]
++    assert _post(ctx, f"/carts/{cid}/lines", {"sku": sku, "qty": qty})["status"] == 200
++    return cid
++
++
++def test_buy_redeem_void_flow():
++    ctx = make_ctx(staff_ids={"staff1"})
++    r = _post(ctx, "/gift-cards", {"value_dollars": 10, "actor_id": "u"})
++    assert r["status"] == 201
++    code = r["body"]["code"]
++
++    c1 = _cart(ctx, "TEA-01", 2)  # 900
++    r = _post(ctx, "/gift-cards/redeem", {"code": code, "cart_id": c1})
++    assert r == {"status": 200, "body": {"balance_cents": 100, "amount_due_cents": 0}}
++
++    c2 = _cart(ctx, "MUG-01", 1)  # 1200
++    r = _post(ctx, "/gift-cards/redeem", {"code": code, "cart_id": c2})
++    assert r == {"status": 200, "body": {"balance_cents": 0, "amount_due_cents": 1100}}
++
++    r = _post(ctx, f"/gift-cards/{code}/void", {"actor_id": "staff1"})
++    assert r == {"status": 200, "body": {"code": code, "status": "void"}}
++
++    r = _post(ctx, "/gift-cards/redeem", {"code": code, "cart_id": c1})
++    assert r["status"] == 409
++
++
++def test_void_requires_staff():
++    ctx = make_ctx(staff_ids={"staff1"})
++    code = _post(ctx, "/gift-cards", {"value_dollars": 20})["body"]["code"]
++    assert _post(ctx, f"/gift-cards/{code}/void", {"actor_id": "x"})["status"] == 403
++
++
++def test_existing_cart_routes_still_work():
++    ctx = make_ctx()
++    cid = _post(ctx, "/carts")["body"]["cart_id"]
++    r = _post(ctx, f"/carts/{cid}/lines", {"sku": "TEA-01", "qty": 2})
++    assert r == {"status": 200, "body": {"subtotal_cents": 900}}
++    r = handle({"method": "GET", "path": f"/carts/{cid}"}, ctx)
++    assert r["status"] == 200 and r["body"]["subtotal_cents"] == 900
++    assert handle({"method": "GET", "path": "/carts/zz"}, ctx)["status"] == 404
++    assert _post(ctx, f"/carts/{cid}/lines", {"sku": "NOPE", "qty": 1})["status"] == 400
+diff --git a/tests/test_ledger_audit.py b/tests/test_ledger_audit.py
+new file mode 100644
+index 0000000..3a2f56d
+--- /dev/null
++++ b/tests/test_ledger_audit.py
+@@ -0,0 +1,82 @@
++# Feature: gift-cards, Property 9: Every change is audited, or nothing changes
++from datetime import timezone
++
++from hypothesis import given, settings, strategies as st
++
++from shop import purchase, redeem, void
++from shop.cart import Cart
++from shop.giftcards import GiftCard
++from shop.inventory import Inventory
++from shop.ledger import Ledger
++from tests.fakes import FailingLedger, make_ctx
++
++ACTOR = "staff1"
++OPS = st.lists(st.sampled_from(["buy", "redeem", "void"]), min_size=1, max_size=12)
++
++
++def _snapshot(store):
++    return {c: (g.balance_cents, g.status) for c, g in store._cards.items()}
++
++
++def _run(op, ctx, state):
++    store = ctx["giftcards"]
++    if op == "buy":
++        r = purchase.buy({"value_dollars": 50, "actor_id": ACTOR}, ctx)
++        if r["status"] == 201:
++            state["codes"].append(r["body"]["code"])
++        return r
++    if not state["codes"]:
++        return None
++    code = state["codes"][-1]
++    if op == "redeem":
++        cart = Cart(Inventory({"TEA-01": 100}))
++        cart.add("TEA-01", 2)
++        ctx["carts"]["c1"] = cart
++        return redeem.apply({"code": code, "cart_id": "c1", "actor_id": ACTOR}, ctx)
++    return void.void(code, {"actor_id": ACTOR}, ctx)
++
++
++@settings(max_examples=100, deadline=None)
++@given(ops=OPS)
++def test_each_change_appends_one_valid_entry(ops):
++    ctx = make_ctx(staff_ids={ACTOR})
++    state = {"codes": []}
++    store, ledger = ctx["giftcards"], ctx["ledger"]
++    for op in ops:
++        before, n = _snapshot(store), len(ledger.entries)
++        r = _run(op, ctx, state)
++        after = _snapshot(store)
++        added = ledger.entries[n:]
++        if r is not None and r["status"] in (200, 201) and after != before:
++            assert len(added) == 1
++            e = added[0]
++            assert e.actor_id == ACTOR and e.at.tzinfo is not None
++            assert e.at.utcoffset() == timezone.utc.utcoffset(None)
++            if op == "buy":
++                code = r["body"]["code"]
++                assert (e.code, e.field, e.old, e.new) == (code, "balance", None, 5000)
++            elif op == "redeem":
++                assert e.field == "balance"
++                assert (e.old, e.new) == (before[e.code][0], after[e.code][0])
++            else:
++                assert (e.field, e.old, e.new) == ("status", "active", "void")
++                assert after[e.code][1] == "void"
++        else:
++            assert after == before
++            assert added == []
++
++
++@settings(max_examples=100, deadline=None)
++@given(ops=OPS, balance=st.integers(0, 50_000))
++def test_ledger_failure_returns_503_and_changes_nothing(ops, balance):
++    ctx = make_ctx(staff_ids={ACTOR}, ledger=FailingLedger())
++    store = ctx["giftcards"]
++    card = store.add(GiftCard("A" * 16, balance))
++    state = {"codes": [card.code]}
++    before = _snapshot(store)
++    for op in ops:
++        r = _run(op, ctx, state)
++        assert r["status"] == 503
++        assert r["body"] == {"error": "ledger_unavailable"}
++        assert _snapshot(store) == before
++        assert ctx["ledger"].entries == []
+diff --git a/tests/test_purchase.py b/tests/test_purchase.py
+new file mode 100644
+index 0000000..60af4c0
+--- /dev/null
++++ b/tests/test_purchase.py
+@@ -0,0 +1,91 @@
++from hypothesis import given, settings, strategies as st
++
++from shop.giftcards import CODE_LEN
++from shop.purchase import buy
++from tests.fakes import FailingLedger, FakePaymentProvider, make_ctx
++
++S = settings(max_examples=100, deadline=None)
++valid = st.integers(10, 500)
++
++
++# Feature: gift-cards, Property 1: Valid purchase creates a matching card
++@S
++@given(v=valid)
++def test_valid_purchase_creates_matching_card(v):
++    ctx = make_ctx()
++    r = buy({"value_dollars": v, "actor_id": "u"}, ctx)
++    assert r["status"] == 201
++    code = r["body"]["code"]
++    assert len(code) == CODE_LEN
++    assert [c[0] for c in ctx["payments"].charges] == [v * 100]
++    card = ctx["giftcards"].get(code)
++    assert card.status == "active" and card.balance_cents == v * 100
++
++
++# Feature: gift-cards, Property 2: Invalid purchase value is rejected without a charge
++invalid = st.one_of(
++    st.integers(max_value=9), st.integers(min_value=501), st.floats(allow_nan=True),
++    st.text(), st.none(), st.booleans(),
++)
++
++
++@S
++@given(v=invalid)
++def test_invalid_value_rejected_no_charge(v):
++    ctx = make_ctx()
++    r = buy({"value_dollars": v, "actor_id": "u"}, ctx)
++    assert r == {"status": 422, "body": {"error": "invalid_request"}}
++    assert ctx["payments"].charges == []
++
++
++@S
++@given(st.data())
++def test_missing_value_rejected(data):
++    ctx = make_ctx()
++    r = buy({"actor_id": "u"}, ctx)
++    assert r["status"] == 422 and ctx["payments"].charges == []
++
++
++# Feature: gift-cards, Property 3: Failed charge creates no card
++@S
++@given(v=valid, res=st.sampled_from(["declined", "timeout"]))
++def test_failed_charge_creates_no_card(v, res):
++    ctx = make_ctx(payments=FakePaymentProvider(res))
++    r = buy({"value_dollars": v, "actor_id": "u"}, ctx)
++    assert r == {"status": 402, "body": {"error": "payment_failed"}}
++    assert ctx["giftcards"]._cards == {}
++    pay = ctx["payments"]
++    if res == "timeout":
++        assert pay.cancels == [pay.charges[0][1]]
++    else:
++        assert pay.cancels == []
++
++
++# Feature: gift-cards, Property 4: Purchase is idempotent per key
++@S
++@given(v=valid, n=st.integers(2, 5), key=st.text(min_size=1))
++def test_purchase_idempotent_per_key(v, n, key):
++    ctx = make_ctx()
++    body = {"value_dollars": v, "idempotency_key": key, "actor_id": "u"}
++    rs = [buy(dict(body), ctx) for _ in range(n)]
++    assert all(r == rs[0] for r in rs)
++    assert rs[0]["status"] == 201
++    assert len(ctx["payments"].charges) == 1
++    assert len(ctx["giftcards"]._cards) == 1
++
++
++# Feature: gift-cards, Property 10: Ledger failure after charge refunds or queues
++@S
++@given(v=valid, refund_fails=st.booleans())
++def test_ledger_failure_refunds_or_queues(v, refund_fails):
++    ctx = make_ctx(ledger=FailingLedger(), payments=FakePaymentProvider("ok", refund_fails))
++    r = buy({"value_dollars": v, "actor_id": "u"}, ctx)
++    pay = ctx["payments"]
++    assert r == {"status": 503, "body": {"error": "ledger_unavailable"}}
++    assert pay.refunds == ["ch_1"]
++    assert ctx["giftcards"]._cards == {}
++    q = ctx["ledger"].manual_refunds
++    if refund_fails:
++        assert len(q) == 1 and q[0]["charge_id"] == "ch_1" and q[0]["amount_cents"] == v * 100
++    else:
++        assert q == []
+diff --git a/tests/test_redeem.py b/tests/test_redeem.py
+new file mode 100644
+index 0000000..d7ce58a
+--- /dev/null
++++ b/tests/test_redeem.py
+@@ -0,0 +1,157 @@
++"""Property tests for gift card redemption (shop/redeem.py)."""
++import threading
++import time
++
++from hypothesis import given, settings, strategies as st
++
++from shop import redeem
++from shop.cart import Cart
++from shop.catalog import CATALOG
++from shop.giftcards import CODE_LEN, MAX_BALANCE_CENTS, GiftCard
++from shop.inventory import Inventory
++from tests.fakes import make_ctx
++
++SKUS = sorted(CATALOG)
++cart_lines = st.dictionaries(st.sampled_from(SKUS), st.integers(1, 20), max_size=3)
++
++
++def _cart(ctx, cart_id, lines, open_=True):
++    cart = Cart(Inventory({s: 10_000 for s in SKUS}))
++    cart.lines = dict(lines)
++    cart.open = open_
++    ctx["carts"][cart_id] = cart
++    return cart
++
++
++def _card(ctx, balance, status="active"):
++    store = ctx["giftcards"]
++    card = GiftCard(store.new_code(), balance, status)
++    store.add(card)
++    return card
++
++
++# Feature: gift-cards, Property 5: Redemption follows the balance model
++@settings(max_examples=200, deadline=None)
++@given(b=st.integers(0, MAX_BALANCE_CENTS), lines=cart_lines)
++def test_redemption_follows_balance_model(b, lines):
++    ctx = make_ctx()
++    card = _card(ctx, b)
++    cart = _cart(ctx, "c1", lines)
++    s = cart.subtotal_cents()
++    r = redeem.apply({"code": card.code, "cart_id": "c1", "actor_id": "u1"}, ctx)
++    assert r["status"] == 200
++    assert r["body"] == {"balance_cents": max(b - s, 0), "amount_due_cents": max(s - b, 0)}
++    assert card.balance_cents == max(b - s, 0)
++    assert 0 <= card.balance_cents <= MAX_BALANCE_CENTS
++
++
++# Feature: gift-cards, Property 6: Concurrent operations never overspend
++@settings(max_examples=100, deadline=None)
++@given(b=st.integers(0, MAX_BALANCE_CENTS), carts=st.lists(cart_lines, min_size=2, max_size=8))
++def test_concurrent_redemptions_never_overspend(b, carts):
++    ctx = make_ctx()
++    card = _card(ctx, b)
++    for i, lines in enumerate(carts):
++        _cart(ctx, f"c{i}", lines)
++    results = [None] * len(carts)
++    barrier = threading.Barrier(len(carts))
++
++    def run(i):
++        barrier.wait()
++        results[i] = redeem.apply({"code": card.code, "cart_id": f"c{i}", "actor_id": "u"}, ctx)
++
++    threads = [threading.Thread(target=run, args=(i,)) for i in range(len(carts))]
++    for t in threads:
++        t.start()
++    for t in threads:
++        t.join()
++    assert all(r["status"] == 200 for r in results)
++    subtracted = sum(
++        ctx["carts"][f"c{i}"].subtotal_cents() - r["body"]["amount_due_cents"] for i, r in enumerate(results)
++    )
++    assert card.balance_cents >= 0
++    assert subtracted == b - card.balance_cents
++    # Ledger entries form one chain: each old equals the previous new.
++    entries = ctx["ledger"].entries
++    assert len(entries) == len(carts)
++    assert entries[0].old == b
++    for prev, nxt in zip(entries, entries[1:]):
++        assert nxt.old == prev.new
++    assert entries[-1].new == card.balance_cents
++
++
++# Feature: gift-cards, Property 7: Redemption error precedence
++@settings(max_examples=200, deadline=None)
++@given(
++    bad_code=st.booleans(),
++    cart_state=st.sampled_from(["open", "closed", "missing"]),
++    unknown=st.booleans(),
++    void=st.booleans(),
++    bad_code_text=st.text(max_size=40).filter(lambda t: len(t) != CODE_LEN),
++    b=st.integers(0, MAX_BALANCE_CENTS),
++    lines=cart_lines,
++)
++def test_redemption_error_precedence(bad_code, cart_state, unknown, void, bad_code_text, b, lines):
++    ctx = make_ctx()
++    card = _card(ctx, b, "void" if void else "active")
++    other = _card(ctx, 1234)
++    if cart_state != "missing":
++        _cart(ctx, "c1", lines, open_=(cart_state == "open"))
++    if bad_code:
++        code = bad_code_text
++    elif unknown:
++        code = "!" * CODE_LEN  # 16 chars, outside the code alphabet: never issued
++    else:
++        code = card.code
++    before = {c.code: (c.balance_cents, c.status) for c in (card, other)}
++    n_entries = len(ctx["ledger"].entries)
++
++    r = redeem.apply({"code": code, "cart_id": "c1", "actor_id": "u1"}, ctx)
++
++    if bad_code or cart_state != "open":
++        expected = (422, "invalid_request")
++    elif unknown:
++        expected = (404, "unknown_card")
++    elif void:
++        expected = (409, "card_void")
++    else:
++        expected = None
++    if expected is None:
++        assert r["status"] == 200
++    else:
++        assert (r["status"], r["body"].get("error")) == expected
++        assert {c.code: (c.balance_cents, c.status) for c in (card, other)} == before
++        assert len(ctx["ledger"].entries) == n_entries
++
++
++# Example test for 2.2: 200 redemptions, 95th percentile < 2 s.
++def test_redemption_latency_p95_under_2s():
++    ctx = make_ctx()
++    durations = []
++    for i in range(200):
++        card = _card(ctx, MAX_BALANCE_CENTS)
++        _cart(ctx, f"c{i}", {"TEA-01": 2, "MUG-01": 1})
++        t0 = time.perf_counter()
++        r = redeem.apply({"code": card.code, "cart_id": f"c{i}", "actor_id": "u"}, ctx)
++        durations.append(time.perf_counter() - t0)
++        assert r["status"] == 200
++    durations.sort()
++    assert durations[int(0.95 * len(durations)) - 1] < 2.0
++
++
++# Example test for 4.1: an untouched card keeps its balance after other operations.
++def test_untouched_card_keeps_balance():
++    ctx = make_ctx(staff_ids={"staff1"})
++    keep = _card(ctx, 25_000)
++    a = _card(ctx, 10_000)
++    b = _card(ctx, 5_000)
++    for i in range(5):
++        _cart(ctx, f"c{i}", {"KET-01": 1})
++        redeem.apply({"code": a.code, "cart_id": f"c{i}", "actor_id": "u"}, ctx)
++    from shop import void as void_mod
++
++    void_mod.void(b.code, {"actor_id": "staff1"}, ctx)
++    _cart(ctx, "cx", {"TEA-01": 1})
++    redeem.apply({"code": b.code, "cart_id": "cx", "actor_id": "u"}, ctx)
++    assert keep.balance_cents == 25_000
++    assert keep.status == "active"
+diff --git a/tests/test_void.py b/tests/test_void.py
+new file mode 100644
+index 0000000..024fda2
+--- /dev/null
++++ b/tests/test_void.py
+@@ -0,0 +1,39 @@
++"""Property 8: Only staff can void. Validates: Requirements 3.1, 3.3, 3.4."""
++from hypothesis import given, strategies as st
++
++from shop.giftcards import GiftCard
++from shop.void import void
++from tests.fakes import make_ctx
++
++ids = st.text(min_size=0, max_size=8)
++
++
++def _setup(staff):
++    ctx = make_ctx(staff_ids=set(staff))
++    ctx["giftcards"].add(GiftCard("CODE", 5000))
++    return ctx
++
++
++@given(staff=st.sets(ids, max_size=5), actor=st.one_of(st.none(), ids))
++def test_only_staff_can_void(staff, actor):
++    ctx = _setup(staff)
++    card = ctx["giftcards"].get("CODE")
++    r = void("CODE", {"actor_id": actor}, ctx)
++    if actor and actor in staff:
++        assert r["status"] == 200
++        assert r["body"] == {"code": "CODE", "status": "void"}
++        assert card.status == "void"
++        assert len(ctx["ledger"].entries) == 1
++    else:
++        assert r == {"status": 403, "body": {"error": "forbidden"}}
++        assert card.status == "active"
++        assert card.balance_cents == 5000
++        assert ctx["ledger"].entries == []
++
++
++@given(staff=st.sets(ids, max_size=5))
++def test_missing_body_forbidden(staff):
++    ctx = _setup(staff)
++    assert void("CODE", {}, ctx)["status"] == 403
++    assert void("CODE", None, ctx)["status"] == 403
++    assert ctx["giftcards"].get("CODE").status == "active"

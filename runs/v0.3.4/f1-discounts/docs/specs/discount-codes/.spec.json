@@ -1,0 +1,50 @@
+{
+  "name": "discount-codes",
+  "workflow": "requirements-first",
+  "order": [
+    "requirements",
+    "design",
+    "tasks"
+  ],
+  "phases": {
+    "requirements": "approved",
+    "design": "approved",
+    "tasks": "approved"
+  },
+  "hashes": {
+    "requirements": "aa40c956b0b2176110c4bedfef83e8064976d24d3736153fef22db3cd8e114e9",
+    "design": "665475aa1b86f88c8981dbc6d7cc6d769ca11c3abff6b926e4a70b6647e4c318",
+    "tasks": "99a37917f5e2e6c8912dcba93abd377ab11542c13695e258d718ed09ba57d06b"
+  },
+  "criteria": {
+    "1.1": "WHEN the Operator creates a Discount_Code whose fields are all in range, THE Code_Book SHALL hold that Discount_Code under its Code.",
+    "1.2": "IF the Kind is `percent` and the Amount is outside 1\u201350, THEN THE Code_Book SHALL refuse the Discount_Code and stay unchanged.",
+    "1.3": "IF the Kind is `fixed` and the Amount is outside 1\u20131,000,000, THEN THE Code_Book SHALL refuse the Discount_Code and stay unchanged.",
+    "1.4": "IF the Code does not match the Code format, THEN THE Code_Book SHALL refuse the Discount_Code and stay unchanged.",
+    "1.5": "IF the Min_Subtotal is outside 0\u20131,000,000, THEN THE Code_Book SHALL refuse the Discount_Code and stay unchanged.",
+    "1.6": "IF the Code_Book already holds a Discount_Code with the same Code, THEN THE Code_Book SHALL refuse the new Discount_Code and keep the old one.",
+    "1.7": "IF the Kind is not `percent` or `fixed`, or the Amount is not an integer, THEN THE Code_Book SHALL refuse the Discount_Code and stay unchanged.",
+    "2.1": "WHEN the Shopper attaches a Code that is in the Code_Book, Current_Date is on or before Valid_Until, and the Subtotal is at least Min_Subtotal, THE Cart SHALL make that Discount_Code its Attached_Code.",
+    "2.2": "IF the Code is not in the Code_Book, THEN THE Cart SHALL refuse the attach with reason `code_not_found`.",
+    "2.3": "IF Current_Date is after Valid_Until, THEN THE Cart SHALL refuse the attach with reason `code_expired`.",
+    "2.4": "IF the Subtotal is less than Min_Subtotal, THEN THE Cart SHALL refuse the attach with reason `minimum_not_met`.",
+    "2.5": "IF the Cart already has an Attached_Code, THEN THE Cart SHALL refuse the attach with reason `code_already_attached`.",
+    "2.6": "WHEN the Cart refuses an attach, THE Cart SHALL keep its Attached_Code as it was before the attach.",
+    "2.7": "IF more than one refusal condition holds, THEN THE Cart SHALL refuse with the first reason in the order `code_not_found`, `code_already_attached`, `code_expired`, `minimum_not_met`.",
+    "3.1": "WHEN the Shopper detaches the code from a Cart, THE Cart SHALL have no Attached_Code.",
+    "3.2": "IF the Cart has no Attached_Code when the Shopper detaches, THEN THE Cart SHALL finish without an error.",
+    "4.1": "WHILE the Attached_Code has Kind `percent`, THE Cart SHALL report Discount_Amount = floor(Subtotal \u00d7 Amount / 100) cents.",
+    "4.2": "WHILE the Attached_Code has Kind `fixed`, THE Cart SHALL report Discount_Amount = min(Amount, Subtotal) cents.",
+    "4.3": "WHILE the Cart has no Attached_Code, THE Cart SHALL report Discount_Amount = 0 cents.",
+    "4.4": "THE Cart SHALL report Amount_Due = Subtotal \u2212 Discount_Amount cents.",
+    "4.5": "WHILE the Subtotal is less than the Attached_Code's Min_Subtotal, THE Cart SHALL report Discount_Amount = 0 cents, overriding 4.1 and 4.2.",
+    "4.6": "WHILE Current_Date is after the Attached_Code's Valid_Until, THE Cart SHALL report Discount_Amount = 0 cents, overriding 4.1 and 4.2.",
+    "5.1": "WHEN the Handler gets `PUT /carts/<id>/code` with body `{\"code\": <string>}` and the attach succeeds, THE Handler SHALL answer status 200 with `subtotal_cents`, `discount_cents`, and `amount_due_cents`.",
+    "5.2": "IF the attach is refused, THEN THE Handler SHALL answer status 422 with body `{\"error\": <reason>}`.",
+    "5.3": "IF the body of `PUT /carts/<id>/code` lacks `code` or `code` is not a string, THEN THE Handler SHALL answer status 400 with body `{\"error\": \"invalid_body\"}`.",
+    "5.4": "WHEN the Handler gets `DELETE /carts/<id>/code`, THE Handler SHALL answer status 200 with `subtotal_cents`, `discount_cents`, and `amount_due_cents`.",
+    "5.5": "WHEN the Handler gets `GET /carts/<id>`, THE Handler SHALL add `code`, `discount_cents`, and `amount_due_cents` to the existing body, with `code` null when the Cart has no Attached_Code.",
+    "5.6": "IF `ctx[\"today\"]` is missing or not a `datetime.date`, or `ctx[\"code_book\"]` is missing, on a request to a route in Requirement 5, THEN THE Handler SHALL answer status 500 with body `{\"error\": \"bad_context\"}` before any body check.",
+    "5.7": "WHEN the Handler answers status 500 with `bad_context`, THE Handler SHALL leave every Cart's lines and Attached_Code unchanged."
+  }
+}

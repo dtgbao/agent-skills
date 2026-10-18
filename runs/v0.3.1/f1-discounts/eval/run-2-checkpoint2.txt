@@ -1,0 +1,15 @@
+            raise ValueError(f"bad kind: {self.kind!r}")
+        if not _is_int(self.value):
+            raise ValueError(f"value must be an integer: {self.value!r}")
+        if self.kind == "percent" and not PERCENT_MIN <= self.value <= PERCENT_MAX:
+>           raise ValueError(f"percent value out of range: {self.value}")
+E           ValueError: percent value out of range: 51
+E           while generating 'dc' from one_of(none(), one_of(builds(DiscountCode, code=just('CODE'), expires_on=dates(min_value=datetime.date(2025, 1, 1), max_value=datetime.date(2027, 1, 1)), kind=just('percent'), min_subtotal_cents=integers(min_value=0, max_value=5000), value=integers(min_value=1, max_value=90)), builds(DiscountCode, code=just('CODE'), expires_on=dates(min_value=datetime.date(2025, 1, 1), max_value=datetime.date(2027, 1, 1)), kind=just('fixed'), min_subtotal_cents=integers(min_value=0, max_value=5000), value=integers(min_value=1, max_value=100000))))
+E           Explanation:
+E               These lines were always and only run by failing test cases:
+E                   /Users/baodang/Documents/code/sdd-mock/f1-discounts-v031/shop/discounts.py:30
+
+shop/discounts.py:30: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_cart_discount.py::test_total_between_zero_and_subtotal - Va...
+1 failed, 16 passed in 2.99s

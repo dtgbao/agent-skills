@@ -1,0 +1,31 @@
+{
+  "name": "slugify",
+  "workflow": "quick-plan",
+  "order": [
+    "requirements",
+    "design",
+    "tasks"
+  ],
+  "phases": {
+    "requirements": "approved",
+    "design": "approved",
+    "tasks": "approved"
+  },
+  "hashes": {
+    "requirements": "b34b887f9722b555c7048268c59794d64c87233f75d95fa9c769469b78e76e4f",
+    "design": "78975fcdf88b6fe25c6963e3dafc3632821a6cdea6e8ad85e5908bb4352922e4",
+    "tasks": "f4d0e7e8119370c840f7e29a0b24cdd1a3b4fe48de7ec586dd152c9895812cbc"
+  },
+  "criteria": {
+    "1.1": "bef9d00e37dc171f",
+    "1.2": "b4385ac7bf5f8aa6",
+    "1.3": "2594b96da5637ad6",
+    "1.4": "5e6a912a4c219852",
+    "1.5": "d7646c8b3a49ee30",
+    "2.1": "053f2bf184554a47",
+    "2.2": "c5d7b75c93d0c2ee",
+    "2.3": "ca5d1742afb7eceb",
+    "2.4": "7c378b09c748d681",
+    "2.5": "52da8cba5d3613aa"
+  }
+}

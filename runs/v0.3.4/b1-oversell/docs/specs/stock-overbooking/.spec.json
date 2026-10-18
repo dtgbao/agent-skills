@@ -1,0 +1,34 @@
+{
+  "name": "stock-overbooking",
+  "workflow": "bugfix",
+  "order": [
+    "requirements",
+    "design",
+    "tasks"
+  ],
+  "phases": {
+    "requirements": "approved",
+    "design": "approved",
+    "tasks": "approved"
+  },
+  "hashes": {
+    "requirements": "2b0ad5d0eb544145a0b5a9ebb98e3a158336b3c2175509bba52a4e8b2b22b92e",
+    "design": "50b203a02424c700533fad140cedd79ff9ca513f9b3de300328479a103275686",
+    "tasks": "74f4917c7f65baa5ea7557a4f5afcb8853b5abe57b0721db78e4e6c1dbb1aa24"
+  },
+  "criteria": {
+    "1.1": "1.1 WHEN MUG-01 has stock 5 and cart A has reserved 3 units THEN the system lets cart B reserve 3 more units with no `OutOfStock`",
+    "1.2": "1.2 WHEN MUG-01 has stock 5 and cart A has reserved 3 units and cart B reserves 3 units THEN the system returns -1 from `available(\"MUG-01\")`",
+    "1.3": "1.3 WHEN MUG-01 has stock 5 and one cart adds 3 units two times THEN the system accepts the second add with no `OutOfStock`",
+    "2.1": "2.1 WHEN MUG-01 has stock 5 and cart A has reserved 3 units THE SYSTEM SHALL raise `OutOfStock` for a reserve of 3 more units by cart B",
+    "2.2": "2.2 WHEN MUG-01 has stock 5 and cart A has reserved 3 units and cart B tries to reserve 3 units THE SYSTEM SHALL return 2 from `available(\"MUG-01\")`",
+    "2.3": "2.3 WHEN MUG-01 has stock 5 and one cart adds 3 units two times THE SYSTEM SHALL raise `OutOfStock` for the second add",
+    "3.1": "3.1 WHEN no units of a sku are reserved and one reserve asks for more units than its stock THE SYSTEM SHALL CONTINUE TO raise `OutOfStock`",
+    "3.2": "3.2 WHEN a reserve asks for 0 or fewer units THE SYSTEM SHALL CONTINUE TO raise `ValueError`",
+    "3.3": "3.3 WHEN `release` runs with any number of units THE SYSTEM SHALL CONTINUE TO return at most the initial stock from `available`",
+    "3.4": "3.4 WHEN `Cart.remove` runs for a sku in the cart THE SYSTEM SHALL CONTINUE TO raise `available` by the qty of that line",
+    "3.5": "3.5 WHEN the running total of reserves for a sku stays at or below its stock THE SYSTEM SHALL CONTINUE TO accept each reserve",
+    "3.6": "3.6 WHEN `Cart.add` raises `OutOfStock` THE SYSTEM SHALL CONTINUE TO leave the lines of that cart unchanged",
+    "3.7": "3.7 WHEN an add through `POST /carts/<id>/lines` raises `OutOfStock` THE SYSTEM SHALL CONTINUE TO return status 409"
+  }
+}

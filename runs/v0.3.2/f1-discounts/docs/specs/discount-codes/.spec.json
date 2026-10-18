@@ -1,0 +1,49 @@
+{
+  "name": "discount-codes",
+  "workflow": "requirements-first",
+  "order": [
+    "requirements",
+    "design",
+    "tasks"
+  ],
+  "phases": {
+    "requirements": "approved",
+    "design": "approved",
+    "tasks": "approved"
+  },
+  "hashes": {
+    "requirements": "366f04c7349b808f98da73f8c802c2d281a5d66c5271f2360900ee8aa527cd3d",
+    "design": "78be93bf599d41a3de1c5937a30cbb5ce804a498588f0f9e8582a2fc3c31f61a",
+    "tasks": "0bb827f9c7e16939a8c32002fa6f7b94f881fa9c9ce0a47455c1a56a2b95cff6"
+  },
+  "criteria": {
+    "1.1": "WHEN an operator registers a Discount_Code with a valid Code_String, Discount_Kind, value, Minimum_Subtotal, and Expiry_Date, THE Code_Registry SHALL store it and return it on lookup by that Code_String.",
+    "1.2": "IF a percent value is outside the integer range 1\u201390, THEN THE Code_Registry SHALL reject the registration with a validation error.",
+    "1.3": "IF a fixed value is not an integer \u22651 cent, THEN THE Code_Registry SHALL reject the registration with a validation error.",
+    "1.4": "IF the Code_String is empty, longer than 20 characters, or holds a character outside `A\u2013Z`, `0\u20139`, `-`, THEN THE Code_Registry SHALL reject the registration with a validation error.",
+    "1.5": "IF a Code_String is already registered, THEN THE Code_Registry SHALL reject the second registration with a duplicate error.",
+    "1.6": "IF the Minimum_Subtotal is not an integer \u22650, THEN THE Code_Registry SHALL reject the registration with a validation error.",
+    "1.7": "IF the Expiry_Date is not a real calendar date in `YYYY-MM-DD` form, THEN THE Code_Registry SHALL reject the registration with a validation error.",
+    "1.8": "IF the Discount_Kind is not `percent` or `fixed`, THEN THE Code_Registry SHALL reject the registration with a validation error.",
+    "2.1": "WHEN a shopper sends `POST /carts/<id>/discount` with a registered, unexpired Code_String and the Subtotal is at least the Minimum_Subtotal, THE Cart_API SHALL attach the code to the Cart and return status 200 with `subtotal_cents`, `discount_cents`, and `total_cents`.",
+    "2.2": "IF the Code_String is not registered, THEN THE Cart_API SHALL return status 404 with error `unknown code`.",
+    "2.3": "IF the Clock date is after the Expiry_Date, THEN THE Cart_API SHALL return status 410 with error `code expired`.",
+    "2.4": "IF the Subtotal is below the Minimum_Subtotal, THEN THE Cart_API SHALL return status 422 with error `minimum not met`.",
+    "2.5": "IF the request body has no `code` field or the field is not a string, THEN THE Cart_API SHALL return status 400 with error `bad code`.",
+    "2.6": "IF the `code` field is a string that is not a valid Code_String, THEN THE Cart_API SHALL return status 400 with error `bad code`.",
+    "2.7": "WHEN more than one error condition holds for `POST /carts/<id>/discount`, THE Cart_API SHALL return the error of the first failing check in this order: 400, 404, 410, 422, 409.",
+    "2.8": "WHEN a shopper sends `POST` or `DELETE /carts/<id>/discount` for a cart id that does not exist, THE Cart_API SHALL return status 404 with error `no cart` before it runs any other check.",
+    "3.1": "WHILE a Cart has an Applied_Code, WHEN a shopper applies a different valid, registered, unexpired Code_String whose Minimum_Subtotal the Subtotal meets, THE Cart_API SHALL return status 409 with error `code already applied`.",
+    "3.2": "WHILE a Cart has an Applied_Code, WHEN a shopper applies the same Code_String again and the code is unexpired and the Subtotal is at least the Minimum_Subtotal, THE Cart_API SHALL return status 200 with the current totals.",
+    "3.3": "WHEN a shopper sends `DELETE /carts/<id>/discount`, THE Cart_API SHALL remove the Applied_Code and return status 200 with `discount_cents` equal to 0.",
+    "3.4": "WHEN the Cart_API returns status 409 with error `code already applied`, THE Cart SHALL keep its Applied_Code unchanged.",
+    "4.1": "WHERE the Applied_Code has Discount_Kind `percent`, THE Cart SHALL set Discount_Amount to floor(Subtotal \u00d7 value \u00f7 100) cents.",
+    "4.2": "WHERE the Applied_Code has Discount_Kind `fixed`, THE Cart SHALL set Discount_Amount to the smaller of the value and the Subtotal.",
+    "4.3": "THE Cart SHALL keep the Total in the range 0 to Subtotal cents.",
+    "4.4": "WHEN a shopper sends `GET /carts/<id>`, THE Cart_API SHALL return `subtotal_cents`, `discount_cents`, `total_cents`, and the Applied_Code's Code_String or null.",
+    "4.5": "WHILE a Cart has no Applied_Code, THE Cart SHALL set Discount_Amount to 0.",
+    "4.6": "WHILE the Subtotal of a Cart is below the Minimum_Subtotal of its Applied_Code, THE Cart SHALL set Discount_Amount to 0.",
+    "4.7": "WHILE the Clock date is after the Expiry_Date of the Applied_Code, THE Cart SHALL set Discount_Amount to 0.",
+    "4.8": "WHILE the Clock date is after the Expiry_Date of the Applied_Code, THE Cart SHALL keep the Applied_Code attached."
+  }
+}

@@ -1,0 +1,17 @@
+[PASS] graph JSON parses
+[PASS] every leaf in exactly one wave -- dup=[] missing=[] extra=[]
+[PASS] wave ids start at 0 and are contiguous -- [0, 1, 2, 3, 4]
+[PASS] same-wave leaves touch disjoint files -- []
+[PASS] every leaf names its files -- []
+[PASS] every criterion cited by >=1 leaf -- criteria=8 uncited=[]
+[PASS] property leaves carry Validates line -- props=['2.3', '2.4'] bad=[]
+[PASS] checkpoints not in graph
+
+Wave table:
+  wave 0: 1.1
+  wave 1: 2.1
+  wave 2: 2.2, 2.3, 4.1
+  wave 3: 2.4, 4.2
+  wave 4: 4.3
+
+RESULT: PASS
