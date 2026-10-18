@@ -1,7 +1,11 @@
 {
   "name": "sdd",
   "version": "0.1.0",
-  "description": "Spec-driven development for Claude Code: requirements/bugfix -> design -> tasks, with approval gates, requirements analysis, file sync, wave execution, and property-based tests.",
+  "description": "Spec-driven development: requirements or bugfix to design to tasks, with approval gates, drift-aware state, requirements analysis, sync, and parallel wave execution.",
+  "author": {
+    "name": "Bao Dang",
+    "url": "https://github.com/dtgbao"
+  },
   "keywords": [
     "sdd",
     "spec-driven",

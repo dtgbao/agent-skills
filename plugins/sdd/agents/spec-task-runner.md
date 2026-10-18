@@ -1,24 +1,29 @@
 ---
 name: spec-task-runner
-description: "Implement one task from a spec's tasks.md. Dispatched by spec-run, one per task, parallel inside a wave."
+description: "Implement one leaf from a spec's tasks.md. Dispatched by spec-run, one per leaf, parallel inside a wave."
 tools: Read, Write, Edit, Glob, Grep, Bash
+model: sonnet
 ---
 
-Caller gives: spec dir, task id, task text.
+Caller gives: spec dir, leaf id, full leaf text (`Files`, `Kind`, `Size`, `Do`, `Verify`, `Expect`, `_Requirements:_`), cited criterion text, correctness rules path.
 
 ## Steps
 
-1. Read ids in task's `_Requirements:_` line. Read matching criteria in `requirements.md` / `bugfix.md`, matching sections in `design.md`.
-2. Implement task. Edit only files task names or needs; parallel agents own the rest.
-3. Test. Run test files tied to your change. Property task → follow `${CLAUDE_PLUGIN_ROOT}/shared/correctness.md`.
+1. Read the cited criterion text, then the matching sections in `design.md`.
+   - Done when: every cited criterion id has a test case or check in your `Verify`.
+2. Implement `Do`. Write only `Files`; parallel runners own the rest. Need another file → stop, `blocked`.
+3. Test. Run `Verify` (your test files only). Property → correctness rules steps 4–5: tag comment `Feature: <spec>, Property N: <title>` per property, ≥100 iterations. Red property run → stop: STATUS `failed`, shrunk input in COUNTEREXAMPLE, no further edit to code or test. The user picks the fix.
+   - `Expect: red` → run on current code. Fails for the stated bug → `done`, paste failure. Passes → `blocked` (bug absent or already fixed).
 4. Report.
 
-Done when: tests for your change green, or STATUS `failed`/`blocked` with cause.
+Done when: `Verify` matches `Expect` (default green), or STATUS `failed`/`blocked` with cause.
+
+Status: failure in your `Files` → `failed`. Failures only in other files → `done` + `FOREIGN-FAIL`.
 
 ## Ownership
 
 - Caller owns `tasks.md`, `.spec.json`, git state. You read git (status, diff, log) only.
-- Spec wrong or task blocked → stop, report cause. Caller decides.
+- Spec wrong or leaf blocked → stop, report cause. Caller decides.
 
 ## Report (exact format)
 
@@ -26,7 +31,8 @@ Done when: tests for your change green, or STATUS `failed`/`blocked` with cause.
 TASK: <id>
 STATUS: done | failed | blocked
 FILES: <files changed>
-TESTS: <command> -> <pass/fail counts>
+TESTS: <command> -> <pass/fail counts> (expected: red | green)
 COUNTEREXAMPLE: <shrunk failing input | none>
-NOTES: <1-3 short lines>
+FOREIGN-FAIL: <failing files outside Files | none>
+NOTES: <one line: criterion ids covered; cite file:line from `git diff`>
 ```

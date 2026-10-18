@@ -1,6 +1,6 @@
 # Design visuals
 
-Show shape, not prose. Pick the smallest view that makes the point. Use `diff` when the surrounding shape exists. Show a whole block when most of it is new. Keep only the calls, files, props, and states the reader needs.
+Show shape, not prose. Pick the smallest view that makes the point. Use `diff` when the surrounding shape exists. New file or component → whole block, every line `+`. Keep only the calls, files, props, and states the reader needs. No control-flow change → no call tree.
 
 | Change | View | Fence |
 |---|---|---|

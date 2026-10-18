@@ -1,16 +1,20 @@
-# design.md
+# design.md (feature)
+
+Bugfix → `${CLAUDE_PLUGIN_ROOT}/shared/artifacts/bugfix-design.md`. Views per `${CLAUDE_PLUGIN_ROOT}/shared/visuals.md`.
 
 Done when:
-- every criterion maps to ≥1 component or property (cite `_Requirements: x.y_` on component)
+- every criterion maps to ≥1 component (`_Requirements: x.y_` on component) or property. Design-First: filled when requirements are derived
+- every new or changed component has interface sketch in project language (signature or type)
 - every external dependency has Error Handling entry
-- every component has interface sketch (signature or type)
 - ≥1 Mermaid diagram
-- File/Folder Structure shows the file tree as a `diff` block
-- every changed component shows its component tree or call tree (or call-stack change) as a `diff` block; views per `${CLAUDE_PLUGIN_ROOT}/shared/visuals.md`
-- Testing Strategy lists every property from `${CLAUDE_PLUGIN_ROOT}/shared/correctness.md`
-- every non-functional constraint (latency, security, compliance) has an owner component
+- File/Folder Structure is a `diff` file tree
+- every component whose control flow changes shows call tree (or call-stack change) as `diff`
+- Criteria Classification lists every criterion (`${CLAUDE_PLUGIN_ROOT}/shared/correctness.md` step 2)
+- Testing Strategy lists every Property N in this file: generator, iterations
+- every non-functional constraint (latency, security, compliance) has owner component
+- every `## Open Questions` item in requirements is decided under Key design decisions or marked out of scope
 
-Skeleton (feature):
+Skeleton:
 
 ```markdown
 # Design Document: <feature>
@@ -34,15 +38,23 @@ Skeleton (feature):
 
 ### <Component> (`<path>`)
 
-<responsibility, interface sketch>
+<responsibility>
 
-<component tree or call tree / call-stack change as `diff`>
+<interface sketch in project language>
+
+<call tree / call-stack change as `diff`, when control flow changes>
 
 _Requirements: x.y_
 
 ## Data Models
 
 <schemas, env vars, types>
+
+## Criteria Classification
+
+| Criterion | Class | Property |
+|---|---|---|
+| 1.1 | invariant | 1 |
 
 ## Correctness Properties
 
@@ -58,30 +70,9 @@ _Requirements: x.y_
 
 ## Testing Strategy
 
-<unit, property, integration; library; iteration count>
-```
+<unit, property, integration; library>
 
-Skeleton (bugfix) — replace middle sections:
-
-```markdown
-## Root Cause
-
-<cause, evidence `file:line`>
-
-## Fix
-
-<change, affected components, constraints>
-
-### Call-tree change
-
-<`diff` of the failing call path per `${CLAUDE_PLUGIN_ROOT}/shared/visuals.md`>
-
-## Validation Properties
-
-- Fix check: *for any* input where bug condition holds, <system> SHALL <expected>.
-- Preservation: *for any* input where bug condition fails, <system> SHALL <unchanged>.
-
-## Regression Strategy
-
-<what pins existing behavior>
+| Property | Generators | Iterations |
+|---|---|---|
+| 1 | <arbitraries> | ≥100 |
 ```

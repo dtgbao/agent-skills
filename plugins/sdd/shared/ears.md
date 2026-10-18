@@ -1,6 +1,6 @@
 # EARS criteria
 
-Pattern per criterion. Subject = Glossary term.
+Pattern per criterion. Subject = Glossary term in `Snake_Case` (`Rate_Limiter`, `Time_Window`).
 
 | Pattern | Form |
 |---|---|
@@ -20,6 +20,6 @@ Bugfix forms:
 | Unchanged | WHEN <condition> THE SYSTEM SHALL CONTINUE TO <existing behavior> |
 
 Rules:
-- One behavior per criterion.
+- One `SHALL` per criterion, ≤40 words. Second behavior → new criterion.
 - One observable assertion per criterion (test can fail on it).
 - Numbers carry unit and bound ("within 2 seconds", "1–50 characters").
