@@ -1,6 +1,6 @@
 # sdd: open issues
 
-As of plugin 0.3.4 (2026-10-18). One list, duplicates merged. Source ids point to the run reports: `v0.3.2` P*, `v0.3.3` L*, `v0.3.4` run issues (f1 / b1 / a1 I*).
+As of round 0.4.1 (2026-10-18). One list, duplicates merged. Source ids point to the run reports: `v0.3.2` P*, `v0.3.3` L*, `v0.3.4` run issues (f1 / b1 / a1 I*), `v0.4.1` run issues (07a / 07b / 07c I*).
 
 ## Medium
 
@@ -30,6 +30,12 @@ As of plugin 0.3.4 (2026-10-18). One list, duplicates merged. Source ids point t
 | L14 | `shared/gate.md` | High/medium Open Questions after the last VERIFY are parked with no ask → list them at the gate with their options | v0.3.4 f1 I6 |
 | L15 | `agents/spec-task-runner.md:15` | Runner fixed its own generator after a red run (counterexample was invalid input) instead of stopping → allow a test-only fix when the input is outside the precondition; report it as `fixed test: <input>` | v0.3.4 a1 I4 |
 | L16 | `agents/spec-analyst.md:15` | `FOCUSED` has no rule for real medium FAILURE/EDGE gaps → report them as low, or as notes after the findings | v0.3.4 a1 I5 |
+| L24 | `skills/spec-brainstorm/SKILL.md` steps 3–4 | Surface (CLI, library, UI) stayed unasked; playback 1 guessed it wrong → in step 3, surface is a frontier question unless input or code fixes it; add `Surface:` to the playback | v0.4.1 07a I1, I2 |
+| L25 | `skills/spec-new/SKILL.md` step 4 | Playback `Workflow:` line has no rule to choose Requirements-First vs Design-First when the stack is fixed → Design-First only when stack or architecture is the main constraint | v0.4.1 07a I3 |
+| L26 | `skills/spec-brainstorm/SKILL.md` Brief | "A why that follows from the what" is still a judgment → add one example (tag + filter → find related notes) | v0.4.1 07b I1 |
+| L27 | `skills/spec-new/SKILL.md` step 2 | Done-when does not require the one-line brief in chat → add "brief shown" | v0.4.1 07b I2 |
+| L28 | `shared/workflows/bugfix.md:7` | Facts settled from code reach the user only in `bugfix.md` (step 3) → show them in one line before the ask | v0.4.1 07c I1 |
+| L29 | `skills/spec-brainstorm/SKILL.md` Brief | Unclear whether a defect claim the code cannot confirm still counts → a user-reported wrong behavior counts; the Bugfix Investigate step tests it | v0.4.1 07c I2 |
 
 ## Not plugin defects
 

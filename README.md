@@ -20,11 +20,11 @@ This repo is a source tree for reusable instruction bundles. Standalone skills l
 
 ## Plugins
 
-| Plugin                                             | Purpose                                                                                                                  | Bundled skills                                                   |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
-| [`fullstack-dev`](plugins/fullstack-dev/README.md) | Coordinate full-stack work from focused context and requirements through implementation, review, operations, and launch. | `index` router plus focused engineering workflows                |
-| [`sdd`](plugins/sdd/README.md)                     | Run spec-driven development from requirements or bugfix through design and tasks to gated execution.                     | `spec-new`, `spec-analyze`, `spec-sync`, `spec-run`              |
-| [`swe-wiki`](plugins/swe-wiki/README.md)           | Maintain a domain-first, Git-synced software engineering knowledge base across computers.                                | `swe-wiki`                                                       |
+| Plugin                                             | Purpose                                                                                                                  | Bundled skills                                                         |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| [`fullstack-dev`](plugins/fullstack-dev/README.md) | Coordinate full-stack work from focused context and requirements through implementation, review, operations, and launch. | `index` router plus focused engineering workflows                      |
+| [`sdd`](plugins/sdd/README.md)                     | Run spec-driven development from requirements or bugfix through design and tasks to gated execution.                     | `spec-brainstorm`, `spec-new`, `spec-analyze`, `spec-sync`, `spec-run` |
+| [`swe-wiki`](plugins/swe-wiki/README.md)           | Maintain a domain-first, Git-synced software engineering knowledge base across computers.                                | `swe-wiki`                                                             |
 
 ## Install plugins with Claude Code
 

@@ -3,8 +3,10 @@
 Spec-driven development for Claude Code, Kiro-style.
 
 ```
-requirements.md | bugfix.md  →  design.md  →  tasks.md  →  run
+(brainstorm)  →  requirements.md | bugfix.md  →  design.md  →  tasks.md  →  run
 ```
+
+Brainstorm sits outside the workflow. It writes no files: it ends on a playback the user confirms in chat.
 
 Specs live in `docs/specs/<name>/`. Commit them with code.
 
@@ -19,7 +21,8 @@ Specs live in `docs/specs/<name>/`. Commit them with code.
 
 | Command | Does |
 |---|---|
-| `/sdd:spec-new [idea \| name]` | Pick workflow (Requirements-First, Design-First, Bugfix, Quick Plan), draft artifacts, gate each. Existing name → resume |
+| `/sdd:spec-brainstorm [idea]` | Clarify a vague feature idea: open questions, then grill rounds with recommendations, then a playback the user confirms. Writes no files. `spec-new` runs it on vague or ambiguous input |
+| `/sdd:spec-new [idea \| name]` | Pick workflow (Requirements-First, Design-First, Bugfix, Quick Plan), draft artifacts, gate each. Existing name → resume. Empty input → uses the confirmed brainstorm playback |
 | `/sdd:spec-analyze <name>` | Cross-requirement review: conflicts, ambiguity, missing edge/failure cases. Round 1 full, rounds 2–3 focused on conflicts, then a verify pass. Reports criteria growth |
 | `/sdd:spec-sync <name>` | Detect hand edits, realign `tasks.md` with upstream artifacts and code already written |
 | `/sdd:spec-run <name> [task-id] [--mode single\|waves] [--optional]` | Run leaves: one at a time, or parallel waves via subagents |
@@ -40,7 +43,7 @@ A hand edit of an approved file marks later phases `stale` at the next skill loa
 ```
 .claude-plugin/plugin.json
 plugin.json                                   Agent Plugins manifest
-skills/spec-{new,analyze,sync,run}/SKILL.md   user-invoked, zero context load
+skills/spec-{brainstorm,new,analyze,sync,run}/SKILL.md   user-invoked, zero context load
 agents/spec-task-runner.md                    one leaf per dispatch
 agents/spec-analyst.md                        read-only requirements review
 shared/                                       plain files, any skill points at them
@@ -50,9 +53,10 @@ shared/                                       plain files, any skill points at t
 
 ## Design notes
 
-- All four skills set `disable-model-invocation: true`: you type them, no description sits in context.
+- All five skills set `disable-model-invocation: true`: you type them, no description sits in context.
 - Shared reference lives outside the skill system, so skills reach it without descriptions.
 - Each workflow file loads only on its branch.
+- Brainstorm vs analyze: brainstorm fixes intent (who, why, scope) before any criterion exists. `spec-analyze` finds gaps in written criteria.
 - Every step ends on a checkable Done-when line. Deterministic checks (state, graph) run in `spec.py`, not in the model.
 - Subagents see one leaf or one document. Later steps stay out of their view.
 - Task leaves carry `Files`, `Kind`, `Size`, `Do`, `Verify`, `_Requirements:_`, so a runner acts without reading the whole design.

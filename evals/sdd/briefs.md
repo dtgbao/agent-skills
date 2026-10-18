@@ -1,6 +1,6 @@
 # Scenario briefs
 
-Each session gets: "Read `evals/sdd/harness.md` and follow it. Work only in `evals/sdd/runs/v<version>/<id>/`." plus the brief below. Fixture per scenario: 01/02 `shortlinks`, 03 `pager`, 04 `notes`, 05 `account-auth`, 06 `textkit`.
+Each session gets: "Read `evals/sdd/harness.md` and follow it. Work only in `evals/sdd/runs/v<version>/<id>/`." plus the brief below. Fixture per scenario: 01/02 `shortlinks`, 03 `pager`, 04 `notes`, 05 `account-auth`, 06 `textkit`, 07 `notes` (07c `pager`).
 
 ## 01-reqfirst-sonnet / 02-reqfirst-haiku (same script)
 
@@ -41,3 +41,42 @@ Run: `/sdd:spec-new Quick Plan: add slugify(title) and unique_slug(title, existi
 Script: ASCII via NFKD, empty → "untitled", existing is set[str], Hypothesis. Approve all. Failures → Retry once, then Skip. Checkpoint red → Stop. Counterexample → fix implementation. Sync → Apply all.
 
 Checks: one-message wave dispatch, disjoint files, `[-]` reverts, property tags and iterations, hand-edit detection, sync matrix, spec-run routing, typecheck absent.
+
+## 07-brainstorm-sonnet
+
+Tests `spec-brainstorm` through `/sdd:spec-new` step 2 (Clarity). Three runs, one session each, ids `07a`, `07b`, `07c`. Stop each run after the workflow gets its first input (before Gate 1). Brainstorm writes no files, so after each run list `WS/docs/specs/` and `git status` in `WS`.
+
+### 07a-vague
+
+Run: `/sdd:spec-new make notes better, people keep losing stuff` (fixture `notes`).
+
+Script (answers to open questions, one per message): "Last week I deleted a note by mistake and it was gone." → why now: "second time this month" → success: "I can get a deleted note back" → non-goal: "no sync, no cloud". Grill rounds: take every `(Recommended)` option, except "keep deleted notes forever" → "purge after 30 days". Playback 1 → "Wrong: it must also work from the CLI, not only the library." Playback 2 (corrected) → Confirm. Workflow → take the recommended option. Stop before Gate 1.
+
+Checks: the first reply names the open slots and offers "skip". One open question per message, no option list. Code read (README, `notes/`) before the first question. Grill uses AskUserQuestion, ≤4 questions, recommendation first. Playback ≤300 words, has the full shape, marks guesses `(guess)`. Correction → new playback before step 3. Confirmed playback → name and workflow options use it. Brainstorm writes no file and changes no code. Before `requirements.md`, only `.spec.json` from `SPEC init` exists.
+
+### 07b-clear
+
+Run: `/sdd:spec-new Requirements-First: add a "tag" subcommand to the notes CLI so a user can attach one or more tags to a note by id and filter "list" by tag. Done when "list --tag X" shows only notes with tag X. Out: tag colors.` (fixture `notes`).
+
+Script: none expected. A question → log it, answer "none", mark `UNSCRIPTED`.
+
+Checks: verdict = clear. Output = a one-line brief, all five slots filled. Zero questions before the workflow Context step. No playback, no grill round. Name step runs next, then the named workflow. Brief slots match the input (no invented non-goal).
+
+### 07c-defect
+
+Run: `/sdd:spec-new Bugfix: paginate(items, 3, 10) returns an empty page for 25 items` (fixture `pager`).
+
+Script: Facts step. Repro as in the run line → "25 items, size 10, page 3" · current "empty page, total_pages is 2" · expected "page 3 has 5 items, total_pages is 3" · must hold "exact multiples work; page < 1 and size < 1 raise ValueError".
+
+Checks: Clarity step makes no brief and asks no open question. Brainstorm is skipped (or ends at once with "defect report"). Bugfix `Facts` step (`bugfix.md` workflow step 1) asks only the missing facts, ≤4 questions. Facts the input implies appear in the Introduction without a question. No `spec-brainstorm` playback.
+
+### 07 pass criteria
+
+| Run | PASS when |
+|---|---|
+| 07a | All 07a checks hold. Playback confirmed in chat before any spec file exists. Workflow chosen from the playback. |
+| 07b | Zero questions. One-line brief shown. |
+| 07c | Brainstorm skipped. Facts step asks. |
+
+Scenario PASS = 07a, 07b and 07c PASS. Any file written by brainstorm = FAIL. Report one `report.md` per run; log plugin issues as `07-<n>`.
+

@@ -4,7 +4,7 @@ Order: bugfix → design → tasks. Gate after each (`${CLAUDE_PLUGIN_ROOT}/shar
 
 ## Steps
 
-1. Facts. Need: exact repro, current result, expected result, behavior that must hold. Fact the input implies → state it in the Introduction. Only missing facts → ask via AskUserQuestion (≤4 questions).
+1. Facts. Need: exact repro, current result, expected result, behavior that must hold. Settle implied facts from the code first (signatures, arg order, current output). Fact the input implies → state it in the Introduction. Only missing facts → ask via AskUserQuestion (≤4 questions).
    - Done when: all four facts in hand.
 2. Investigate. Trace repro through code. Note neighbor paths that share the faulty code. Root cause cites `file:line`.
    - Done when: cause explains every observed symptom.
