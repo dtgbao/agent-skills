@@ -1,6 +1,6 @@
 # Spec state
 
-Dir `docs/specs/<name>/`. State `docs/specs/<name>/.spec.json`. `SPEC <cmd> <args>` = run `python3 ${CLAUDE_PLUGIN_ROOT}/shared/scripts/spec.py <cmd> <args>` as one full command line (a shell variable does not word-split in zsh). Every state write goes through `SPEC`. No `python3` → edit `.spec.json` by hand per Events table.
+Dir `docs/specs/<name>/`. State `docs/specs/<name>/.spec.json`. `SPEC <cmd> <args>` = run `python3 ${CLAUDE_PLUGIN_ROOT}/shared/scripts/spec.py <cmd> <args>` as one full command line, e.g. `python3 /abs/plugins/sdd/shared/scripts/spec.py drift docs/specs/x`. Type the full command each time; a shell variable holding `python3 …` does not word-split in zsh. Every state write goes through `SPEC`. No `python3` → edit `.spec.json` by hand per Events table.
 
 ```json
 {

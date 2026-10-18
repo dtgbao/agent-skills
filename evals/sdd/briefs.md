@@ -50,7 +50,7 @@ Tests `spec-brainstorm` through `/sdd:spec-new` step 2 (Clarity). Three runs, on
 
 Run: `/sdd:spec-new make notes better, people keep losing stuff` (fixture `notes`).
 
-Script (answers to open questions, one per message): "Last week I deleted a note by mistake and it was gone." → why now: "second time this month" → success: "I can get a deleted note back" → non-goal: "no sync, no cloud". Grill rounds: take every `(Recommended)` option, except "keep deleted notes forever" → "purge after 30 days". Playback 1 → "Wrong: it must also work from the CLI, not only the library." Playback 2 (corrected) → Confirm. Workflow → take the recommended option. Stop before Gate 1.
+Script (answers to open questions, one per message): "Last week I deleted a note by mistake and it was gone." → why now: "second time this month" → success: "I can get a deleted note back" → non-goal: "no sync, no cloud". Grill rounds: take every `(Recommended)` option, except "keep deleted notes forever" → "purge after 30 days", and surface → "library only". Playback 1 → "Wrong: it must also work from the CLI, not only the library." Playback 2 (corrected) → Confirm. Workflow → take the recommended option. Stop before Gate 1.
 
 Checks: the first reply names the open slots and offers "skip". One open question per message, no option list. Code read (README, `notes/`) before the first question. Grill uses AskUserQuestion, ≤4 questions, recommendation first. Playback ≤300 words, has the full shape, marks guesses `(guess)`. Correction → new playback before step 3. Confirmed playback → name and workflow options use it. Brainstorm writes no file and changes no code. Before `requirements.md`, only `.spec.json` from `SPEC init` exists.
 

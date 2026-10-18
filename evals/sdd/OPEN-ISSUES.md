@@ -1,41 +1,49 @@
 # sdd: open issues
 
-As of round 0.4.1 (2026-10-18). One list, duplicates merged. Source ids point to the run reports: `v0.3.2` P*, `v0.3.3` L*, `v0.3.4` run issues (f1 / b1 / a1 I*), `v0.4.1` run issues (07a / 07b / 07c I*).
+As of round 0.4.2 (2026-10-18). One list, duplicates merged. Source ids point to the run reports of round 0.4.2: real `f1` / `b1` / `a1` I*, simulated `07a` / `07c` I*. Older issue ids (Q1–Q3, L1–L29) are in git history.
+
+## Status of the 0.4.1 list
+
+- Held: Q1 (the recount caught 7 off-target `CHECK` lines), Q3 (2 check-order clashes found), L1 (the past-7 rule split 2 requirements), L4, L5, L7 (`+new` / `+split`), L24–L28.
+- Partly held: Q2 → Q5, L8 → L36, L14 → Q8, L16 → Q6, L6 → L42.
+- No issue reported, not proven: L2, L3, L9–L13, L15, L29.
 
 ## Medium
 
 | # | Where | Problem | Proposed fix | Source |
 |---|---|---|---|---|
-| Q1 | `skills/spec-analyze/SKILL.md:17`, `agents/spec-analyst.md:56` | `CHECK` is a self-report. In 0.3.4, 7 findings said pass but failed when counted | Orchestrator recounts gaps, `SHALL` and assertions per option and ignores `CHECK` on a mismatch. Analyst lists the assertions inside `CHECK` | v0.3.4 a1 I1, f1 I2 |
-| Q2 | same | The `CHECK` target `gaps=1 shall=1 asserts=1` fails every correct `NEEDS_OWNER` finding | Separate target for owner findings: `gaps=1 owner=sole` | v0.3.4 a1 I2, f1 I1 |
-| Q3 | `skills/spec-analyze/SKILL.md:19` | Cross-check by shared term misses check-order clashes between rejection rules (a1 F16–F20, 2 left open) | For each changed rejection criterion, list the other rejection criteria that can match the same input; the spec must state their order | v0.3.4 a1 I3 |
+| Q4 | `skills/spec-analyze/SKILL.md:17` | The repair list has no rule for an option with `shall=1` and 2 assertions, an option that closes no gap, or one that closes part of the gap | Option with asserts≠1 or that does not close the gap → drop it; one option left → A \| Defer | a1 I1 |
+| Q5 | `agents/spec-analyst.md:59` | `CHECK` said on target for 7 off-target findings. `NEEDS_OWNER` questions ask 2–3 things but say `gaps=1` | `CHECK` names each gap and assertion (`gaps=1 [<gap>]`); one question mark per owner question | a1 I2 |
+| Q6 | `agents/spec-analyst.md:15` vs `:27` | `FOCUSED` makes medium FAILURE/EDGE low, but `NEEDS_OWNER` must be ≥ medium. 2 gaps were dropped; one came back in VERIFY | `NEEDS_OWNER` keeps medium in `FOCUSED` | a1 I3 |
+| Q7 | `shared/gate.md:6`, `skills/spec-analyze/SKILL.md:22` | Split spec is offered only at a requirements gate. Standalone analyze on approved requirements, then resume → no gate offers it | End of standalone analyze with a split recommendation → ask Split spec \| Continue | a1 I4 |
+| Q8 | `shared/gate.md:7`, `skills/spec-analyze/SKILL.md:22` | High/medium Open Questions are asked only on the gate "Analyze first" path. Standalone analyze parks them; design decides them alone | spec-analyze step 5: ask each high/medium item left: Answer \| Keep deferred | a1 I5 |
+| Q9 | `agents/spec-task-runner.md:14` | A runner edited a file outside its `Files` for a mutation check during a parallel wave, then restored it | No edit outside `Files`, temporary edits and mutation checks included | a1 I6 |
+| Q10 | `shared/correctness.md:10`, `agents/spec-task-runner.md:15` | A property test imported its oracle bound (`PERCENT_MAX`) from the code under test, so a criterion change could not make it fail | Oracle and generator bounds come from the criterion text as literals, never from the code under test | f1 I1 |
 
 ## Low (for owner review)
 
 | # | Where | Problem → proposed fix | Source |
 |---|---|---|---|
-| L1 | `skills/spec-analyze/SKILL.md` step 4 | Apply can push a requirement past 7 criteria → split or supersede, log it | v0.3.3 L1 |
-| L2 | `agents/spec-analyst.md` | A and B both reserve new numbers, so gaps appear after A is chosen → number only A; B reuses A's id | v0.3.3 L2 |
-| L3 | `agents/spec-task-runner.md` | NOTES `file:line`: Haiku cites wrong lines; new files have no `git diff` → cite from `git diff -U0`, or `grep -n` for new files | v0.3.3 L4, v0.3.4 f1 I5, b1 I3 |
-| L4 | `shared/gate.md` | Count line and Analyze-first threshold (">8 requirements") have no bugfix form → `bugfix.md: N current, N expected, N unchanged`; threshold by criteria | v0.3.2 P11, v0.3.3 L5, v0.3.4 b1 I1, I2 |
-| L5 | `shared/artifacts/bugfix-design.md` | Root-cause `file:line` not checked → `grep -n` each cite before the gate | v0.3.3 L6, v0.3.4 b1 I4 |
-| L6 | `shared/artifacts/bugfix-design.md` | Interface-level criterion forced into a property → allow example-only criteria | v0.3.3 L7 |
-| L7 | `skills/spec-analyze/SKILL.md` | Growth: owner answers add interfaces that create new failure paths; growth metric counts one-assertion splits; split advice has no gate option | v0.3.2 P9, v0.3.3 L8 |
-| L8 | `skills/spec-analyze/SKILL.md` step 3 | `NEEDS_OWNER` ask has no defined options → `Answer | Defer`, prefer Defer when the answer adds an interface the code lacks | v0.3.2 P10 |
-| L9 | `skills/spec-analyze/SKILL.md` | Deferred proposals keep criterion numbers that later clash → deferred items hold no number | v0.3.3 L9 |
-| L10 | `shared/state.md` | zsh variable warning easy to miss → show one copy-paste command form; "never put `python3` in a variable" | v0.3.3 L10 |
-| L11 | `skills/spec-run/SKILL.md:23` | Checkpoint below only skipped `*` leaves: rule works but does not say it runs and ticks | v0.3.2 P12 |
-| L12 | `agents/spec-task-runner.md:13` | Runner Done-when "every cited id has a check in your Verify" cannot hold for code leaves tested by a later test leaf → "…or is cited by a `Kind: test` leaf that deps on this leaf" | v0.3.2 P13, v0.3.4 f1 I3 |
-| L13 | `skills/spec-sync/SKILL.md` step 5 | Confirmed `SUSPECT` leaf does not get the changed criterion text in its runner prompt → add the changed id to that leaf's prompt | v0.3.4 f1 I4 |
-| L14 | `shared/gate.md` | High/medium Open Questions after the last VERIFY are parked with no ask → list them at the gate with their options | v0.3.4 f1 I6 |
-| L15 | `agents/spec-task-runner.md:15` | Runner fixed its own generator after a red run (counterexample was invalid input) instead of stopping → allow a test-only fix when the input is outside the precondition; report it as `fixed test: <input>` | v0.3.4 a1 I4 |
-| L16 | `agents/spec-analyst.md:15` | `FOCUSED` has no rule for real medium FAILURE/EDGE gaps → report them as low, or as notes after the findings | v0.3.4 a1 I5 |
-| L24 | `skills/spec-brainstorm/SKILL.md` steps 3–4 | Surface (CLI, library, UI) stayed unasked; playback 1 guessed it wrong → in step 3, surface is a frontier question unless input or code fixes it; add `Surface:` to the playback | v0.4.1 07a I1, I2 |
-| L25 | `skills/spec-new/SKILL.md` step 4 | Playback `Workflow:` line has no rule to choose Requirements-First vs Design-First when the stack is fixed → Design-First only when stack or architecture is the main constraint | v0.4.1 07a I3 |
-| L26 | `skills/spec-brainstorm/SKILL.md` Brief | "A why that follows from the what" is still a judgment → add one example (tag + filter → find related notes) | v0.4.1 07b I1 |
-| L27 | `skills/spec-new/SKILL.md` step 2 | Done-when does not require the one-line brief in chat → add "brief shown" | v0.4.1 07b I2 |
-| L28 | `shared/workflows/bugfix.md:7` | Facts settled from code reach the user only in `bugfix.md` (step 3) → show them in one line before the ask | v0.4.1 07c I1 |
-| L29 | `skills/spec-brainstorm/SKILL.md` Brief | Unclear whether a defect claim the code cannot confirm still counts → a user-reported wrong behavior counts; the Bugfix Investigate step tests it | v0.4.1 07c I2 |
+| L30 | `skills/spec-analyze/SKILL.md:19` | Only the upper bound (7) is checked; a removal left a requirement with 1 criterion → below 2 → merge with a related requirement, or log it | a1 I7 |
+| L31 | `skills/spec-analyze/SKILL.md:19` | Check-order clash also matches rejections with the same response → clash only when the responses differ | a1 I8 |
+| L32 | `skills/spec-analyze/SKILL.md:19` | A split renumbers criteria; the decided-findings map is not updated → pass the old → new id map to the next round | a1 I9 |
+| L33 | `skills/spec-analyze/SKILL.md:19` | Open Questions line form not named → point to the skeleton line in `shared/artifacts/requirements.md` | a1 I10 |
+| L34 | `agents/spec-analyst.md:54` | Option text holds "(Delete 4.2.)", not criterion text → add `SUPERSEDES: <ids>` per option | a1 I11 |
+| L35 | `skills/spec-run/SKILL.md:21` | A retry ran on top of a partial write from a reply with no `STATUS:` → show `git diff` of the leaf's `Files` before Retry, ask Keep \| Revert | a1 I12 |
+| L36 | `skills/spec-analyze/SKILL.md:17` | "Defer first" on greenfield work recommended Defer on 4 of 4 owner questions → recommend Defer only when the interface is outside the spec's files or scope | f1 I5 |
+| L37 | `shared/gate.md:5` | Growth line: which gates show it is not stated → requirements gate only | a1 I13 |
+| L38 | `shared/gate.md:5` | Bugfix design has no Components section, so its count has no rule → count components named in `## Fix` | b1 I1 |
+| L39 | `agents/spec-analyst.md:42` | `NEEDS_OWNER` options name a criterion number that the caller then drops → owner options name no number | f1 I2 |
+| L40 | `agents/spec-analyst.md:31-35` | Checklist does not check the EARS pattern (state inside a WHEN) → add "each option matches one EARS pattern" | f1 I3 |
+| L41 | `skills/spec-analyze/SKILL.md:22` | VERIFY takes criterion ids only; owner answers change Glossary entries → VERIFY takes changed Glossary terms too | f1 I4 |
+| L42 | `shared/artifacts/bugfix-design.md:3` | "Error type → example-only" is unclear for a state-dependent raise → example-only = interface only (name, signature, error class for bad input, status mapping) | b1 I3 |
+| L43 | `shared/artifacts/tasks.md:37-42` | Bugfix order does not place the Property 1/2 test leaf or say if it can be `*` → add it after the fix, never `*` | b1 I4 |
+| L44 | `agents/spec-task-runner.md:30-38` | Report has no model field → add `MODEL: <model the agent ran as>` | b1 I2 |
+| L45 | `skills/spec-run/SKILL.md:23` | Due checkpoints with the same command run back to back → run once, tick all | f1 I7 |
+| L46 | `shared/scripts/spec.py:123-144` | `SUSPECT` matches numbers only: false hits on cent amounts, and it misses imported constants → also report identifiers that `AFFECTS` leaves define and other leaves import | f1 I6 |
+| L47 | `skills/spec-brainstorm/SKILL.md:32` | Surface rule unclear when the code names a surface for other features → ask unless input or code names the surface for this feature | 07a I2 |
+| L48 | `skills/spec-brainstorm/SKILL.md:30` | No rule when the user story and the code disagree → state the code fact, ask which one is meant | 07a I3 |
+| L49 | `shared/workflows/bugfix.md:7` | Order of "show in chat" vs "state in Introduction" unclear; a fact that names only the wrong result → show in chat now, copy to the Introduction at step 3; Expected is missing then | 07c I1, I2 |
 
 ## Not plugin defects
 

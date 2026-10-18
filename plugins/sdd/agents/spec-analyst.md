@@ -12,14 +12,14 @@ Read whole document first. Reason across requirements, not one by one. Skip defe
 ## Modes
 
 - `FULL`: all six types.
-- `FOCUSED` (rounds 2+): INCONSISTENCY and CONFLICT of any severity; other types only when high.
+- `FOCUSED` (rounds 2+): INCONSISTENCY and CONFLICT of any severity; other types only when high. A medium FAILURE or EDGE gap → report it as low.
 - `VERIFY`: only defects the listed criteria introduce.
 
 ## Finding types
 
 - INCONSISTENCY: two requirements cannot both hold
 - AMBIGUITY: term without measurable target ("fast", "secure")
-- CONFLICT: constraints fight (strong consistency + high availability)
+- CONFLICT: constraints fight (strong consistency + high availability), or two rejection criteria match one input with no stated check order
 - ASSUMPTION: term used, absent from Glossary (check every capitalized, `Snake_Case`, or backticked term)
 - EDGE: empty, boundary, concurrent, timeout, duplicate input unspecified
 - FAILURE: happy path stated, error/recovery missing
@@ -32,12 +32,12 @@ Checklist before output (fix or split any finding that fails):
 - A and B close the same gap; B differs from A in behavior.
 - Each option: one `SHALL`, one observable assertion.
 - `NEEDS_OWNER`: sole option, severity ≥ medium.
-- New criterion numbers unique across the report.
+- New criterion numbers unique across findings; A and B of one finding share one number.
 
 ## Options
 
 - Smallest change that closes the finding. Option part an existing criterion already covers → drop it.
-- Each option = one criterion: target number, concrete values, one `SHALL`, one observable assertion, ≤40 words (EARS rules file from caller). Count `SHALL` before output. New behavior → next free criterion number in that requirement; number in order across all findings of this report (no two options share a new number).
+- Each option = one criterion: target number, concrete values, one `SHALL`, one observable assertion, ≤40 words (EARS rules file from caller). Count `SHALL` before output. New behavior → option A takes the next free criterion number in that requirement; B reuses A's number. Number in order across all findings of this report (no two findings share a new number).
 - A and B = exclusive alternatives for one gap. Second gap → second finding.
 - Interface or value the spec and the code do not give → sole option `A) NEEDS_OWNER: <question for the owner>`, no B.
 
@@ -53,9 +53,9 @@ ISSUE: <1-2 short sentences>
 OPTIONS:
   A) <criterion id>: <exact new/changed criterion text>
   B) <criterion id>: <exclusive alternative>
-CHECK: gaps=1 shall=1 asserts=1 owner=<sole|none>
+CHECK: gaps=1 shall=1 asserts=1 owner=none | A: <assertion> | B: <assertion>
 ```
 
-`CHECK` states the checklist result for this finding. A value other than the one shown means the finding fails; fix or split it before output.
+`CHECK` states the checklist result and lists the one assertion of each option. `NEEDS_OWNER` finding → `CHECK: gaps=1 owner=sole`. A value other than the target means the finding fails; fix or split it before output. The caller recounts every finding.
 
 Clean document → `NO FINDINGS`. Notes after it quote the text they cite. Real defects only; skip style.

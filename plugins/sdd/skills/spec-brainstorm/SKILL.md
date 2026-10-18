@@ -12,11 +12,11 @@ Goal: user and agent share one picture of what to build and why, before `require
 
 ## Brief
 
-The brief is the clarity test: `<who> needs <what> so that <why>. Done when <observable success>. Out: <one non-goal>.` Fill each slot from the input and the code. A slot you guess → `?`. A why that follows from the what counts as filled.
+The brief is the clarity test: `<who> needs <what> so that <why>. Done when <observable success>. Out: <one non-goal>.` Fill each slot from the input and the code. A slot you guess → `?`. A why that follows from the what counts as filled (tag + filter by tag → so that the user finds related notes).
 
 - Vague = one or more slots `?`.
 - Ambiguous = a word in the input has two readings that build different things.
-- Defect report = the input names a wrong behavior that existing code shows now: a failing call, or actual vs expected. "Feels broken" with no observed behavior → not a defect report; test it as a feature.
+- Defect report = the input names a wrong behavior that existing code shows now: a failing call, or actual vs expected. A wrong behavior the user reports counts, even when the code cannot confirm it; the Bugfix Investigate step tests it. "Feels broken" with no observed behavior → not a defect report; test it as a feature.
 
 ## Steps
 
@@ -29,13 +29,14 @@ The brief is the clarity test: `<who> needs <what> so that <why>. Done when <obs
    - Done when: verdict known (defect, clear, vague or ambiguous).
 2. Describe. One open question per message, no option list. Anchor it on a real moment ("Walk me through the last time this hurt."). Use the user's words. A guess the user can correct beats a question. Facts are your job: read code, docs, `git log` (Bash for read-only commands only); ask the user only for intent and decisions. Ground to cover, never read out as a list: why now · users · success · non-goals · anti-goals (works, but still a failure) · prior art · current state · fixed choices (stack, libraries, interfaces).
    - Done when: no slot `?`.
-3. Grill. Map the open decisions as a design tree. Frontier = decisions whose prerequisites are settled. Each round: AskUserQuestion, ≤4 frontier questions, your recommendation first, marked `(Recommended)`. Recompute the frontier after each answer. Stay at intent: what, why, which choices are fixed. EARS criteria, edge and failure cases go to the requirements draft and `/sdd:spec-analyze`.
+3. Grill. Map the open decisions as a design tree. Frontier = decisions whose prerequisites are settled. Each round: AskUserQuestion, ≤4 frontier questions, your recommendation first, marked `(Recommended)`. Surface (CLI, library, UI, API) is a frontier question unless the input or code fixes it. Recompute the frontier after each answer. Stay at intent: what, why, which choices are fixed. EARS criteria, edge and failure cases go to the requirements draft and `/sdd:spec-analyze`.
    - Done when: frontier empty, no assumption left unspoken.
 4. Play back. ≤300 words, this shape:
    ```
    Brief: <brief>
    Why: <user's reason>
    Code facts: <what the code shows that changes scope>
+   Surface: <what calls it: CLI, library, UI, API>
    Goals: …  Non-goals: …  Anti-goals: …
    Fixed: <choices the user made>
    Open for design: <choices left to the agent>
