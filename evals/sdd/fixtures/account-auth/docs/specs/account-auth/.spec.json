@@ -1,0 +1,39 @@
+{
+  "name": "account-auth",
+  "workflow": "requirements-first",
+  "order": [
+    "requirements",
+    "design",
+    "tasks"
+  ],
+  "phases": {
+    "requirements": "approved",
+    "design": "approved",
+    "tasks": "approved"
+  },
+  "hashes": {
+    "requirements": "02ad5680031d59db097d41919c1370ac513202b327d4e11d4b90fc535ee9ec0c",
+    "design": "23956a62e4477df35ec0682dcc0fc54925475af33e69c7c2c16bd15aa685fcf9",
+    "tasks": "de6ccf45f457737c82ef25026d90bdff71872028ef4e8106e032d4a91a87b464"
+  },
+  "criteria": {
+    "1.1": "b9ab4a9e7a8f5f0e",
+    "1.2": "ca3198a796d3019d",
+    "1.3": "04ee3f9c074420cf",
+    "2.1": "3b223e8649d5f4d8",
+    "2.2": "a92c0c9ff0d25ee8",
+    "2.3": "07fd9e8bc3776860",
+    "2.4": "33650410290d19db",
+    "3.1": "8d17ec92dec0c8a0",
+    "3.2": "5fb35615f0c3e5ce",
+    "4.1": "bed7887d4aae3b26",
+    "4.2": "26b26422aae8e999",
+    "4.3": "bbde0fff657f9ead",
+    "5.1": "25ec8ce4c92c90b6",
+    "5.2": "9afa323cffaead63",
+    "6.1": "59820b2093b29be9",
+    "6.2": "50a05dd840c167c8",
+    "7.1": "85d014f3ba1e8f0f",
+    "7.2": "e4b30d0db57845fe"
+  }
+}
