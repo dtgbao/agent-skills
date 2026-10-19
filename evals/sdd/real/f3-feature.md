@@ -1,0 +1,1 @@
+Add bulk pricing to carts: a customer who buys more units of one product pays less for each unit. The cart subtotal (`Cart.subtotal_cents()`, and `subtotal_cents` in the API responses) includes the bulk price.

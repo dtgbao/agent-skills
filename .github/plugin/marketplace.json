@@ -15,10 +15,10 @@
 			"source": "./plugins/fullstack-dev"
 		},
 		{
-			"name": "spec-workflow",
-			"description": "Spec-driven development workflows for requirements, design, bug fixes, quick specs, task planning, and execution.",
-			"version": "2.0.6",
-			"source": "./plugins/spec-workflow"
+			"name": "sdd",
+			"description": "Spec-driven development: requirements or bugfix to design to tasks, with approval gates, analysis, sync, and wave execution.",
+			"version": "0.1.0",
+			"source": "./plugins/sdd"
 		},
 		{
 			"name": "swe-wiki",

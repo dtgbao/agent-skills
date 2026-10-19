@@ -29,10 +29,10 @@
 			"category": "Productivity"
 		},
 		{
-			"name": "spec-workflow",
+			"name": "sdd",
 			"source": {
 				"source": "local",
-				"path": "./plugins/spec-workflow"
+				"path": "./plugins/sdd"
 			},
 			"policy": {
 				"installation": "AVAILABLE",

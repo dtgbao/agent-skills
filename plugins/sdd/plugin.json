@@ -1,0 +1,20 @@
+{
+	"$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+	"name": "sdd",
+	"version": "0.1.0",
+	"description": "Spec-driven development: one spec.md (EARS requirements, design, lane plan) with user gates, built by lane subagents through a script-driven TDD loop, with drift-aware sync.",
+	"author": {
+		"name": "Bao Dang",
+		"url": "https://github.com/dtgbao"
+	},
+	"repository": "https://github.com/dtgbao/agent-skills",
+	"keywords": [
+		"sdd",
+		"spec-driven",
+		"requirements",
+		"EARS",
+		"property-based-testing",
+		"subagents",
+		"tdd"
+	]
+}

@@ -12,8 +12,8 @@
 			"source": "./plugins/fullstack-dev"
 		},
 		{
-			"name": "spec-workflow",
-			"source": "./plugins/spec-workflow"
+			"name": "sdd",
+			"source": "./plugins/sdd"
 		},
 		{
 			"name": "swe-wiki",

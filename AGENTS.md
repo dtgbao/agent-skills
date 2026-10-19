@@ -39,17 +39,15 @@ flowchart LR
         FIndex --> FOther
     end
 
-    subgraph Spec["plugins/spec-workflow/skills/"]
-        PNew["spec-new router"]
-        PPhases["requirements / design / bugfix / quick"]
-        PTasks["spec-tasks"]
-        PExecute["spec-execute"]
-        PSteering["steering-setup"]
-        PStatus["spec-status"]
+    subgraph SDD["plugins/sdd/skills/"]
+        DBrain["spec-brainstorm (no artifact)"]
+        DNew["spec-new"]
+        DSync["spec-sync"]
+        DRun["spec-run"]
 
-        PNew --> PPhases --> PTasks --> PExecute
-        PSteering -. "optional project context" .-> PPhases
-        PStatus -. "observes artifacts and progress" .-> PPhases
+        DNew -. "vague input" .-> DBrain
+        DNew --> DRun
+        DSync -. "reopens changed cases" .-> DRun
     end
 
     subgraph Wiki["plugins/swe-wiki/skills/"]
