@@ -1,14 +1,16 @@
-## Script (f1-discounts)
+## Script (f1-discounts, sdd plugin)
+
+Feature text: the content of `f1-feature.md` in this folder, word for word.
 
 Commands:
-1. `/sdd:spec-new Requirements-First: add discount codes to carts. A code gives a percent (1–90) or a fixed amount in cents off the subtotal, may need a minimum subtotal, has an expiry date, and a cart holds at most one code.`
-2. `/sdd:spec-run <name> --mode waves --optional`
-3. Hand edit, as a human: in `requirements.md` change the percent upper bound 90 → 50. Text only. Touch no other file.
+1. `/sdd:spec-new <feature text>`
+2. `/sdd:spec-run <name> <RUN ARGS>` — RUN ARGS come from your first message.
+3. Hand edit, as a human: in `spec.md`, in the Requirements section only, change the percent range 1–90 to 1–50. Text only. Touch no other file and no other section.
 4. `/sdd:spec-sync <name>`
-5. `/sdd:spec-run <name> --mode waves --optional`
+5. `/sdd:spec-run <name> <RUN ARGS>`
 
 Answers:
-- Requirements gate: first "Analyze first". High/medium → option A. `NEEDS_OWNER` → pick the most conservative concrete value, log it. Analyze Close step: deferred high/medium → same rule. Split spec → Continue. Then "Approve".
-- Design gate, tasks gate: Approve.
-- spec-run: failed leaf → Retry once, then Skip. Red checkpoint → Untick leaf, then Stop. Counterexample → fix implementation.
-- spec-sync: Apply all.
+- Gate 1: Approve, with the recommended answer for each open question.
+- Gate 2: Approve.
+- spec-run: retries as the skill says; after 2 attempts, Skip lane. Counterexample: Fix code.
+- spec-sync: Approve.

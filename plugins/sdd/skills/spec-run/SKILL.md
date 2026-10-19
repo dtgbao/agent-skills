@@ -1,29 +1,26 @@
 ---
 name: spec-run
-description: "Run tasks from a spec's tasks.md, one at a time or in parallel waves."
-argument-hint: "<spec-name> [task-id] [--mode single|waves] [--optional]"
+description: "Build an approved spec: one lane-runner subagent per lane, in parallel waves, each driven by spec.py one test at a time."
+argument-hint: "<spec-name> [lane] [--inline] [--model haiku|sonnet] [--effort low|medium|high]"
 disable-model-invocation: true
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion, Agent, Task
+allowed-tools: Read, Glob, Grep, Bash, AskUserQuestion, Agent, Task
 ---
 
-Arguments: $ARGUMENTS. `SPEC` per `${CLAUDE_PLUGIN_ROOT}/shared/state.md`. Orchestrator (you) owns `tasks.md` and `.spec.json`. `spec-task-runner` subagents own code.
+Arguments: $ARGUMENTS. `SPEC` = `python3 ${CLAUDE_PLUGIN_ROOT}/shared/scripts/spec.py`. Keep your context small: do not read `spec.md`, the code or the diffs. The script and the runners do that.
 
 ## Steps
 
-1. Load. `SPEC drift <dir>`. Read `.spec.json`. Any phase not `approved` → stop, give next command per Route table in `${CLAUDE_PLUGIN_ROOT}/shared/state.md`.
-2. Mode. `--mode` given → use it. `task-id` given → `single`. Else ask via AskUserQuestion: single (approve each) | waves (all, parallel).
-3. Scope. `task-id` given → that leaf only. Else leaves `[ ]` or `[-]` (left by a stopped run). Drop `*` leaves unless `--optional`. `Expect: red` pin with a `[x]` fix leaf (`Kind: fix` leaf whose `deps` hold the pin) → drop, report "pin after fix". Scope empty → report "nothing to run" + reason, stop.
-4. Graph. `SPEC check-tasks <dir>`. `RESULT: FAIL` → show fails, stop, point to `/sdd:spec-sync <name>`.
-5. Execute, wave by wave in id order. Wave ∩ scope = leaves.
-   - **single**: per leaf, show it, ask Run | Skip | Stop. Run → mark `[-]`, dispatch one `spec-task-runner`.
-   - **waves**: mark each `[-]`. Dispatch one `spec-task-runner` per leaf, all in ONE message.
-   - Dispatch = Agent call, `subagent_type: sdd:spec-task-runner`, foreground. Tiers: haiku → sonnet → opus. `model` from leaf `Size`: S → `haiku`, M → `sonnet`, L → `opus`. No `Size` → omit `model` (agent default `sonnet`). Prompt: spec dir, leaf id, full leaf text (with `Seam`), the text of every criterion in its `_Requirements:_`, correctness rules path (`${CLAUDE_PLUGIN_ROOT}/shared/correctness.md`, resolved). Wait for every report before marking. A report may arrive as a hand-back message, not in the Agent result: read it there.
-   - After reports: a `no-red` cycle with no killed mutant counts as `failed`. `done` → `[x]`. `FOREIGN-FAIL` files → note them for the checkpoint. `failed` with a COUNTEREXAMPLE → `[ ]`, go to step 6. Other `failed`/`blocked`, or no `STATUS:` line → `[ ]`, show the raw reply, ask Retry | Skip (dependents skip too) | Stop. Retry moves the leaf one tier up; opus stays opus.
-   - Group → `[x]` when every leaf in it is `[x]`. Skipped `*` leaves keep it `[ ]`; report "optional skipped".
-   - Checkpoint, once every in-scope leaf above it is `[x]`: run its commands. Failing test file in `Files` of an in-scope leaf not yet run → defer the checkpoint until that leaf runs. Re-run an `[x]` checkpoint when a leaf above it ran this run. Only open leaves above it are skipped `*` leaves → run it too. Green → `[x]`. Red → show output, name the leaf whose `Files` hold the failing test, ask Untick leaf | Continue | Stop.
-6. Property failure. Report holds counterexample, and the leaf is not an `Expect: red` pin with STATUS `done` → ask per step 5 of `${CLAUDE_PLUGIN_ROOT}/shared/correctness.md`:
-   - fix implementation → re-dispatch the leaf that owns the code under test (the slice itself; for a `test` leaf, the slices in its `deps`; for a pin, the fix leaf) with the counterexample, same tier; then re-run the failing test.
-   - fix test → re-dispatch the leaf whose `Files` hold the failing test, with the counterexample and the user's note, same tier.
-   - fix requirement → stop; user edits the criterion, then `/sdd:spec-sync <name>`.
-7. Report. Table: leaf, size, model, attempts, status, tests, `no-red` cycles, counterexample. Many `no-red` cycles show that an earlier leaf wrote too much code.
-   - Done when: every in-scope leaf is `[x]` or listed with reason; no `[-]` left.
+1. Ready. Run `SPEC ready docs/specs/<name>`. If it prints `NOT READY`, show its lines and the command that it names, then stop. If it prints `NOTHING TO RUN`, stop. Else note the WAVE lines. If the arguments name a lane, run only that lane.
+2. Run each wave in order.
+   - Start one Agent call for each lane of the wave, all in ONE message, in the foreground: `subagent_type: sdd:lane-runner`. The prompt is one line: `Run: python3 ${CLAUDE_PLUGIN_ROOT}/shared/scripts/spec.py tdd docs/specs/<name> <lane>`.
+   - Model and effort from the lane tier: S = `haiku`; M = `sonnet`, `effort: low`; L = `sonnet`, `effort: medium`. The script drives each step, so a low tier is sufficient. `--model` and `--effort` replace these values for all lanes. Never use a model or an effort above sonnet high.
+   - `--inline`, or no Agent tool: do not start subagents. Run the command of each lane yourself and do the loop of `${CLAUDE_PLUGIN_ROOT}/agents/lane-runner.md`.
+   - After the wave, run `SPEC verify docs/specs/<name> <lanes of the wave>` one time.
+3. Results. For each lane that `verify` does not show as `DONE`:
+   - `COUNTEREXAMPLE`: show it. Ask: Fix code | Fix test | Fix requirement. For Fix code or Fix test, start the lane again with one more line in the prompt: the choice and the counterexample. For Fix requirement, stop; the user edits `spec.md` and runs `/sdd:spec-sync <name>`.
+   - `OPEN`, or a reply with `STATUS: failed | blocked`: start the lane again one tier up (haiku, sonnet low, sonnet medium, sonnet high). The script keeps the progress, so the lane continues at its open case. With `--model` or `--effort`, the retry also goes one step up from those values. After 2 attempts, show the cause and ask: Retry | Skip lane | Stop.
+   - A `SUITE: FAIL` line names the lane of each failing test. Start that lane again, with the failing test name in the prompt.
+   Start the next wave only when all lanes that it needs are `DONE`.
+4. Report. Run `SPEC verify docs/specs/<name>`. Show its output, and one line for each lane: tier, model, attempts.
+
+Done when: `verify` prints `RESULT: PASS`, or the user stopped.

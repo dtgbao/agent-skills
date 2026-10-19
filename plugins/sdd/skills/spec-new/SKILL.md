@@ -1,31 +1,38 @@
 ---
 name: spec-new
-description: "Start or resume a spec: Requirements-First, Design-First, Bugfix, or Quick Plan."
-argument-hint: "[feature or bug description | spec-name]"
+description: "Start or resume a spec: requirements, then design and plan, with user gates. Feature or bugfix."
+argument-hint: "[feature or bug description | spec-name] [--quick]"
 disable-model-invocation: true
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion, Agent, Task
+allowed-tools: Read, Glob, Grep, Bash, AskUserQuestion, Agent, Task
 ---
 
-Input: $ARGUMENTS. `SPEC` per `${CLAUDE_PLUGIN_ROOT}/shared/state.md`.
+Input: $ARGUMENTS.
+
+You are the main session. Keep your context small: subagents write the spec, and `spec.py` checks it. Do not read `spec.md` in full, and do not write it yourself. The terms have the meanings in `${CLAUDE_PLUGIN_ROOT}/shared/glossary.md`; read it only if a term is not clear.
+
+- `SPEC` = `python3 ${CLAUDE_PLUGIN_ROOT}/shared/scripts/spec.py`
+- `WRITE(task, text)` = an Agent call with `subagent_type: sdd:spec-writer`, `model: sonnet`, `effort: medium`, in the foreground. The prompt holds: the spec dir, the task, the text, and the paths `${CLAUDE_PLUGIN_ROOT}/shared/spec-format.md` and `${CLAUDE_PLUGIN_ROOT}/shared/scripts/spec.py`. The reply is a short report: WROTE, COUNTS, OPEN, KEY, CHECK.
 
 ## Steps
 
-1. Route. Input names a dir in `docs/specs/` → Resume: `SPEC drift <dir>`, read `.spec.json`, jump to step 6 at first phase in `order` not `approved`. Input empty → use the confirmed `spec-brainstorm` playback in this conversation; none → ask what to build or fix. No workflow named and typo or one-line change → say spec unneeded, do it direct, stop. Named workflow wins.
-   - Done when: resume point known, or new-spec input in hand.
-2. Clarity. Input is a confirmed playback → step 3. Else read `${CLAUDE_PLUGIN_ROOT}/skills/spec-brainstorm/SKILL.md`, run its steps on the input.
-   - Done when: input is a defect report, brief clear and shown in chat, playback confirmed, or user said skip.
-3. Name. Feature or bug noun phrase, kebab-case, ≤5 words, workflow name dropped. `docs/specs/<name>/` exists → ask: Resume (as step 1) | New name.
-   - Done when: name unique, or resume point known.
-4. Workflow. Input names one → use it. Else ask via AskUserQuestion, options below. Playback recommends one, or input is a defect report (→ Bugfix) → put it first, marked `(Recommended)`.
-   - Requirements-First: need clear, architecture open
-   - Design-First: stack or architecture is the main constraint. A fixed stack alone → Requirements-First
-   - Bugfix: defect, regressions costly
-   - Quick Plan: familiar feature, one pass, no gates
-   - Done when: workflow chosen.
-5. State. `SPEC init docs/specs/<name> <workflow>`.
-6. Run workflow. Read the chosen file; read files it links when a step reaches them:
-   - Requirements-First → `${CLAUDE_PLUGIN_ROOT}/shared/workflows/requirements-first.md`
-   - Design-First → `${CLAUDE_PLUGIN_ROOT}/shared/workflows/design-first.md`
-   - Bugfix → `${CLAUDE_PLUGIN_ROOT}/shared/workflows/bugfix.md`
-   - Quick Plan → `${CLAUDE_PLUGIN_ROOT}/shared/workflows/quick-plan.md`
-   - Done when: workflow's last step done.
+1. Route.
+   - If the input names a directory in `docs/specs/`, run `SPEC status <dir>` and resume at the gate that it names.
+   - If the input is empty, use the confirmed `spec-brainstorm` playback in this conversation. If there is none, ask what to build or fix.
+   - If the change is a typo or one line, tell the user that a spec is not necessary. Make the change, then stop.
+2. Clarity. If the input is not a confirmed playback, read `${CLAUDE_PLUGIN_ROOT}/skills/spec-brainstorm/SKILL.md` and do its step 1. If the input is vague or ambiguous, do the other steps of that skill too.
+   - Done when: the input is a defect report, or the brief is clear, or the user confirmed the playback, or the user said "skip".
+3. Name and workflow. Make a kebab-case name of 5 words or fewer. The workflow is `bugfix` for a defect report or an input that starts with `Bugfix:`, else `feature`. If `docs/specs/<name>/` exists, ask: Resume | New name. Run `SPEC init docs/specs/<name> <workflow>`.
+4. Requirements. `WRITE(requirements, <input, or the playback, word for word>)`.
+5. Gate 1. Show the WROTE, COUNTS and KEY lines and the path of `spec.md`. Then ask with ONE AskUserQuestion call:
+   - one question for each OPEN item (4 or fewer in each call; the recommended answer first, marked `(Recommended)`);
+   - a last question: "Approve the requirements with these answers?" Approve | Change.
+
+   Then:
+   - If the user chose Change, ask what to change, then `WRITE(update, <the words of the user>)`, show the new report and ask again.
+   - If the user chose Approve, go to step 6 with the answers.
+   - With `--quick`: do not ask. Go to step 6 with the recommended answers, and say that they are assumptions.
+6. Design and plan, in ONE writer call: `WRITE(design, "Answers: <the answers, or none>")`. The writer applies the answers to the Requirements, then writes Design and Plan. Then run `SPEC approve <dir> requirements`. If it prints `REFUSED`, give the line to `WRITE(update, …)` and run it again.
+7. Gate 2. Show the COUNTS and KEY lines. Ask: Approve | Change. For Change, do as in step 5. For Approve, run `SPEC approve <dir> design`.
+8. Hand off. Run `SPEC ready <dir>` and show its WAVE lines. Tell the user to type `/sdd:spec-run <name>`.
+
+Done when: `SPEC status <dir>` prints `NEXT: /sdd:spec-run`.

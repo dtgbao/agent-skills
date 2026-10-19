@@ -1,57 +1,73 @@
 # sdd evals
 
-Evaluation of the [`sdd` plugin](../../plugins/sdd/README.md). Raw runs (reports, generated specs, logs, patches) are on branch **`eval-runs`**; this folder holds the method, the summary, and the open issues.
+Evaluation of the [`sdd` plugin](../../plugins/sdd/README.md). Raw runs (reports, generated specs, logs, patches) are on branch **`eval-runs`**. This folder holds the method, the summary and the open issues.
 
-## Verdict (v0.5.0)
+## Verdict (rewrite, round r4)
 
-Round 0.4.2 passed every scenario (real f1, b1, a1; simulated 07a–c). Round 0.4.3 (Sonnet) checked the Q4–Q10 fixes: f1 PASS, a1 PARTIAL, and the gaps it found are fixed. Round 0.5.0 (Sonnet) checked the new vertical-slice task phase: f1 PARTIAL. Tracer bullet, seams, slice shape and property placement held. 6 of 25 cycles had no red because the tracer slice wrote too much code; that fix and the sync cap fix are not verified yet. Open: **9 medium, 24 low** in [OPEN-ISSUES.md](OPEN-ISSUES.md).
+The plugin was rewritten after round 0.5.x: one `spec.md`, a thin main session, a `spec-writer` subagent, one `lane-runner` subagent for each lane, and a TDD loop that `spec.py` drives and checks.
 
-## Results
+In round r4, sdd and strict /tdd (Sonnet medium) both pass every hidden acceptance test on three features. sdd uses **1.1–1.55× the tokens** of strict /tdd (the target was below 2×). It is **2–4× slower**. Only sdd gives proof that each test was red before its code: the /tdd runs skip red runs, also when the prompt asks for one test at a time. Sonnet low also builds f1 correctly with the full process (round v3). Open: **3 medium, 6 low** in [OPEN-ISSUES.md](OPEN-ISSUES.md).
 
-Rounds carry working labels (0.1.0–0.5.0). The plugin was unpublished during the evals, so its manifest stays at 0.1.0.
+## Results: rewrite
+
+All runs use Sonnet. Context tokens = the sum of all model calls, subagents included. "Acceptance" = a hidden suite in [`real/acceptance/`](real/acceptance) that the builder never sees.
+
+| Round | Feature | Run | Acceptance | Time | Calls | Context tokens | Change confirmed |
+|---|---|---|---|---|---|---|---|
+| before | f1 (old text) | old plugin, high | – | 16.0 min | 140 | 8.6M | baseline: the orchestrator used 89% of the tokens; one subagent for each leaf |
+| before | f1 (old text) | /tdd horizontal, high | – | 2.8 min | 25 | 2.0M | |
+| v2 | f1 | sdd, medium/medium | 27/27 | 13.8 min | 152 | 5.6M | thin main session (24 calls); found a sync deadlock, 40 cases for 17 criteria |
+| v2 | f1 | /tdd horizontal, medium / low | 27/27, 27/27 | 0.9 / 0.9 min | 7 / 8 | 0.5M / 0.6M | wrote all tests first, then all code |
+| v3 | f1 | sdd, medium | 27/27 | 11.0 min | 95 | 3.2M | 2 calls for each cycle, automatic mutants, fewer cases, deadlock fixed |
+| v3 | f1 | sdd, low (all Sonnet low) | 27/27 | 10.9 min | 90 | 2.8M | a low-effort model follows the full process |
+| v3 | f1 | strict /tdd, medium / low | 27/27, 27/27 | 2.6 / 3.5 min | 24 / 32 | 1.9M / 2.6M | told to do one test at a time; the medium run ran tests only 2 times |
+| r4 | f1 | sdd, medium | 27/27 | 9.9 min | 95 | 2.95M | speed fixes: one writer call for answers + design, 15 s mutant cap, regression at slice end |
+| r4 | f2 | sdd, medium | 19/19 | 3.5 min | 62 | 1.5M | 3 lanes; shipping and tax ran in parallel, then the API lane |
+| r4 | f2 | strict /tdd, medium | 19/19 | 1.7 min | 18 | 1.4M | |
+| r4 | f3 | sdd, medium | 12/12 | 4.1 min | 46 | 1.4M | gate 1 asked 5 questions with recommended answers; the answers became criteria |
+| r4 | f3 | strict /tdd, medium | 12/12 | 1.0 min | 13 | 0.97M | asked 1 combined question; 7 of 9 tests were never red |
+
+Features: f1 discount codes, then a change of the percent range to 1–50 through a hand edit and `spec-sync`. f2 checkout quote over 3 modules. f3 bulk pricing with open values; the answers are in [`real/f3-answers.md`](real/f3-answers.md), and a run may read that file only when it asks a question.
+
+## Results: old plugin (0.1.0–0.5.0)
+
+Rounds carry working labels. The plugin was not published, so its manifest stays at 0.1.0. These rounds tested files that the rewrite removed (`spec-analyze`, `spec-analyst`, `tasks.md`, the leaf runner).
 
 | Version | Method | Runs | Result | Main change confirmed |
 |---|---|---|---|---|
 | 0.1.0 | simulated, Sonnet/Haiku | 6 scenarios | 6 PARTIAL, 71 issues | baseline; cross-file contract breaks |
-| 0.2.0 | simulated, Sonnet | 03 bugfix, 06 lifecycle (+ check) | 03 PASS, 06 PASS on check | `spec.py` drift + tasks checker; 20 of 22 issues fixed |
-| 0.3.0 | real plugin, Opus orchestrator | f1, b1, a1 | 3/3 PASS | real agents, Size → model routing (haiku/sonnet/opus) |
-| 0.3.1 | real | f1, a1 | 2/2 PASS | analyze growth +115 % → +42 %, code context |
-| 0.3.2 | real | f1, b1, a1 | 2 PASS, f1 cut at 2/5 (usage limit) | hand-back reports, verify resolve, script kept out of `CLAUDE.md` |
-| 0.3.3 | real | f1, b1, a1 | 3/3 PASS | red-property stop, fix flow, bugfix coverage |
-| 0.3.4 | real (reused sessions) | f1, b1, a1 | 3/3 PASS | criterion text in runner prompt, owner-answer placement, cross-check |
-| 0.4.0 | simulated, Sonnet | 07a vague, 07b clear, 07c defect | 3/3 PASS, 1 med + 7 low | `spec-brainstorm`: vague → confirmed playback, clear → one-line brief, defect → skip; no file written |
-| 0.4.1 | simulated, Sonnet (fresh sessions) | 07a, 07b, 07c | 3/3 PASS, 6 new low | all 8 0.4.0 fixes held: defect exit, code facts in playback, Facts step reads code first |
-| 0.4.2 | real (Opus) + simulated (Sonnet), fresh sessions | f1, b1, a1, 07a, 07b, 07c | 6/6 PASS, 7 med + 20 low new | 25 fixes: `CHECK` recount, check-order clashes, past-7 split, growth `+new/+split`, root-cause grep, brainstorm surface |
-| 0.4.3 | real, Sonnet orchestrator | a1, f1 | f1 PASS, a1 PARTIAL | `CHECK` names the gap, owner keeps medium, Close step asks, literal oracles; gaps in runner rule and Close loop → fixed |
-| 0.5.0 | real, Sonnet orchestrator | f1 (vertical slices) | PARTIAL | slice shape, tracer bullet, seams at the gate, properties in slices; 6/25 cycles no red (tracer overbuilt) → fixed |
-
-Analyst recall on the seeded spec: 7/7 planted defects in round 1 (Haiku in 0.1.0, Sonnet in 0.3.x). Sonnet: same recall with fewer false positives.
+| 0.2.0 | simulated, Sonnet | 03 bugfix, 06 lifecycle | PASS | `spec.py` drift + tasks checker |
+| 0.3.x | real plugin, Opus | f1, b1, a1 | PASS | real agents, model routing, analyze growth, criterion text in runner prompts |
+| 0.4.x | simulated + real | 07a–c, f1, b1, a1 | PASS | `spec-brainstorm`; 25 analyze and runner fixes |
+| 0.5.x | real, Sonnet | f1 | PARTIAL | vertical slices, STE text; prose rules for red and one test at a time failed, which led to the rewrite |
 
 ## Layout
 
 | Path | Role |
 |---|---|
-| [harness.md](harness.md), [briefs.md](briefs.md), [fixtures/](fixtures) | Simulated eval: skill text run as a slash command with a scripted user (cheap, any model). Scenario 07 tests `spec-brainstorm` (vague, clear, defect inputs) |
-| [real/](real/README.md) | Real-plugin eval: mock shop project, eval rules, scripts, seeded spec (install, agents, routing) |
-| [OPEN-ISSUES.md](OPEN-ISSUES.md) | Merged open issues |
-| [kiro/](kiro/COMPARISON.md) | Kiro vs sdd artifact comparison + `measure.py` |
+| [real/](real/README.md) | Real-plugin eval: mock shop, eval rules for sdd and for /tdd, feature texts, scripts, hidden acceptance suites |
+| [OPEN-ISSUES.md](OPEN-ISSUES.md) | Open issues |
+| [harness.md](harness.md), [briefs.md](briefs.md), [fixtures/](fixtures) | Simulated eval of the old plugin. Scenario 07 (`spec-brainstorm`) still applies; the others use removed files |
+| [kiro/](kiro/COMPARISON.md) | Kiro vs old sdd artifact comparison + `measure.py` |
 | `runs/` | Working dir for new runs (gitignored) |
 
 ## Run a new round
 
-1. Real eval: follow [real/README.md](real/README.md); copy results to `runs/v<version>/`. Simulated: [harness.md](harness.md).
-2. Add one row to Results; update [OPEN-ISSUES.md](OPEN-ISSUES.md).
-3. Archive the run:
+1. Follow [real/README.md](real/README.md). Run sdd and the /tdd baseline at the same model and effort.
+2. Grade each project with `real/acceptance/run.sh <feature> <project dir>`. Take time, calls and tokens from the session transcripts.
+3. Add rows to Results, and update [OPEN-ISSUES.md](OPEN-ISSUES.md).
+4. Archive the run:
 
 ```bash
 git worktree add ../eval-runs eval-runs
 ```
 
 ```bash
-cp -R evals/sdd/runs/v<version> ../eval-runs/runs/ && git -C ../eval-runs add -A && git -C ../eval-runs commit -m "runs v<version>"
+cp -R evals/sdd/runs/<round> ../eval-runs/runs/ && git -C ../eval-runs add -A && git -C ../eval-runs commit -m "runs <round>"
 ```
 
 ## Known limits
 
-- Sessions started by the app get the first prompt as plain text, so skills ran by manual load. Verify `$ARGUMENTS` / `${CLAUDE_PLUGIN_ROOT}` expansion once by typing a command.
-- 0.3.4 reused the 0.3.3 sessions (the app blocked new starts), so orchestrators remembered the earlier run.
+- The app starts eval sessions with plain text, so the skills ran by manual load. `$ARGUMENTS` and `${CLAUDE_PLUGIN_ROOT}` expansion in a typed command is not verified for the rewrite.
+- One run for each cell. The time numbers vary between runs.
+- The scripted user and the builder are the same model. For f3, a run could read the answers file early; the transcripts show that the r4 runs read it only after they asked.

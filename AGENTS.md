@@ -42,13 +42,12 @@ flowchart LR
     subgraph SDD["plugins/sdd/skills/"]
         DBrain["spec-brainstorm (no artifact)"]
         DNew["spec-new"]
-        DAnalyze["spec-analyze"]
         DSync["spec-sync"]
         DRun["spec-run"]
 
         DNew -. "vague input" .-> DBrain
-        DNew --> DAnalyze --> DRun
-        DSync -. "realigns tasks.md" .-> DRun
+        DNew --> DRun
+        DSync -. "reopens changed cases" .-> DRun
     end
 
     subgraph Wiki["plugins/swe-wiki/skills/"]
