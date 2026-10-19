@@ -42,5 +42,5 @@ Skeleton:
 
 ## Regression Strategy
 
-<pin tests: exploration (red before fix), preservation (green before fix)>
+<seams the pins drive; pin tests: exploration (red before fix, holds Property 1), preservation (green before fix, one holds Property 2)>
 ```

@@ -12,18 +12,18 @@ Arguments: $ARGUMENTS. `SPEC` per `${CLAUDE_PLUGIN_ROOT}/shared/state.md`. Orche
 
 1. Load. `SPEC drift <dir>`. Read `.spec.json`. Any phase not `approved` → stop, give next command per Route table in `${CLAUDE_PLUGIN_ROOT}/shared/state.md`.
 2. Mode. `--mode` given → use it. `task-id` given → `single`. Else ask via AskUserQuestion: single (approve each) | waves (all, parallel).
-3. Scope. `task-id` given → that leaf only. Else leaves `[ ]` or `[-]` (left by a stopped run). Drop `*` leaves unless `--optional`. `Expect: red` pin with a `[x]` fix leaf (`Kind: code` leaf whose `deps` hold the pin) → drop, report "pin after fix". Scope empty → report "nothing to run" + reason, stop.
+3. Scope. `task-id` given → that leaf only. Else leaves `[ ]` or `[-]` (left by a stopped run). Drop `*` leaves unless `--optional`. `Expect: red` pin with a `[x]` fix leaf (`Kind: fix` leaf whose `deps` hold the pin) → drop, report "pin after fix". Scope empty → report "nothing to run" + reason, stop.
 4. Graph. `SPEC check-tasks <dir>`. `RESULT: FAIL` → show fails, stop, point to `/sdd:spec-sync <name>`.
 5. Execute, wave by wave in id order. Wave ∩ scope = leaves.
    - **single**: per leaf, show it, ask Run | Skip | Stop. Run → mark `[-]`, dispatch one `spec-task-runner`.
    - **waves**: mark each `[-]`. Dispatch one `spec-task-runner` per leaf, all in ONE message.
-   - Dispatch = Agent call, `subagent_type: sdd:spec-task-runner`, foreground. Tiers: haiku → sonnet → opus. `model` from leaf `Size`: S → `haiku`, M → `sonnet`, L → `opus`. No `Size` → omit `model` (agent default `sonnet`). Prompt: spec dir, leaf id, full leaf text, the text of every criterion in its `_Requirements:_`, correctness rules path (`${CLAUDE_PLUGIN_ROOT}/shared/correctness.md`, resolved). Wait for every report before marking. A report may arrive as a hand-back message, not in the Agent result: read it there.
-   - After reports: `done` → `[x]`. `FOREIGN-FAIL` files → note them for the checkpoint. `failed` with a COUNTEREXAMPLE → `[ ]`, go to step 6. Other `failed`/`blocked`, or no `STATUS:` line → `[ ]`, show the raw reply, ask Retry | Skip (dependents skip too) | Stop. Retry moves the leaf one tier up; opus stays opus.
+   - Dispatch = Agent call, `subagent_type: sdd:spec-task-runner`, foreground. Tiers: haiku → sonnet → opus. `model` from leaf `Size`: S → `haiku`, M → `sonnet`, L → `opus`. No `Size` → omit `model` (agent default `sonnet`). Prompt: spec dir, leaf id, full leaf text (with `Seam`), the text of every criterion in its `_Requirements:_`, correctness rules path (`${CLAUDE_PLUGIN_ROOT}/shared/correctness.md`, resolved). Wait for every report before marking. A report may arrive as a hand-back message, not in the Agent result: read it there.
+   - After reports: a `no-red` cycle with no killed mutant counts as `failed`. `done` → `[x]`. `FOREIGN-FAIL` files → note them for the checkpoint. `failed` with a COUNTEREXAMPLE → `[ ]`, go to step 6. Other `failed`/`blocked`, or no `STATUS:` line → `[ ]`, show the raw reply, ask Retry | Skip (dependents skip too) | Stop. Retry moves the leaf one tier up; opus stays opus.
    - Group → `[x]` when every leaf in it is `[x]`. Skipped `*` leaves keep it `[ ]`; report "optional skipped".
    - Checkpoint, once every in-scope leaf above it is `[x]`: run its commands. Failing test file in `Files` of an in-scope leaf not yet run → defer the checkpoint until that leaf runs. Re-run an `[x]` checkpoint when a leaf above it ran this run. Only open leaves above it are skipped `*` leaves → run it too. Green → `[x]`. Red → show output, name the leaf whose `Files` hold the failing test, ask Untick leaf | Continue | Stop.
 6. Property failure. Report holds counterexample, and the leaf is not an `Expect: red` pin with STATUS `done` → ask per step 5 of `${CLAUDE_PLUGIN_ROOT}/shared/correctness.md`:
-   - fix implementation → re-dispatch each code leaf in the test leaf's `deps` with the counterexample, same tier; then re-run the test leaf.
-   - fix test → re-dispatch the test leaf with the counterexample and the user's note, same tier.
+   - fix implementation → re-dispatch the leaf that owns the code under test (the slice itself; for a `test` leaf, the slices in its `deps`; for a pin, the fix leaf) with the counterexample, same tier; then re-run the failing test.
+   - fix test → re-dispatch the leaf whose `Files` hold the failing test, with the counterexample and the user's note, same tier.
    - fix requirement → stop; user edits the criterion, then `/sdd:spec-sync <name>`.
-7. Report. Table: leaf, size, model, attempts, status, tests, counterexample.
+7. Report. Table: leaf, size, model, attempts, status, tests, `no-red` cycles, counterexample. Many `no-red` cycles show that an earlier leaf wrote too much code.
    - Done when: every in-scope leaf is `[x]` or listed with reason; no `[-]` left.

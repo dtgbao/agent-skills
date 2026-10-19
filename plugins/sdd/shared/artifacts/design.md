@@ -11,6 +11,7 @@ Done when:
 - every component whose control flow changes shows call tree (or call-stack change) as `diff`
 - Criteria Classification lists every criterion (`${CLAUDE_PLUGIN_ROOT}/shared/correctness.md` step 2)
 - Testing Strategy lists every Property N in this file: generator, iterations
+- Testing Strategy lists the seams: each public interface tests drive, with what it catches and what it misses. Tasks test only at these seams
 - every non-functional constraint (latency, security, compliance) has owner component
 - every `## Open Questions` item in requirements is decided under Key design decisions or marked out of scope
 
@@ -71,6 +72,10 @@ _Requirements: x.y_
 ## Testing Strategy
 
 <unit, property, integration; library>
+
+| Seam | Catches | Misses |
+|---|---|---|
+| `<public interface>` | <behavior it proves> | <what it cannot see> |
 
 | Property | Generators | Iterations |
 |---|---|---|

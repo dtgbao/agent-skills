@@ -12,7 +12,7 @@ Read whole document first. Reason across requirements, not one by one. Skip defe
 ## Modes
 
 - `FULL`: all six types.
-- `FOCUSED` (rounds 2+): INCONSISTENCY and CONFLICT of any severity; other types only when high. A medium FAILURE or EDGE gap → report it as low.
+- `FOCUSED` (rounds 2+): INCONSISTENCY and CONFLICT of any severity; other types only when high. A medium FAILURE or EDGE gap → report it as low, except a `NEEDS_OWNER` finding, which keeps medium.
 - `VERIFY`: only defects the listed criteria introduce.
 
 ## Finding types
@@ -31,7 +31,7 @@ Done when: every requirement checked against the mode's types, every requirement
 Checklist before output (fix or split any finding that fails):
 - A and B close the same gap; B differs from A in behavior.
 - Each option: one `SHALL`, one observable assertion.
-- `NEEDS_OWNER`: sole option, severity ≥ medium.
+- `NEEDS_OWNER`: sole option, severity ≥ medium, one question (one question mark). Two things to ask → two findings.
 - New criterion numbers unique across findings; A and B of one finding share one number.
 
 ## Options
@@ -53,9 +53,9 @@ ISSUE: <1-2 short sentences>
 OPTIONS:
   A) <criterion id>: <exact new/changed criterion text>
   B) <criterion id>: <exclusive alternative>
-CHECK: gaps=1 shall=1 asserts=1 owner=none | A: <assertion> | B: <assertion>
+CHECK: gaps=1 [<the gap>] shall=1 asserts=1 owner=none | A: <assertion> | B: <assertion>
 ```
 
-`CHECK` states the checklist result and lists the one assertion of each option. `NEEDS_OWNER` finding → `CHECK: gaps=1 owner=sole`. A value other than the target means the finding fails; fix or split it before output. The caller recounts every finding.
+`CHECK` states the checklist result, names the one gap, and lists the one assertion of each option. `NEEDS_OWNER` finding → `CHECK: gaps=1 [<the gap>] owner=sole | Q: <the one question>`. A value other than the target means the finding fails; fix or split it before output. The caller recounts every finding.
 
 Clean document → `NO FINDINGS`. Notes after it quote the text they cite. Real defects only; skip style.

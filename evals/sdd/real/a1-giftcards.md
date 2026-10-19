@@ -8,6 +8,6 @@ Commands:
 3. `/sdd:spec-run gift-cards --mode waves --optional`
 
 Answers:
-- spec-analyze: high/medium → option A. `NEEDS_OWNER` → the most conservative concrete value, log it.
-- spec-new: "Resume". Every gate: Approve.
+- spec-analyze: high/medium → option A. `NEEDS_OWNER` → the most conservative concrete value, log it. Close step: deferred high/medium → same rule. Split spec → Continue.
+- spec-new: resume runs with no question (named dir). Every gate: Approve.
 - spec-run: failed leaf → Retry once, then Skip. Red checkpoint → Stop. Counterexample → fix implementation.

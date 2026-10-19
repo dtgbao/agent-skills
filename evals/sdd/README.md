@@ -2,13 +2,13 @@
 
 Evaluation of the [`sdd` plugin](../../plugins/sdd/README.md). Raw runs (reports, generated specs, logs, patches) are on branch **`eval-runs`**; this folder holds the method, the summary, and the open issues.
 
-## Verdict (v0.4.2)
+## Verdict (v0.5.0)
 
-The plugin runs end to end with real `sdd:*` agents: install, gates, analyze, waves, drift, sync, model routing. The last three real-plugin rounds passed every scenario. The simulated `spec-brainstorm` rounds (07) passed 3/3 twice. Round 0.4.2 passed every scenario (real f1, b1, a1; simulated 07a–c) and confirmed most of the 0.4.1 fixes. Open: **7 medium, 20 low** in [OPEN-ISSUES.md](OPEN-ISSUES.md). The medium issues: analyst option repair and `CHECK` (Q4–Q6), standalone-analyze follow-ups (Q7, Q8), runner file discipline (Q9) and test oracles (Q10).
+Round 0.4.2 passed every scenario (real f1, b1, a1; simulated 07a–c). Round 0.4.3 (Sonnet) checked the Q4–Q10 fixes: f1 PASS, a1 PARTIAL, and the gaps it found are fixed. Round 0.5.0 (Sonnet) checked the new vertical-slice task phase: f1 PARTIAL. Tracer bullet, seams, slice shape and property placement held. 6 of 25 cycles had no red because the tracer slice wrote too much code; that fix and the sync cap fix are not verified yet. Open: **9 medium, 24 low** in [OPEN-ISSUES.md](OPEN-ISSUES.md).
 
 ## Results
 
-Rounds carry working labels (0.1.0–0.4.2). The plugin was unpublished during the evals, so its manifest stays at 0.1.0.
+Rounds carry working labels (0.1.0–0.5.0). The plugin was unpublished during the evals, so its manifest stays at 0.1.0.
 
 | Version | Method | Runs | Result | Main change confirmed |
 |---|---|---|---|---|
@@ -22,6 +22,8 @@ Rounds carry working labels (0.1.0–0.4.2). The plugin was unpublished during t
 | 0.4.0 | simulated, Sonnet | 07a vague, 07b clear, 07c defect | 3/3 PASS, 1 med + 7 low | `spec-brainstorm`: vague → confirmed playback, clear → one-line brief, defect → skip; no file written |
 | 0.4.1 | simulated, Sonnet (fresh sessions) | 07a, 07b, 07c | 3/3 PASS, 6 new low | all 8 0.4.0 fixes held: defect exit, code facts in playback, Facts step reads code first |
 | 0.4.2 | real (Opus) + simulated (Sonnet), fresh sessions | f1, b1, a1, 07a, 07b, 07c | 6/6 PASS, 7 med + 20 low new | 25 fixes: `CHECK` recount, check-order clashes, past-7 split, growth `+new/+split`, root-cause grep, brainstorm surface |
+| 0.4.3 | real, Sonnet orchestrator | a1, f1 | f1 PASS, a1 PARTIAL | `CHECK` names the gap, owner keeps medium, Close step asks, literal oracles; gaps in runner rule and Close loop → fixed |
+| 0.5.0 | real, Sonnet orchestrator | f1 (vertical slices) | PARTIAL | slice shape, tracer bullet, seams at the gate, properties in slices; 6/25 cycles no red (tracer overbuilt) → fixed |
 
 Analyst recall on the seeded spec: 7/7 planted defects in round 1 (Haiku in 0.1.0, Sonnet in 0.3.x). Sonnet: same recall with fewer false positives.
 

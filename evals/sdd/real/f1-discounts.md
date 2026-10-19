@@ -8,7 +8,7 @@ Commands:
 5. `/sdd:spec-run <name> --mode waves --optional`
 
 Answers:
-- Requirements gate: first "Analyze first". High/medium → option A. `NEEDS_OWNER` → pick the most conservative concrete value, log it. Then "Approve".
+- Requirements gate: first "Analyze first". High/medium → option A. `NEEDS_OWNER` → pick the most conservative concrete value, log it. Analyze Close step: deferred high/medium → same rule. Split spec → Continue. Then "Approve".
 - Design gate, tasks gate: Approve.
 - spec-run: failed leaf → Retry once, then Skip. Red checkpoint → Untick leaf, then Stop. Counterexample → fix implementation.
 - spec-sync: Apply all.

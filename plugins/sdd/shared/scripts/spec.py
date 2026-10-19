@@ -16,7 +16,10 @@ from pathlib import Path
 
 WORKFLOWS = ("requirements-first", "design-first", "bugfix", "quick-plan")
 PHASES = ("requirements", "design", "tasks")
-KINDS = ("setup", "code", "test", "pin")
+KINDS = ("setup", "slice", "test", "pin", "fix")
+TEST_FILE = re.compile(r"(^|/)(tests?|__tests__)/|(^|/)test_[^/]*$|_test\.[^/]+$|\.(test|spec)\.[^/]+$")
+SLICE_MAX_FILES = 5
+SLICE_MAX_CRITERIA = 3
 
 
 def state_path(d):
@@ -198,6 +201,8 @@ def parse_tasks(text):
         leaf["files"] = re.findall(r"`([^`]+)`", f.group(1)) if f else []
         k = re.search(r"^\s*- Kind:\s*(\w+)", body, re.M)
         leaf["kind"] = k.group(1) if k else None
+        sm = re.search(r"^\s*- Seam:\s*(\S.*)$", body, re.M)
+        leaf["seam"] = sm.group(1).strip() if sm else None
         z = re.search(r"^\s*- Size:\s*([SML])\b", body, re.M)
         leaf["size"] = z.group(1) if z else None
         e = re.search(r"^\s*- Expect:\s*(\w+)", body, re.M)
@@ -263,7 +268,18 @@ def check_tasks(d, quiet=False):
     check("every leaf has _Requirements:_", [k for k, v in leaves.items() if v["reqs"] is None])
     check("every leaf has Size S|M|L", [k for k, v in leaves.items() if not v["size"]])
     check("every leaf has Verify", [k for k, v in leaves.items() if not v["verify"]])
-    check("setup/code leaf has Do", [k for k, v in leaves.items() if v["kind"] in ("setup", "code") and not v["do"]])
+    check("setup/slice/fix leaf has Do", [k for k, v in leaves.items() if v["kind"] in ("setup", "slice", "fix") and not v["do"]])
+    check("slice/test/pin leaf has Seam", [k for k, v in leaves.items() if v["kind"] in ("slice", "test", "pin") and not v["seam"]])
+    slices = {k: v for k, v in leaves.items() if v["kind"] == "slice"}
+    check("slice holds a test file and a code file (vertical)",
+          [k for k, v in slices.items() if not (any(TEST_FILE.search(f) for f in v["files"])
+                                                and any(not TEST_FILE.search(f) for f in v["files"]))])
+    check(f"slice touches <= {SLICE_MAX_FILES} files", [f"{k}={len(v['files'])}" for k, v in slices.items()
+                                                       if len(v["files"]) > SLICE_MAX_FILES])
+    check(f"slice cites <= {SLICE_MAX_CRITERIA} criteria", [f"{k}={len(v['reqs'] or [])}" for k, v in slices.items()
+                                                           if len(v["reqs"] or []) > SLICE_MAX_CRITERIA])
+    check("test leaf holds only test files", [k for k, v in leaves.items() if v["kind"] == "test"
+                                              and any(not TEST_FILE.search(f) for f in v["files"])])
     check("optional * only on Kind test", [k for k, v in leaves.items() if v["optional"] and v["kind"] != "test"])
     clash = []
     for w in waves:
@@ -282,15 +298,16 @@ def check_tasks(d, quiet=False):
                 if f in owner and owner[f] != t:
                     race.append(f"wave {w['id']}: {t} reads {f} written by {owner[f]}")
     check("no same-wave read of another leaf's file (Do/Verify paths)", race)
-    code = [k for k, v in leaves.items() if v["kind"] == "code"]
-    check("test leaf deps on a code leaf", [k for k, v in leaves.items() if v["kind"] == "test" and code
-                                           and not any(x in code for x in deps.get(k, []))])
+    check("test leaf deps on a slice", [k for k, v in leaves.items() if v["kind"] == "test" and slices
+                                       and not any(x in slices for x in deps.get(k, []))])
+    fixes = [k for k, v in leaves.items() if v["kind"] == "fix"]
 
     pins = [k for k, v in leaves.items() if v["kind"] == "pin"]
     check("pin leaf has Expect red|green", [k for k in pins if leaves[k]["expect"] not in ("red", "green")])
     if s["workflow"] == "bugfix":
         check("bugfix has pins", "" if pins else "no Kind: pin leaf")
-        check("pins run before fix", [f"{p}>={c}" for p in pins for c in code
+        check("bugfix has a fix leaf", "" if fixes else "no Kind: fix leaf")
+        check("pins run before fix", [f"{p}>={c}" for p in pins for c in fixes
                                       if p in wave_of and c in wave_of and wave_of[p] >= wave_of[c]])
 
     crit = set(criteria(d, s))
@@ -310,7 +327,7 @@ def check_tasks(d, quiet=False):
             below = [k for k in leaves if int(k.split(".")[0]) > int(num) and k in wave_of]
             early = [k for k in below if above and wave_of[k] <= max(above)]
             if early:
-                print(f"WARN checkpoint {num} runs after later-layer leaves {early} (shared waves)")
+                print(f"WARN checkpoint {num} runs after later-group leaves {early} (shared waves)")
     return fails
 
 

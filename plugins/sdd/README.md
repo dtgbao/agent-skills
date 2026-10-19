@@ -23,9 +23,9 @@ Specs live in `docs/specs/<name>/`. Commit them with code.
 |---|---|
 | `/sdd:spec-brainstorm [idea]` | Clarify a vague feature idea: open questions, then grill rounds with recommendations, then a playback the user confirms. Writes no files. `spec-new` runs it on vague or ambiguous input |
 | `/sdd:spec-new [idea \| name]` | Pick workflow (Requirements-First, Design-First, Bugfix, Quick Plan), draft artifacts, gate each. Existing name → resume. Empty input → uses the confirmed brainstorm playback |
-| `/sdd:spec-analyze <name>` | Cross-requirement review: conflicts, ambiguity, missing edge/failure cases. Round 1 full, rounds 2–3 focused on conflicts, then a verify pass. Reports criteria growth |
+| `/sdd:spec-analyze <name>` | Cross-requirement review: conflicts, ambiguity, missing edge/failure cases. Round 1 full, rounds 2–3 focused on conflicts, then a verify pass. Reports criteria growth, then asks about high/medium deferred items and a split |
 | `/sdd:spec-sync <name>` | Detect hand edits, realign `tasks.md` with upstream artifacts and code already written |
-| `/sdd:spec-run <name> [task-id] [--mode single\|waves] [--optional]` | Run leaves: one at a time, or parallel waves via subagents |
+| `/sdd:spec-run <name> [task-id] [--mode single\|waves] [--optional]` | Run leaves: one at a time, or parallel waves via subagents. `--optional` also runs `*` extra-test leaves |
 
 ## State
 
@@ -33,7 +33,7 @@ Specs live in `docs/specs/<name>/`. Commit them with code.
 
 ```bash
 python3 shared/scripts/spec.py drift docs/specs/<name>        # hand edits → DRIFT, criterion changes → CHANGED
-python3 shared/scripts/spec.py check-tasks docs/specs/<name>  # graph, deps, disjoint files, coverage
+python3 shared/scripts/spec.py check-tasks docs/specs/<name>  # graph, deps, disjoint files, vertical slices, coverage
 ```
 
 A hand edit of an approved file marks later phases `stale` at the next skill load. `/sdd:spec-sync` then unticks leaves that cite changed criteria, and leaves whose files still hold the old value (`SUSPECT`).
@@ -59,7 +59,8 @@ shared/                                       plain files, any skill points at t
 - Brainstorm vs analyze: brainstorm fixes intent (who, why, scope) before any criterion exists. `spec-analyze` finds gaps in written criteria.
 - Every step ends on a checkable Done-when line. Deterministic checks (state, graph) run in `spec.py`, not in the model.
 - Subagents see one leaf or one document. Later steps stay out of their view.
-- Task leaves carry `Files`, `Kind`, `Size`, `Do`, `Verify`, `_Requirements:_`, so a runner acts without reading the whole design.
+- Task leaves carry `Files`, `Kind`, `Size`, `Seam`, `Do`, `Verify`, `_Requirements:_`, so a runner acts without reading the whole design.
+- Tasks are vertical slices: one test → one implementation → repeat. A `slice` leaf holds the test and the code for ≤3 criteria and runs red → green per criterion. The first slice is a tracer bullet through every layer. Tests drive only the seams that design.md lists. `check-tasks` rejects a slice without a test file or a code file. Horizontal plans (all tests first, or one layer at a time) give brittle tests that miss behavior changes.
 - Cost routing: leaf `Size` S/M/L → runner model haiku/sonnet/opus. A retry moves one tier up. Agents default to `sonnet`. Hosts that ignore `model` run the session model.
 
 ## Evals
