@@ -12,19 +12,15 @@ This repo is a source tree for reusable instruction bundles. Standalone skills l
 | `design-pattern`          | Provide TypeScript implementations and tradeoffs for the 22 Gang of Four design patterns.            |
 | `code-architect`          | Design decisive feature architectures and implementation blueprints from existing codebase patterns. |
 | `code-explore`            | Trace feature execution paths, architecture layers, dependencies, and implementation details.        |
-| `frontend-scaffold`       | Guide framework-agnostic frontend architecture, tooling choices, and project scaffolding.            |
 | `frontend-ui-engineering` | Build accessible, responsive, production-quality interfaces and components.                          |
-| `orchestrator`            | Plan multi-step work and delegate clean, reviewable subtasks.                                        |
 | `react-best-practices`    | Provide focused React and TypeScript architecture, state, composition, and testing guidance.         |
-| `web-search`              | Research current technical guidance and return concise, source-backed summaries.                     |
 
 ## Plugins
 
-| Plugin                                             | Purpose                                                                                                                  | Bundled skills                                                   |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
-| [`fullstack-dev`](plugins/fullstack-dev/README.md) | Coordinate full-stack work from focused context and requirements through implementation, review, operations, and launch. | `index` router plus focused engineering workflows                |
-| [`spec-workflow`](plugins/spec-workflow/README.md) | Guide requirements, design, bug-fix, quick-spec, task-planning, and execution workflows.                                 | `spec-new`, spec phases, execution, status, and `steering-setup` |
-| [`swe-wiki`](plugins/swe-wiki/README.md)           | Maintain a domain-first, Git-synced software engineering knowledge base across computers.                                | `swe-wiki`                                                       |
+| Plugin                                             | Purpose                                                                                                                  | Bundled skills                                    |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------- |
+| [`fullstack-dev`](plugins/fullstack-dev/README.md) | Coordinate full-stack work from focused context and requirements through implementation, review, operations, and launch. | `index` router plus focused engineering workflows |
+| [`swe-wiki`](plugins/swe-wiki/README.md)           | Maintain a domain-first, Git-synced software engineering knowledge base across computers.                                | `swe-wiki`                                        |
 
 ## Install plugins with Claude Code
 
@@ -38,7 +34,6 @@ Then install any bundled plugin:
 
 ```text
 /plugin install fullstack-dev@bao-plugins
-/plugin install spec-workflow@bao-plugins
 /plugin install swe-wiki@bao-plugins
 ```
 
@@ -54,7 +49,6 @@ Then install any bundled plugin:
 
 ```bash
 copilot plugin install fullstack-dev@bao-plugins
-copilot plugin install spec-workflow@bao-plugins
 copilot plugin install swe-wiki@bao-plugins
 ```
 
@@ -70,7 +64,7 @@ To publish a plugin in Cursor's public marketplace, submit this repository for r
 ## Install plugins with Devin
 
 Devin plugin support is currently a closed beta. After access is enabled, install the repository's
-meta-plugin to install all three bundled plugins:
+meta-plugin to install both bundled plugins:
 
 ```bash
 devin plugins install dtgbao/agent-skills
@@ -79,13 +73,6 @@ devin plugins install dtgbao/agent-skills
 For managed distribution, add `"dtgbao/agent-skills"` to `requiredPlugins` under
 **Settings → Resources → Plugins**. The root Devin meta-plugin pulls in each plugin from its
 repository subdirectory.
-
-## Agent presets
-
-The `.codex/agents/` directory currently contains:
-
-- `jira_explorer` for read-only Jira issue exploration
-- `web_searcher` for invoking the web-search workflow
 
 ## Repository layout
 
@@ -102,8 +89,6 @@ The `.codex/agents/` directory currently contains:
 │       └── marketplace.json # GitHub Copilot marketplace metadata
 ├── .agents/
 │   └── plugins/         # Local plugin marketplace metadata
-├── .codex/
-│   └── agents/          # Codex agent presets
 ├── plugins/
 │   └── <plugin>/
 │       ├── plugin.json       # Portable Agent Plugins manifest

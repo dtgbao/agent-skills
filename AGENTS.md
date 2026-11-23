@@ -17,11 +17,8 @@ same change.
 flowchart LR
     subgraph Standalone["skills/ — standalone skills"]
         SDesign["design-pattern"]
-        SScaffold["frontend-scaffold"]
         SUI["frontend-ui-engineering"]
         SReact["react-best-practices"]
-        SWeb["web-search"]
-        SOrchestrator["orchestrator (independent)"]
     end
 
     subgraph Fullstack["plugins/fullstack-dev/skills/"]
@@ -39,24 +36,10 @@ flowchart LR
         FIndex --> FOther
     end
 
-    subgraph Spec["plugins/spec-workflow/skills/"]
-        PNew["spec-new router"]
-        PPhases["requirements / design / bugfix / quick"]
-        PTasks["spec-tasks"]
-        PExecute["spec-execute"]
-        PSteering["steering-setup"]
-        PStatus["spec-status"]
-
-        PNew --> PPhases --> PTasks --> PExecute
-        PSteering -. "optional project context" .-> PPhases
-        PStatus -. "observes artifacts and progress" .-> PPhases
-    end
-
     subgraph Wiki["plugins/swe-wiki/skills/"]
         SWiki["swe-wiki (self-contained)"]
     end
 
-    SScaffold -. "optional research handoff" .-> SWeb
     SDesign -. "bundled variant" .-> FDesign
     SUI -. "bundled variant" .-> FUI
     SReact -. "architecture subset; tests split out" .-> FReact
