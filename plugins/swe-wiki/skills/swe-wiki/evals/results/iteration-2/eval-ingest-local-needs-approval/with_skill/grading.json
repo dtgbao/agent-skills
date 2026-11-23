@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Wiki and raw trees are unchanged before approval",
+      "passed": true,
+      "evidence": "no changes"
+    },
+    {
+      "text": "Response recommends a primary domain in kebab-case path form",
+      "passed": true,
+      "evidence": "domains: ['backend/caching', 'backend/databases/postgres', 'backend/reliability']"
+    },
+    {
+      "text": "Response gives key takeaways from the notes",
+      "passed": true,
+      "evidence": "keyword 'takeaway' found"
+    },
+    {
+      "text": "Response names related existing wiki pages (cache invalidation)",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Response asks the user what to emphasize",
+      "passed": true,
+      "evidence": "keyword 'emphas' found"
+    },
+    {
+      "text": "Response explicitly waits for approval before writing",
+      "passed": true,
+      "evidence": ""
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "A `kind: question` page is filed in the wiki",
+      "passed": true,
+      "evidence": "wiki/backend/caching/product-catalog-write-through-vs-event-purge.md"
+    },
+    {
+      "text": "Question page carries the local-convention tag `team-platform`",
+      "passed": true,
+      "evidence": "tags=[swe, caching, team-platform]"
+    },
+    {
+      "text": "Question page ends with a `## Decision Checklist` of 3-5 checkbox items",
+      "passed": true,
+      "evidence": "items=4"
+    },
+    {
+      "text": "Response cites both cache-invalidation and write-through-cache pages",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "Question page is listed in its local index",
+      "passed": true,
+      "evidence": ""
+    },
+    {
+      "text": "wiki/log.md has a `query` entry",
+      "passed": true,
+      "evidence": ""
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

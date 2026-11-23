@@ -1,0 +1,45 @@
+{
+  "expectations": [
+    {
+      "text": "Raw layer holds an immutable local copy of the URL page under raw/backend/caching/",
+      "passed": false,
+      "evidence": "raw files: []"
+    },
+    {
+      "text": "Source page exists and has no `_Fill during ingestion._` placeholders",
+      "passed": true,
+      "evidence": "source=2026-11-23-two-hard-things.md, placeholders=0"
+    },
+    {
+      "text": "Source page has a non-empty `summary` frontmatter field",
+      "passed": false,
+      "evidence": "summary=''"
+    },
+    {
+      "text": "An existing durable page in backend/caching links to the new source page",
+      "passed": true,
+      "evidence": "pages linking source: ['cache-invalidation.md']"
+    },
+    {
+      "text": "Source page cites at least one related external URL besides the source",
+      "passed": true,
+      "evidence": "other urls: ['https://martinfowler.com/bliki/TwoHardThings.html\"']"
+    },
+    {
+      "text": "wiki/log.md has an `ingest` entry",
+      "passed": true,
+      "evidence": "found"
+    },
+    {
+      "text": "Strict (new) mechanical lint reports no errors",
+      "passed": true,
+      "evidence": "no errors"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 2,
+    "total": 7,
+    "pass_rate": 0.71
+  }
+}

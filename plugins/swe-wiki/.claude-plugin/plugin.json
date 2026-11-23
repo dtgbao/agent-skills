@@ -2,7 +2,7 @@
 	"$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
 	"name": "swe-wiki",
 	"displayName": "SWE Wiki",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"description": "Maintain a persistent, domain-first Markdown knowledge base for software engineering decisions, blueprints, practices, conventions, systems, and reusable answers.",
 	"author": {
 		"name": "Bao Dang",

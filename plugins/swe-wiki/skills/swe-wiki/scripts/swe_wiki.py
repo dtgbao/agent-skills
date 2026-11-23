@@ -23,11 +23,14 @@ LEGACY_KIND_DIRS = {
     "questions": "question",
 }
 KINDS = tuple(LEGACY_KIND_DIRS.values())
+LOG_KINDS = ("bootstrap", "ingest", "query", "lint", "migrate", "schema")
+PLACEHOLDER = "_Fill during ingestion._"
+SUMMARY_MAX = 160
 ACRONYMS = {"ai", "api", "aws", "cli", "ec2", "iam", "sdk", "swe", "vpc"}
 DOMAIN_SEGMENT_RE = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*$")
 LOG_RE = re.compile(
     r"^## \[\d{4}-\d{2}-\d{2}(?: \d{2}:\d{2})?\] "
-    r"(bootstrap|ingest|query|lint|migrate) \| .+"
+    r"(bootstrap|ingest|query|lint|migrate|schema) \| .+"
 )
 GITIGNORE = """.DS_Store
 __pycache__/
@@ -208,16 +211,44 @@ def index_row(index_dir, path):
     title = meta.get("title") or title_from_path(path)
     tags = meta.get("tags", "[]").strip("[]") or "swe"
     updated = meta.get("updated") or today()
-    summary = ""
-    for line in text.splitlines():
-        if line and not line.startswith(("#", "---")) and ":" not in line[:20]:
-            summary = line.strip()
-            break
-    summary = summary or f"{title}."
+    summary = page_summary(text, meta) or f"{title}."
     return (
         f"- [{title}]({markdown_rel(path, index_dir)}) - {summary} "
         f"| tags: {tags} | updated: {updated} | sources: {source_count(meta)}"
     )
+
+
+def body_lines(text):
+    lines = text.splitlines()
+    if lines and lines[0] == "---":
+        try:
+            lines = lines[lines.index("---", 1) + 1 :]
+        except ValueError:
+            pass
+    fenced = False
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("```"):
+            fenced = not fenced
+            continue
+        if not fenced:
+            yield stripped
+
+
+def page_summary(text, meta):
+    summary = meta.get("summary", "").strip()
+    if not summary:
+        for line in body_lines(text):
+            if not line or line.startswith(("#", "<!--", "|", ">")):
+                continue
+            if PLACEHOLDER in line or re.match(r"[-*] \w+:", line):
+                continue
+            summary = line.lstrip("-* ").strip()
+            break
+    summary = " ".join(summary.split())
+    if len(summary) > SUMMARY_MAX:
+        summary = summary[: SUMMARY_MAX - 3].rstrip() + "..."
+    return summary
 
 
 def knowledge_dirs(root, pages=None):
@@ -257,11 +288,7 @@ def rebuild_indexes(root):
     changed = []
 
     for directory in sorted(directories, key=lambda path: (len(path.parts), str(path))):
-        children = sorted(
-            child
-            for child in directories
-            if child.parent == directory
-        )
+        children = sorted(child for child in directories if child.parent == directory)
         local_pages = sorted(path for path in pages if path.parent == directory)
         title = directory_title(directory, base)
         lines = [
@@ -336,6 +363,13 @@ Use `$swe-wiki` to ingest sources, query accumulated knowledge, lint this wiki, 
 - Maintain an `index.md` in every directory under `wiki/`.
 - Keep `wiki/log.md` append-only with headings like `## [YYYY-MM-DD HH:MM] ingest | Title`.
 - Use tags and cross-links for secondary domains instead of duplicating pages.
+
+## Local Conventions
+
+Agents read this file before every operation. Rules here override the skill defaults.
+Add a rule when the user states a durable convention, then log a `schema` entry.
+
+- _None yet._
 """,
     ):
         changed.append("AGENTS.md")
@@ -488,8 +522,7 @@ def validate_repository(repository):
         parsed.scheme.lower() in {"http", "https"} and parsed.username is not None
     ):
         raise SweWikiError(
-            "repository URLs must not contain embedded credentials; "
-            "use SSH or a credential manager"
+            "repository URLs must not contain embedded credentials; use SSH or a credential manager"
         )
     return repository
 
@@ -675,6 +708,14 @@ def cmd_init(args):
         print("legacy layout detected; preview and apply `migrate` before ingesting")
 
 
+def cmd_index(args):
+    root = resolve_root(args.root)
+    require_initialized(root)
+    require_domain_layout(root)
+    for path in rebuild_indexes(root):
+        print(f"INDEX {rel(path, root)}")
+
+
 def cmd_ingest(args):
     root = resolve_root(args.root)
     require_initialized(root)
@@ -685,7 +726,13 @@ def cmd_ingest(args):
     path.parent.mkdir(parents=True, exist_ok=True)
     source_values = []
     provenance = []
-    for value in [args.source, *args.asset]:
+    if args.snapshot and not is_web_url(args.source):
+        raise SweWikiError("--snapshot applies only when the source is a URL")
+    for value in [
+        args.source,
+        *([args.snapshot] if args.snapshot else []),
+        *args.asset,
+    ]:
         if is_web_url(value):
             source_values.append(value)
             provenance.append(f"- Source: {value}")
@@ -699,6 +746,7 @@ def cmd_ingest(args):
         path,
         f"""---
 title: {json.dumps(title)}
+summary: ""
 kind: source
 domain: {domain}
 status: draft
@@ -724,6 +772,10 @@ _Fill during ingestion._
 - _Fill during ingestion._
 
 ## Impacted Pages
+
+- _Fill during ingestion._
+
+## Related Reading
 
 - _Fill during ingestion._
 
@@ -764,9 +816,13 @@ def migration_target(root, source, domain):
     if relative.parts[0] == "raw":
         return root / "raw" / Path(domain) / source.name
     if relative.parts[0] != "wiki" or source.suffix != ".md":
-        raise SweWikiError(f"migration supports only raw files and wiki pages: {relative}")
+        raise SweWikiError(
+            f"migration supports only raw files and wiki pages: {relative}"
+        )
     if source.name in {"index.md", "log.md"}:
-        raise SweWikiError(f"generated indexes and the log cannot be assigned: {relative}")
+        raise SweWikiError(
+            f"generated indexes and the log cannot be assigned: {relative}"
+        )
     kind = frontmatter(source.read_text(encoding="utf-8")).get("kind")
     parent = wiki(root) / Path(domain)
     if kind == "source":
@@ -801,13 +857,17 @@ def build_migration_plan(root, manifest):
                     f"{rel(targets[target], root)} and {value}"
                 )
             if target.exists() and target != source:
-                raise SweWikiError(f"migration target already exists: {rel(target, root)}")
+                raise SweWikiError(
+                    f"migration target already exists: {rel(target, root)}"
+                )
             targets[target] = source
             moves.append((source, target, domain))
 
     for page in page_files(root):
         meta = frontmatter(page.read_text(encoding="utf-8", errors="ignore"))
-        valid = meta.get("domain") and expected_domain(root, page, meta.get("kind")) == meta.get("domain")
+        valid = meta.get("domain") and expected_domain(
+            root, page, meta.get("kind")
+        ) == meta.get("domain")
         if not valid and page.resolve() not in assigned:
             raise SweWikiError(
                 f"legacy page is missing from the migration manifest: {rel(page, root)}"
@@ -822,7 +882,9 @@ def build_migration_plan(root, manifest):
 
 def predicted_index_paths(root, moves):
     destinations = {source: target for source, target, _ in moves}
-    pages = [destinations.get(path.resolve(), path.resolve()) for path in page_files(root)]
+    pages = [
+        destinations.get(path.resolve(), path.resolve()) for path in page_files(root)
+    ]
     return sorted(directory / "index.md" for directory in knowledge_dirs(root, pages))
 
 
@@ -868,8 +930,8 @@ def set_domain_frontmatter(text, domain):
 
 def rewrite_page_references(text, old_page, new_page, destinations):
     def replace_link(match):
-        target = match.group(2)
-        return f"{match.group(1)}{remap_reference(target, old_page, new_page, destinations)}{match.group(3)}"
+        target = remap_reference(match.group(2), old_page, new_page, destinations)
+        return f"{match.group(1)}{target}{match.group(3)}"
 
     text = re.sub(r"(!?\[[^\]]*\]\()([^)]+)(\))", replace_link, text)
     lines = text.splitlines()
@@ -925,10 +987,13 @@ def apply_migration(root, moves):
     require_clean_worktree(root)
     destinations = {source.resolve(): target.resolve() for source, target, _ in moves}
     domains = {source.resolve(): domain for source, _, domain in moves}
-    original_pages = {path.resolve(): path.read_text(encoding="utf-8") for path in page_files(root)}
+    original_pages = {
+        path.resolve(): path.read_text(encoding="utf-8") for path in page_files(root)
+    }
     rewritten_pages = {}
-    for old_page, text in original_pages.items():
+    for old_page, original in original_pages.items():
         new_page = destinations.get(old_page, old_page)
+        text = original
         if old_page in domains:
             text = set_domain_frontmatter(text, domains[old_page])
         rewritten_pages[(old_page, new_page)] = rewrite_page_references(
@@ -1016,6 +1081,96 @@ def cmd_log(args):
     print(f"logged {args.kind} | {args.title}")
 
 
+def lint_page(root, path, ingested_titles, errors, warnings):
+    text = path.read_text(encoding="utf-8", errors="ignore")
+    meta = frontmatter(text)
+    page_rel = rel(path, wiki(root))
+    local_index = path.parent / "index.md"
+    listed_targets = {
+        (local_index.parent / target).resolve() for target in index_links(local_index)
+    }
+    if path.resolve() not in listed_targets:
+        errors.append(f"not listed in local index: wiki/{page_rel}")
+    for key in [
+        "title",
+        "kind",
+        "domain",
+        "status",
+        "tags",
+        "sources",
+        "updated",
+        "confidence",
+    ]:
+        if key not in meta:
+            errors.append(f"missing frontmatter `{key}`: wiki/{page_rel}")
+    if meta.get("kind") not in set(KINDS):
+        errors.append(f"bad kind `{meta.get('kind')}`: wiki/{page_rel}")
+    if PLACEHOLDER in text:
+        errors.append(f"unfinished ingest placeholder: wiki/{page_rel}")
+    if not meta.get("summary", "").strip():
+        warnings.append(f"missing frontmatter `summary`: wiki/{page_rel}")
+    if meta.get("kind") == "source":
+        sources = frontmatter_sources(text)
+        if sources and all(
+            isinstance(item, str) and is_web_url(item) for item in sources
+        ):
+            warnings.append(
+                f"URL source has no raw snapshot (use --snapshot): wiki/{page_rel}"
+            )
+        if meta.get("title") and meta["title"] not in ingested_titles:
+            warnings.append(f"source page has no `ingest` log entry: wiki/{page_rel}")
+    for target in markdown_links(text):
+        target_path = (path.parent / target).resolve()
+        if not target_path.exists():
+            errors.append(f"broken link in wiki/{page_rel}: {target}")
+
+    domain = meta.get("domain")
+    if domain:
+        try:
+            raw_domain = (root / "raw" / Path(validate_domain(domain))).resolve()
+        except SweWikiError:
+            raw_domain = None
+        if raw_domain:
+            for source in frontmatter_sources(text):
+                if not isinstance(source, str) or urlsplit(source).scheme:
+                    continue
+                source_path = (path.parent / split_fragment(source)[0]).resolve()
+                try:
+                    source_path.relative_to((root / "raw").resolve())
+                except ValueError:
+                    continue
+                try:
+                    source_path.relative_to(raw_domain)
+                except ValueError:
+                    errors.append(
+                        f"raw source outside domain `{domain}` in wiki/{page_rel}: {source}"
+                    )
+
+
+def orphan_warnings(root, pages):
+    warnings = []
+    inbound = {rel(path, wiki(root)): 0 for path in pages}
+    for path in pages:
+        for target in markdown_links(path.read_text(encoding="utf-8", errors="ignore")):
+            target_path = (path.parent / target).resolve()
+            if (
+                not target_path.exists()
+                or wiki(root).resolve() not in target_path.parents
+            ):
+                continue
+            norm = rel(target_path, wiki(root))
+            if norm in inbound:
+                inbound[norm] += 1
+    for page, count in inbound.items():
+        path = wiki(root) / page
+        kind = frontmatter(path.read_text(encoding="utf-8", errors="ignore")).get(
+            "kind"
+        )
+        if count == 0 and kind not in {"source", "question"}:
+            warnings.append(f"orphan page: wiki/{page}")
+    return warnings
+
+
 def cmd_lint(args):
     root = resolve_root(args.root)
     if not root.exists():
@@ -1029,62 +1184,28 @@ def cmd_lint(args):
             errors.append(f"missing {item}")
 
     pages = page_files(root)
+    log = wiki(root) / "log.md"
+    log_headings = (
+        [
+            line
+            for line in log.read_text(encoding="utf-8").splitlines()
+            if line.startswith("## ")
+        ]
+        if log.exists()
+        else []
+    )
+    ingested_titles = {
+        heading.split(" ingest | ", 1)[1].strip()
+        for heading in log_headings
+        if " ingest | " in heading
+    }
     errors.extend(domain_layout_errors(root))
     for directory in knowledge_dirs(root, pages):
         if not (directory / "index.md").exists():
             errors.append(f"missing local index: {rel(directory / 'index.md', root)}")
 
-    for path in page_files(root):
-        text = path.read_text(encoding="utf-8", errors="ignore")
-        meta = frontmatter(text)
-        page_rel = rel(path, wiki(root))
-        local_index = path.parent / "index.md"
-        listed_targets = {
-            (local_index.parent / target).resolve()
-            for target in index_links(local_index)
-        }
-        if path.resolve() not in listed_targets:
-            errors.append(f"not listed in local index: wiki/{page_rel}")
-        for key in [
-            "title",
-            "kind",
-            "domain",
-            "status",
-            "tags",
-            "sources",
-            "updated",
-            "confidence",
-        ]:
-            if key not in meta:
-                errors.append(f"missing frontmatter `{key}`: wiki/{page_rel}")
-        if meta.get("kind") not in set(KINDS):
-            errors.append(f"bad kind `{meta.get('kind')}`: wiki/{page_rel}")
-        for target in markdown_links(text):
-            target_path = (path.parent / target).resolve()
-            if not target_path.exists():
-                errors.append(f"broken link in wiki/{page_rel}: {target}")
-
-        domain = meta.get("domain")
-        if domain:
-            try:
-                raw_domain = (root / "raw" / Path(validate_domain(domain))).resolve()
-            except SweWikiError:
-                raw_domain = None
-            if raw_domain:
-                for source in frontmatter_sources(text):
-                    if not isinstance(source, str) or urlsplit(source).scheme:
-                        continue
-                    source_path = (path.parent / split_fragment(source)[0]).resolve()
-                    try:
-                        source_path.relative_to((root / "raw").resolve())
-                    except ValueError:
-                        continue
-                    try:
-                        source_path.relative_to(raw_domain)
-                    except ValueError:
-                        errors.append(
-                            f"raw source outside domain `{domain}` in wiki/{page_rel}: {source}"
-                        )
+    for path in pages:
+        lint_page(root, path, ingested_titles, errors, warnings)
 
     for index in index_files(root):
         for target in index_links(index):
@@ -1097,40 +1218,20 @@ def cmd_lint(args):
     if root_index.exists():
         for target in index_links(root_index):
             target_path = (root_index.parent / target).resolve()
-            if target_path.name != "index.md" or target_path.parent.parent != wiki(root).resolve():
+            if (
+                target_path.name != "index.md"
+                or target_path.parent.parent != wiki(root).resolve()
+            ):
                 errors.append(f"root index must link only top-level domains: {target}")
 
-    log = wiki(root) / "log.md"
     if log.exists():
-        headings = [
-            line
-            for line in log.read_text(encoding="utf-8").splitlines()
-            if line.startswith("## ")
-        ]
-        for heading in headings:
+        for heading in log_headings:
             if not LOG_RE.match(heading):
                 errors.append(f"bad log heading: {heading}")
-        if not headings:
+        if not log_headings:
             warnings.append("log has no entries")
 
-    inbound = {rel(path, wiki(root)): 0 for path in pages}
-    for path in pages:
-        for target in markdown_links(
-            path.read_text(encoding="utf-8", errors="ignore")
-        ):
-            target_path = path.parent / target
-            norm = (
-                rel(target_path.resolve(), wiki(root))
-                if target_path.exists()
-                else target
-            )
-            if norm in inbound:
-                inbound[norm] += 1
-    for page, count in inbound.items():
-        path = wiki(root) / page
-        kind = frontmatter(path.read_text(encoding="utf-8", errors="ignore")).get("kind")
-        if count == 0 and kind not in {"source", "question"}:
-            warnings.append(f"orphan page: wiki/{page}")
+    warnings.extend(orphan_warnings(root, pages))
 
     for item in errors:
         print(f"ERROR {item}")
@@ -1172,10 +1273,18 @@ def build_parser():
     add_root_argument(command)
     command.set_defaults(func=cmd_init)
 
+    command = subparsers.add_parser("index")
+    add_root_argument(command)
+    command.set_defaults(func=cmd_index)
+
     command = subparsers.add_parser("ingest")
     command.add_argument("source")
     command.add_argument("--domain", required=True)
     command.add_argument("--asset", action="append", default=[])
+    command.add_argument(
+        "--snapshot",
+        help="Local copy of a URL source to keep immutable under raw/<domain>/.",
+    )
     command.add_argument("--title")
     add_root_argument(command)
     command.set_defaults(func=cmd_ingest)
@@ -1193,9 +1302,7 @@ def build_parser():
     command.set_defaults(func=cmd_query)
 
     command = subparsers.add_parser("log")
-    command.add_argument(
-        "kind", choices=["bootstrap", "ingest", "query", "lint", "migrate"]
-    )
+    command.add_argument("kind", choices=list(LOG_KINDS))
     command.add_argument("title")
     command.add_argument("--changed", action="append")
     command.add_argument("--notes")

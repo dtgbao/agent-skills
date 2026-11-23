@@ -36,10 +36,11 @@ Setup clones an existing repository or initializes an empty one, creates the wik
 ## Workflows
 
 - `init`: Create or repair a local wiki without invoking Git.
-- `ingest`: Classify a source into an approved primary domain, preserve local inputs under `raw/<domain>/`, and synthesize reusable engineering knowledge.
+- `index`: Rebuild all generated `index.md` files after page edits.
+- `ingest`: Start background web research on a fast model, scan the wiki, propose a domain without waiting for research, classify the source into an approved primary domain, preserve local inputs and URL snapshots under `raw/<domain>/`, and synthesize reusable engineering knowledge.
 - `migrate`: Preview and explicitly apply a legacy kind-first to domain-first migration.
 - `query`: Search the wiki and answer with page citations.
-- `lint`: Check mechanical structure and semantic health.
+- `lint`: Check mechanical structure and semantic health. Lint fails on unfinished ingest placeholders and warns about missing summaries, URL sources without snapshots, and source pages without an `ingest` log entry.
 - `sync`: Explicitly commit, rebase, and push without force.
 
 Synchronization is never automatic. If a rebase conflicts, the script aborts it, preserves the local commit, and reports the files requiring user-guided resolution.
@@ -76,6 +77,17 @@ python3 skills/swe-wiki/scripts/swe_wiki.py ingest ./lesson.txt \
   --title "IAM lesson"
 ```
 
+For a URL source, save a Markdown copy first and pass it as the immutable raw snapshot:
+
+```bash
+python3 skills/swe-wiki/scripts/swe_wiki.py ingest https://example.com/post \
+  --snapshot ./post.md \
+  --domain aws/iam \
+  --title "IAM post"
+```
+
+Each wiki's `AGENTS.md` has a `Local Conventions` section. Agents read it before every operation, and it overrides the skill defaults. Changes to it are logged as `schema` events.
+
 Legacy migrations use a JSON assignment manifest and preview by default. Apply only after reviewing the exact moves:
 
 ```bash
@@ -97,4 +109,16 @@ Run the isolated test suite:
 
 ```bash
 python3 -m unittest discover -s plugins/swe-wiki/tests -v
+```
+
+Behavior evals live in `skills/swe-wiki/evals/`. `evals.json` holds 4 agent test prompts with their expectations, `files/` holds the fixture wikis, and `results/` holds each iteration's benchmark against the previous skill version (iteration 2 reruns only the ingest evals). Grade a new run with:
+
+```bash
+python3 plugins/swe-wiki/skills/swe-wiki/evals/grade.py <iteration-dir>
+```
+
+Lint and type-check the Python files with Ruff and ty, using their default rules:
+
+```bash
+uvx ruff check . && uvx ruff format --check plugins && uvx ty check plugins skills
 ```

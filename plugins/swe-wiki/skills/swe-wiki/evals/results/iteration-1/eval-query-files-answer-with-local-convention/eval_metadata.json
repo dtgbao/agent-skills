@@ -1,0 +1,13 @@
+{
+  "eval_id": 3,
+  "eval_name": "query-files-answer-with-local-convention",
+  "prompt": "Using my SWE wiki at <WIKI_ROOT>: should our product catalog use write-through caching or event-driven purge? Cite the wiki pages, and save the comparison into the wiki so we keep it.",
+  "assertions": [
+    "A `kind: question` page is filed in the wiki",
+    "Question page carries the local-convention tag `team-platform`",
+    "Question page ends with a `## Decision Checklist` of 3-5 checkbox items",
+    "Response cites both cache-invalidation and write-through-cache pages",
+    "Question page is listed in its local index",
+    "wiki/log.md has a `query` entry"
+  ]
+}

@@ -1,0 +1,4 @@
+{
+	"recommendations": ["charliermarsh.ruff", "astral-sh.ty"],
+	"unwantedRecommendations": ["ms-python.pylint", "ms-python.vscode-pylance"]
+}

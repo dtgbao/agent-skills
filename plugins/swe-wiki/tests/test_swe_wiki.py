@@ -71,6 +71,16 @@ class SweWikiCliTests(unittest.TestCase):
             )
         return result
 
+    def fill_source_pages(self, root, summary, environment):
+        for page in (root / "wiki").rglob("sources/*.md"):
+            if page.name == "index.md":
+                continue
+            text = page.read_text(encoding="utf-8")
+            text = text.replace('summary: ""', f'summary: "{summary}"')
+            text = text.replace("_Fill during ingestion._", "Filled.")
+            page.write_text(text, encoding="utf-8")
+        self.cli("index", "--root", root, environment=environment)
+
     def bare_remote(self, name="remote.git"):
         remote = self.base / name
         self.git("init", "--bare", "--initial-branch=main", str(remote))
@@ -129,10 +139,7 @@ class SweWikiCliTests(unittest.TestCase):
         self.assertTrue((root / "wiki" / "log.md").exists())
         config = json.loads(
             (
-                Path(environment["HOME"])
-                / ".config"
-                / "swe-wiki"
-                / "config.json"
+                Path(environment["HOME"]) / ".config" / "swe-wiki" / "config.json"
             ).read_text(encoding="utf-8")
         )
         self.assertEqual({"version": 1, "root": str(root.resolve())}, config)
@@ -175,6 +182,14 @@ class SweWikiCliTests(unittest.TestCase):
             "--root",
             root,
             environment=environment,
+        )
+        unfinished = self.cli(
+            "lint", "--root", root, environment=environment, check=False
+        )
+        self.assertEqual(1, unfinished.returncode)
+        self.assertIn("unfinished ingest placeholder", unfinished.stdout)
+        self.fill_source_pages(
+            root, "Cache Strategies compares write-through caches.", environment
         )
         query = self.cli(
             "query",
@@ -251,9 +266,9 @@ class SweWikiCliTests(unittest.TestCase):
         self.cli("sync", environment=second_environment)
         self.assertEqual(
             "# Synced from the first computer\n",
-            (
-                second_root / "wiki" / "testing" / "sync-test.md"
-            ).read_text(encoding="utf-8"),
+            (second_root / "wiki" / "testing" / "sync-test.md").read_text(
+                encoding="utf-8"
+            ),
         )
         self.cli("sync", environment=second_environment)
         count_after_noop = int(
@@ -314,6 +329,75 @@ class SweWikiCliTests(unittest.TestCase):
         ).stdout.strip()
         self.assertTrue(local_subject.startswith("swe-wiki sync:"))
 
+    def test_url_snapshot_summary_and_ingest_log_checks(self):
+        environment = self.machine_environment("snapshot")
+        root = self.base / "snapshot-wiki"
+        snapshot = self.base / "article.md"
+        snapshot.write_text("# Article\n", encoding="utf-8")
+        self.cli("init", "--root", root, environment=environment)
+
+        refused = self.cli(
+            "ingest",
+            snapshot,
+            "--snapshot",
+            snapshot,
+            "--domain",
+            "web",
+            "--root",
+            root,
+            environment=environment,
+            check=False,
+        )
+        self.assertEqual(1, refused.returncode)
+        self.assertIn("--snapshot applies only", refused.stderr)
+
+        self.cli(
+            "ingest",
+            "https://example.com/article",
+            "--snapshot",
+            snapshot,
+            "--domain",
+            "web",
+            "--title",
+            "Snapshotted",
+            "--root",
+            root,
+            environment=environment,
+        )
+        self.cli(
+            "ingest",
+            "https://example.com/other",
+            "--domain",
+            "web",
+            "--title",
+            "Url Only",
+            "--root",
+            root,
+            environment=environment,
+        )
+        self.fill_source_pages(root, "A short, concrete summary.", environment)
+        self.cli(
+            "log", "ingest", "Snapshotted", "--root", root, environment=environment
+        )
+
+        self.assertTrue((root / "raw" / "web" / "article.md").exists())
+        index = (root / "wiki" / "web" / "sources" / "index.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("- A short, concrete summary. |", index)
+        lint = self.cli("lint", "--root", root, environment=environment)
+        snapshot_warnings = [
+            line for line in lint.stdout.splitlines() if "no raw snapshot" in line
+        ]
+        self.assertEqual(1, len(snapshot_warnings))
+        self.assertIn("url-only.md", snapshot_warnings[0])
+        log_warnings = [
+            line for line in lint.stdout.splitlines() if "no `ingest` log entry" in line
+        ]
+        self.assertEqual(1, len(log_warnings))
+        self.assertIn("url-only.md", log_warnings[0])
+        self.assertNotIn("missing frontmatter `summary`", lint.stdout)
+
     def test_ingest_validates_domains_and_refuses_raw_collisions(self):
         environment = self.machine_environment("domains")
         root = self.base / "wiki"
@@ -365,9 +449,7 @@ class SweWikiCliTests(unittest.TestCase):
         self.assertIn("raw file collision", collision.stderr)
         self.assertEqual(
             "first\n",
-            (root / "raw" / "aws" / "iam" / "lesson.txt").read_text(
-                encoding="utf-8"
-            ),
+            (root / "raw" / "aws" / "iam" / "lesson.txt").read_text(encoding="utf-8"),
         )
         self.assertEqual(
             [],
@@ -482,23 +564,22 @@ Identity and access management.
         )
         self.assertIn(
             "# IAM",
-            (root / "wiki" / "aws" / "iam" / "index.md").read_text(
-                encoding="utf-8"
-            ),
+            (root / "wiki" / "aws" / "iam" / "index.md").read_text(encoding="utf-8"),
         )
         source_text = migrated_source.read_text(encoding="utf-8")
         system_text = migrated_system.read_text(encoding="utf-8")
         self.assertIn("domain: aws/iam", source_text)
         self.assertIn("../../../../raw/aws/iam/iam-lesson.txt", source_text)
         self.assertIn("../iam.md", source_text)
-        self.assertIn("sources: [\"sources/iam-lesson.md\"]", system_text)
+        self.assertIn('sources: ["sources/iam-lesson.md"]', system_text)
         self.assertIn("(sources/iam-lesson.md)", system_text)
         self.assertIn(
             "migrate | Domain-first wiki layout",
             (root / "wiki" / "log.md").read_text(encoding="utf-8"),
         )
         lint = self.cli("lint", "--root", root, environment=environment)
-        self.assertEqual("OK\n", lint.stdout)
+        self.assertNotIn("ERROR", lint.stdout)
+        self.assertTrue(lint.stdout.endswith("OK\n"))
 
     def test_migration_requires_complete_collision_free_manifest(self):
         environment = self.machine_environment("migration-errors")
@@ -527,11 +608,7 @@ Service summary.
         incomplete = self.base / "incomplete.json"
         incomplete.write_text(
             json.dumps(
-                {
-                    "assignments": [
-                        {"domain": "backend", "paths": ["wiki/log.md"]}
-                    ]
-                }
+                {"assignments": [{"domain": "backend", "paths": ["wiki/log.md"]}]}
             ),
             encoding="utf-8",
         )

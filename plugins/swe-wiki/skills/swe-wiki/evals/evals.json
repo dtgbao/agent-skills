@@ -1,0 +1,76 @@
+{
+  "skill_name": "swe-wiki",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Ingest https://martinfowler.com/bliki/TwoHardThings.html into my SWE wiki at {wiki_root}. I already approve `backend/caching` as the primary domain, so go ahead without asking me again.",
+      "expected_output": "Full ingest: raw immutable copy of the URL page, filled source page with summary, related pages updated, indexes rebuilt, ingest log entry, lint clean.",
+      "files": [
+        "evals/files/base-wiki"
+      ],
+      "expectations": [
+        "Raw layer holds an immutable local copy of the URL page under raw/backend/caching/",
+        "Source page exists and has no `_Fill during ingestion._` placeholders",
+        "Source page has a non-empty `summary` frontmatter field",
+        "An existing durable page in backend/caching links to the new source page",
+        "Source page cites at least one related external URL besides the source",
+        "wiki/log.md has an `ingest` entry",
+        "Strict (new) mechanical lint reports no errors"
+      ],
+      "name": "ingest-url-preapproved"
+    },
+    {
+      "id": 1,
+      "prompt": "add these notes to my swe wiki please: {files}/inputs/cache-stampede-notes.md (wiki lives at {wiki_root})",
+      "expected_output": "Stops before writing: proposes one primary domain with reasons and alternatives, gives key takeaways, related pages and contradictions, asks what to emphasize. Wiki unchanged.",
+      "files": [
+        "evals/files/base-wiki",
+        "evals/files/inputs/cache-stampede-notes.md"
+      ],
+      "expectations": [
+        "Wiki and raw trees are unchanged before approval",
+        "Response recommends a primary domain in kebab-case path form",
+        "Response gives key takeaways from the notes",
+        "Response names related existing wiki pages (cache invalidation)",
+        "Response asks the user what to emphasize",
+        "Response explicitly waits for approval before writing"
+      ],
+      "name": "ingest-local-needs-approval"
+    },
+    {
+      "id": 2,
+      "prompt": "Run a health check on my SWE wiki at {wiki_root}. Fix what you safely can and list anything that needs my input.",
+      "expected_output": "Mechanical lint passes or failures are reported; placeholder page fixed or flagged; TTL contradiction (60s vs 300s) named; gaps with suggested questions/sources recorded; lint log entry with follow-ups.",
+      "files": [
+        "evals/files/lint-wiki"
+      ],
+      "expectations": [
+        "wiki/log.md has a `lint` entry",
+        "The lint log entry records Follow-ups",
+        "cdn-caching placeholder is fixed in the page or flagged to the user",
+        "Response names the TTL contradiction (60 s vs 300 s)",
+        "Response suggests new questions or sources to fill gaps",
+        "Strict (new) mechanical lint reports no errors after repair"
+      ],
+      "name": "lint-repair-with-gaps"
+    },
+    {
+      "id": 3,
+      "prompt": "Using my SWE wiki at {wiki_root}: should our product catalog use write-through caching or event-driven purge? Cite the wiki pages, and save the comparison into the wiki so we keep it.",
+      "expected_output": "Answer cites wiki pages; a question page is filed under backend/caching following AGENTS.md local conventions (team-platform tag, Decision Checklist section); indexes and query log updated.",
+      "files": [
+        "evals/files/convention-wiki"
+      ],
+      "expectations": [
+        "A `kind: question` page is filed in the wiki",
+        "Question page carries the local-convention tag `team-platform`",
+        "Question page ends with a `## Decision Checklist` of 3-5 checkbox items",
+        "Response cites both cache-invalidation and write-through-cache pages",
+        "Question page is listed in its local index",
+        "wiki/log.md has a `query` entry"
+      ],
+      "name": "query-files-answer-with-local-convention"
+    }
+  ],
+  "notes": "Copy the fixture wiki in files[0] to a fresh directory and substitute it for {wiki_root}; {files} is evals/files. Grade with: python3 evals/grade.py <iteration-dir>."
+}

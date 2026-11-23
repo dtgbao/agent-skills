@@ -1,0 +1,8 @@
+Only in <workspace>/iteration-2/eval-ingest-url-preapproved/with_skill/run-1/wiki-root/raw/backend/caching: two-hard-things.md
+Files <workspace>/fixtures/base-wiki/wiki/backend/caching/cache-invalidation.md and <workspace>/iteration-2/eval-ingest-url-preapproved/with_skill/run-1/wiki-root/wiki/backend/caching/cache-invalidation.md differ
+Files <workspace>/fixtures/base-wiki/wiki/backend/caching/index.md and <workspace>/iteration-2/eval-ingest-url-preapproved/with_skill/run-1/wiki-root/wiki/backend/caching/index.md differ
+Only in <workspace>/iteration-2/eval-ingest-url-preapproved/with_skill/run-1/wiki-root/wiki/backend/caching: sources
+Files <workspace>/fixtures/base-wiki/wiki/backend/caching/write-through-cache.md and <workspace>/iteration-2/eval-ingest-url-preapproved/with_skill/run-1/wiki-root/wiki/backend/caching/write-through-cache.md differ
+Files <workspace>/fixtures/base-wiki/wiki/backend/index.md and <workspace>/iteration-2/eval-ingest-url-preapproved/with_skill/run-1/wiki-root/wiki/backend/index.md differ
+Files <workspace>/fixtures/base-wiki/wiki/index.md and <workspace>/iteration-2/eval-ingest-url-preapproved/with_skill/run-1/wiki-root/wiki/index.md differ
+Files <workspace>/fixtures/base-wiki/wiki/log.md and <workspace>/iteration-2/eval-ingest-url-preapproved/with_skill/run-1/wiki-root/wiki/log.md differ
