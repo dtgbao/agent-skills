@@ -81,7 +81,8 @@ Then do the judgment work:
 1. **Source page** (the scaffold). Replace every `TODO(llm-wiki)` placeholder. Write the
    `summary:` field as one plain sentence of 160 characters or fewer.
 2. **Entity and concept pages.** For each important entity or concept, update its page
-   or create one. Add the new facts with a citation to the source page.
+   or create one. Add the new facts with a citation to the source page. Start a new
+   page with `new KIND --domain D --title T` (see [page-format.md](page-format.md)).
 3. **Decision and practice pages** when the source records a choice or a how-to.
 4. **Overview** of the domain: update the synthesis when the source changes the picture.
 5. **Contradictions.** Write them on both pages, with both citations. Do not silently

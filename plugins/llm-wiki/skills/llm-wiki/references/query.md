@@ -24,6 +24,12 @@ comparison or analysis, or the user asks to keep it. Skip it for trivial lookups
 or when the user says not to.
 
 Put the page under the domain of its main subject. Name the file after the question.
+Start with the scaffold, then write it to this shape:
+
+```bash
+python3 <skill-dir>/scripts/llm_wiki.py new question --domain aws/iam \
+  --title "Do permission boundaries limit resource-based policies?" --json
+```
 
 ```markdown
 ---

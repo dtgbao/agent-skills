@@ -32,6 +32,11 @@ SPEC.loader.exec_module(lw)
 DOMAIN_IN_TICKS = re.compile(
     r"`[a-z0-9]+(?:-[a-z0-9]+)*(?:/[a-z0-9]+(?:-[a-z0-9]+)*)+`"
 )
+CONFLICT_RE = re.compile(r"contradict|conflict|supersed|disagree", re.IGNORECASE)
+WEB_CITATION_RE = re.compile(
+    r"\]\(https?://[^)\s]+\)[^\[\]]{0,80}?retrieved \d{4}-\d{2}-\d{2}", re.IGNORECASE
+)
+HEADING_RE = re.compile(r"^(#|\*\*[^*].*\*\*[:.]?\s*$)")
 
 
 class Run:
@@ -90,6 +95,45 @@ def entry_names(entry: Any, page_rel: str, title: str) -> bool:
     )
 
 
+def link_contexts(page: Any, target: Path) -> list[str]:
+    """For each link from page to target: the nearest heading (or bold line) plus the paragraph."""
+    lines = page.text.splitlines()
+    contexts: list[str] = []
+    for number, link in lw.page_links(page):
+        if lw.resolve_link(page, link) != target:
+            continue
+        at = number - 1
+        start = at
+        while start > 0 and lines[start - 1].strip():
+            start -= 1
+        end = at
+        while end + 1 < len(lines) and lines[end + 1].strip():
+            end += 1
+        heading = next(
+            (lines[i] for i in range(start - 1, -1, -1) if HEADING_RE.match(lines[i])),
+            "",
+        )
+        contexts.append("\n".join([heading, *lines[start : end + 1]]))
+    return contexts
+
+
+def flags_link(page: Any | None, target: Path, pattern: re.Pattern[str]) -> bool:
+    return bool(page) and any(pattern.search(c) for c in link_contexts(page, target))
+
+
+def linked_from(run: Run, page: Any) -> list[str]:
+    return [
+        other.rel
+        for other in run.wiki.pages()
+        if other.path != page.path
+        and any(lw.resolve_link(other, t) == page.path for _, t in lw.page_links(other))
+    ]
+
+
+def page_at(run: Run, rel: str) -> Any | None:
+    return next((p for p in run.wiki.pages() if p.rel == rel), None)
+
+
 def lint_clean(run: Run) -> tuple[bool, str]:
     errors = run.lint()["errors"]
     return (
@@ -143,19 +187,20 @@ def eval_url_snapshot(run: Run) -> dict[str, tuple[bool, str]]:
         bool(page) and bool(summary) and lw.cell(summary) in index_text,
         f"summary in index: {bool(summary) and lw.cell(summary) in index_text}",
     )
+    types = page_at(run, "aws/iam/policy-types.md")
     old_types = (run.fixture / "wiki/aws/iam/policy-types.md").read_text(
         encoding="utf-8"
     )
-    types_path = run.root / "wiki/aws/iam/policy-types.md"
-    new_types = types_path.read_text(encoding="utf-8") if types_path.is_file() else ""
-    flagged = re.search(
-        r"contradict|conflict|supersed|disagree",
-        new_types,
-        re.IGNORECASE,
-    )
+    changed = bool(types) and types.text != old_types
+    flagged = bool(page) and flags_link(types, page.path, CONFLICT_RE)
     results["contradiction"] = (
-        new_types != old_types and bool(flagged),
-        f"changed={new_types != old_types} flagged={bool(flagged)}",
+        changed and flagged,
+        f"changed={changed} conflict word next to a link to the source page={flagged}",
+    )
+    back = bool(types) and flags_link(page, types.path, CONFLICT_RE)
+    results["contradiction-source-page"] = (
+        back,
+        f"conflict word next to a link to policy-types.md={back}",
     )
     results["ingest-log"] = (
         log_entry(run, "ingest", page) if page else (False, "no new source page")
@@ -245,15 +290,8 @@ def eval_local_convention(run: Run) -> dict[str, tuple[bool, str]]:
         )
         detail = f"last H2 section starts: {last[:60]!r}"
     results["confidence"] = (confidence, detail)
-    linked_from: list[str] = []
-    if page:
-        for other in run.wiki.pages():
-            if other.path == page.path:
-                continue
-            for _, target in lw.page_links(other):
-                if lw.resolve_link(other, target) == page.path:
-                    linked_from.append(other.rel)
-    results["linked"] = (bool(linked_from), f"linked from: {linked_from or 'none'}")
+    links = linked_from(run, page) if page else []
+    results["linked"] = (bool(links), f"linked from: {links or 'none'}")
     results["query-log"] = (
         log_entry(run, "query", page) if page else (False, "no question page")
     )
@@ -320,25 +358,117 @@ def eval_lint_follow_ups(run: Run) -> dict[str, tuple[bool, str]]:
 # ---------------------------------------------------------------- eval 5
 
 
+RUNBOOK_SECTIONS = ("when to use", "steps", "rollback")
+
+
 def eval_schema(run: Run) -> dict[str, tuple[bool, str]]:
     schema = run.root / "AGENTS.md"
     text = schema.read_text(encoding="utf-8") if schema.is_file() else ""
     match = re.search(r"(?ims)^## Local conventions\s*$(.*?)(?=^## |\Z)", text)
     section = match.group(1) if match else ""
-    entities = [p for p in run.wiki.pages() if p.get("kind") == "entity"]
-    missing = [p.rel for p in entities if not p.get("owner")]
+    bullet = re.search(
+        r"(?im)^\s*[-*].*(\d{4}-\d{2}-\d{2}.*runbook|runbook.*\d{4}-\d{2}-\d{2})",
+        section,
+    )
+    pages = [p for p in run.new_pages() if p.get("kind") == "runbook"]
+    page = pages[0] if pages else None
+    headings = (
+        [h.strip().lower() for h in re.findall(r"(?m)^## (.+)$", page.body)]
+        if page
+        else []
+    )
+    missing = [s for s in RUNBOOK_SECTIONS if s not in headings]
+    links = linked_from(run, page) if page else []
+    stale = [w["path"] for w in run.lint()["warnings"] if w["code"] == "index-stale"]
     return {
-        "schema-updated": (
-            bool(re.search(r"(?m)^\s*[-*].*owner", section, re.IGNORECASE)),
-            f"Local conventions section: {section.strip()[:160]!r}",
+        "kinds-marker": (
+            "runbook" in run.wiki.extra_kinds(),
+            f"extra kinds: {run.wiki.extra_kinds()}",
+        ),
+        "schema-bullet": (
+            bool(bullet),
+            f"Local conventions section: {section.strip()[:200]!r}",
         ),
         "schema-log": log_entry(run, "schema", None),
-        "owner-field": (
-            bool(entities) and not missing,
-            f"entity pages={len(entities)} missing owner={missing}",
+        "runbook-page": (
+            bool(page) and not missing,
+            f"runbook pages={[p.rel for p in pages]} missing sections={missing}",
         ),
+        "linked": (bool(links), f"linked from: {links or 'none'}"),
+        "indexes-current": (not stale, f"stale indexes: {stale or 'none'}"),
         "log-append-only": run.log_prefix_kept(),
         "raw-untouched": run.raw_untouched(),
+        "lint-clean": lint_clean(run),
+    }
+
+
+# ---------------------------------------------------------------- eval 6
+
+
+MANAGEMENT_RE = re.compile(r"management account", re.IGNORECASE)
+REFUTED_RE = re.compile(
+    r"contradict|conflict|incorrect|wrong|false|not true|inaccurate|"
+    r"do(?:es)? not (?:apply|affect|restrict)|don't|doesn't|exempt|unaffected",
+    re.IGNORECASE,
+)
+
+
+def eval_research(run: Run) -> dict[str, tuple[bool, str]]:
+    source = (EVALS_DIR / "fixtures/sources/scp-rollout-notes.md").read_bytes()
+    old_files = run.files(run.fixture)
+    new_files = run.files(run.root)
+    new_raw = [r for r in new_files if r.startswith("raw/") and r not in old_files]
+    copies = [r for r in new_raw if new_files[r] == source]
+    pages = [
+        p
+        for p in run.new_pages()
+        if p.get("kind") == "source" and p.directory == "aws/organizations"
+    ]
+    page = pages[0] if pages else None
+    summary = page.get("summary") if page else ""
+    changed = [
+        p
+        for p in run.wiki.pages()
+        if old_files.get(f"wiki/{p.rel}") != p.path.read_bytes()
+    ]
+    cited = [p.rel for p in changed if WEB_CITATION_RE.search(p.text)]
+    flagged = False
+    if page:
+        paragraphs = re.split(r"\n\s*\n", page.body)
+        flagged = any(
+            MANAGEMENT_RE.search(par) and REFUTED_RE.search(par) for par in paragraphs
+        )
+    scp = page_at(run, "aws/organizations/scp.md")
+    old_scp = (run.fixture / "wiki/aws/organizations/scp.md").read_text(
+        encoding="utf-8"
+    )
+    scp_links = (
+        bool(scp)
+        and bool(page)
+        and any(lw.resolve_link(scp, t) == page.path for _, t in lw.page_links(scp))
+    )
+    return {
+        "source-page": (
+            bool(page) and bool(summary) and lw.PLACEHOLDER not in summary,
+            f"page={page.rel if page else None} summary={summary!r}",
+        ),
+        "raw-only-source": (
+            len(new_raw) == 1 and len(copies) == 1,
+            f"new raw files: {new_raw or 'none'}",
+        ),
+        "web-citation": (bool(cited), f"pages with dated web citations: {cited}"),
+        "management-account": (
+            flagged,
+            "a source-page paragraph names the management account and refutes the claim",
+        ),
+        "scp-updated": (
+            bool(scp) and scp.text != old_scp and scp_links,
+            f"changed={bool(scp) and scp.text != old_scp} links to source={scp_links}",
+        ),
+        "ingest-log": (
+            log_entry(run, "ingest", page) if page else (False, "no new source page")
+        ),
+        "log-append-only": run.log_prefix_kept(),
         "lint-clean": lint_clean(run),
     }
 
@@ -349,6 +479,7 @@ GRADERS: dict[str, Callable[[Run], dict[str, tuple[bool, str]]]] = {
     "local-convention-query": eval_local_convention,
     "lint-follow-ups": eval_lint_follow_ups,
     "schema-co-evolution": eval_schema,
+    "research-preapproved": eval_research,
 }
 
 

@@ -34,14 +34,26 @@ python3 <skill-dir>/scripts/llm_wiki.py sync -m "Ingest IAM policy evaluation gu
 Sync does: `git add -A`, commit when there are changes, `git pull --rebase`, `git push`.
 It never force-pushes.
 
+## The schema is always tracked
+
+`init` writes `!AGENTS.md` into `.gitignore`. `sync` also adds `AGENTS.md` with
+`git update-index`. So a global ignore file that lists `AGENTS.md` cannot drop the schema.
+
 ## Conflicts
 
-Exit code 2 and `error.code: rebase-conflict` mean that the pull had conflicts.
+The CLI resolves conflicts in generated files by itself and continues the rebase:
+
+| File | Resolution |
+|---|---|
+| `wiki/log.md` | Keep every entry of both sides once. Remote order stays; local entries go in time order. |
+| `index.md` files | Regenerate from the merged pages. |
+
+The JSON lists these files in `resolved`.
+
+Exit code 2 and `error.code: rebase-conflict` mean that another file also conflicts.
 The CLI already ran `git rebase --abort`. The local commit is kept and nothing was pushed.
 
 1. Report the files in `conflicts` to the user.
 2. Ask how to resolve them. Typical choices: merge both versions of a page by hand,
    or keep one side.
 3. Never force-push, `reset --hard` or rewrite history to get past a conflict.
-4. A `log.md` conflict usually means both sides appended entries. Keep all entries
-   from both sides in time order.

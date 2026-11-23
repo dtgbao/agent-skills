@@ -45,6 +45,20 @@ Never derive the summary from the body. Write it on purpose.
 
 A preset or the user can add kinds in `AGENTS.md`. Follow the sections it defines.
 
+## Scaffold a page
+
+`new` writes the frontmatter and the kind's sections, each with a placeholder.
+It refuses kind `source` (use `ingest`) and kinds that are not in the AGENTS.md marker.
+
+```bash
+python3 <skill-dir>/scripts/llm_wiki.py new decision --domain team/payments --title "Gateway retry policy" --json
+python3 <skill-dir>/scripts/llm_wiki.py new runbook --domain team/payments --title "Gateway timeouts" \
+  --section "When to use" --section Steps --section Rollback --tags payments --json
+```
+
+`--section` replaces the default sections. Use it when `AGENTS.md` sets them.
+`--source` (repeatable) fills `sources:`. Then replace every placeholder.
+
 ## Links and citations
 
 - Use relative Markdown links: `[Policy types](policy-types.md)`,

@@ -34,6 +34,7 @@ when you parse the output. Every command takes `--root PATH`; the default comes 
 | `wiki setup --remote URL [--root PATH]` | Connect a root to an existing Git repository |
 | `wiki init [--preset P] [--domain D]` | Create the layout once. Each run logs a `bootstrap` event. |
 | `wiki ingest SRC --domain D [--snapshot] [--asset F]` | Copy or snapshot a source into raw, write a page scaffold |
+| `wiki new KIND --domain D --title T [--section S] [--name N]` | Write a scaffold for a page that is not a source page. Writes no log entry. |
 | `wiki index` | Rebuild every `index.md`. Writes no log entry. |
 | `wiki search "QUERY" [--domain D] [--kind K]` | BM25 search, title and summary boosted |
 | `wiki log OP "TITLE" [--page P] [--body T] [--follow-up T]` | Append to `wiki/log.md`. OP: bootstrap, ingest, query, lint, schema |
@@ -83,7 +84,9 @@ Read [references/ingest.md](references/ingest.md) before the first ingest in a s
    If the CLI reports `name-collision`, pick a new `--name`. Never overwrite raw files.
 6. **Write the pages.** Replace every `TODO(llm-wiki)` placeholder in the scaffold.
    Create or update the entity, concept, decision and practice pages that the source
-   touches; one source often touches 5–15 pages. Merge research findings that arrived.
+   touches; one source often touches 5–15 pages. For each new page, run
+   `wiki new KIND --domain D --title T --json`, then replace its placeholders.
+   Merge research findings that arrived.
    Note contradictions on both pages. Follow the page format in
    [references/page-format.md](references/page-format.md).
 7. **Close.** Run `wiki index`, then `wiki lint` and fix every error. Then run
@@ -99,7 +102,9 @@ Read [references/ingest.md](references/ingest.md) before the first ingest in a s
    Say when the wiki does not know. Do not fill gaps from memory without saying so.
 3. File the answer as a `question` page when it combines two or more pages, makes a
    comparison or analysis, or the user asks to keep it. Put it under the domain of its
-   main subject. See [references/query.md](references/query.md).
+   main subject. Start it with `wiki new question`. When a local convention sets the
+   file name or the sections, pass `--name` and `--section`.
+   See [references/query.md](references/query.md).
 4. Link the new page from the pages it cites, so it is not an orphan.
 5. Run `wiki index`, `wiki lint`, then `wiki log query "<question>" --page <page>`.
 
@@ -119,6 +124,7 @@ When the user states a convention:
 
 1. Add one bullet under `## Local conventions` in `<root>/AGENTS.md`, with the date.
    For a new page kind, also add it to the `<!-- llm-wiki:extra-kinds: ... -->` marker.
+   Lint fails on a page kind that is not in the marker, and `wiki new` refuses it.
 2. Run `wiki log schema "<convention in a few words>"`.
 3. Apply the convention to the current task and to pages you touch from now on.
    See [references/schema.md](references/schema.md).
@@ -129,8 +135,11 @@ Run sync only when the user asks. Sync events go to Git history, not to `log.md`
 
 1. Run `wiki lint`. Fix errors first.
 2. Run `wiki sync -m "<what changed>" --json`.
-3. Exit code 2 means a rebase conflict. The CLI aborted the rebase and kept the local
-   commit. Report the conflicting files and ask the user how to resolve them.
+3. The CLI resolves conflicts in `wiki/log.md` and `index.md` files itself. It keeps
+   the log entries of both sides in time order and regenerates the indexes. The JSON
+   lists these files in `resolved`.
+4. Exit code 2 means a conflict in another file. The CLI aborted the rebase and kept
+   the local commit. Report the conflicting files and ask the user how to resolve them.
    Never force-push, never reset, never rewrite history. See
    [references/git.md](references/git.md).
 

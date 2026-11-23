@@ -1,7 +1,7 @@
 {
 	"$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
 	"name": "llm-wiki",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "Extract knowledge from any source into a persistent, interlinked Markdown wiki in a Git repository.",
 	"author": {
 		"name": "Bao Dang",

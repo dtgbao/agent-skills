@@ -1,6 +1,6 @@
 {
   "skill_name": "llm-wiki",
-  "notes": "Placeholders: {WIKI_ROOT} is a fresh copy of the fixture wiki for one run; {SOURCES} is evals/fixtures/sources. Grade with: python3 evals/grade.py --run-dir <run-dir> --eval <name>. Each assertion checks behavior that only this skill's design produces.",
+  "notes": "Placeholders: {WIKI_ROOT} is a fresh copy of the fixture wiki for one run; {SOURCES} is evals/fixtures/sources. Grade with: python3 evals/grade.py --run-dir <run-dir> --eval <name>. Each assertion checks behavior that only this skill's design produces. Every fixture AGENTS.md is a minimal schema with no workflow recipe and no CLI names, so a baseline cannot copy the skill's workflow from it. Evals with \"web\": true allow web search and fetch; all others block the web.",
   "evals": [
     {
       "id": 1,
@@ -14,7 +14,8 @@
         {"id": "source-page-summary", "text": "A new kind: source page has a summary: field of 1-160 characters with no placeholder"},
         {"id": "sources-field", "text": "The new source page lists the raw snapshot path in its sources: field"},
         {"id": "index-uses-summary", "text": "wiki/aws/iam/index.md lists the new page with its summary text"},
-        {"id": "contradiction", "text": "policy-types.md records the contradiction about resource-based policies (not a silent overwrite)"},
+        {"id": "contradiction", "text": "policy-types.md records the contradiction next to a link to the new source page (not a silent overwrite)"},
+        {"id": "contradiction-source-page", "text": "The new source page records the contradiction next to a link to policy-types.md"},
         {"id": "ingest-log", "text": "log.md has a new ingest entry that names the new source page"},
         {"id": "log-append-only", "text": "log.md is append-only: the fixture log is an unchanged prefix"},
         {"id": "lint-clean", "text": "Mechanical lint reports zero errors"}
@@ -74,15 +75,37 @@
       "id": 5,
       "name": "schema-co-evolution",
       "fixture": "fixtures/wiki-base",
-      "prompt": "New rule for my wiki at {WIKI_ROOT}: from now on every entity page must have an `owner:` frontmatter field naming the responsible team. Apply it to the existing entity pages too.",
-      "expected_output": "AGENTS.md gets a dated Local conventions bullet, a schema log entry is appended, both entity pages get owner:, lint is clean.",
+      "prompt": "New rule for my wiki at {WIKI_ROOT}: from now on, step-by-step operational procedures get their own `runbook` page kind, with the sections When to use, Steps and Rollback. Write the first runbook now: how to handle payments gateway timeouts, from what the wiki already says.",
+      "expected_output": "The runbook kind is added to the extra-kinds marker and as a dated Local conventions bullet, a schema log entry is appended, a linked runbook page with the three sections exists, indexes are regenerated, lint is clean.",
       "files": [],
       "assertions": [
-        {"id": "schema-updated", "text": "AGENTS.md has a new Local conventions bullet about the owner: field"},
+        {"id": "kinds-marker", "text": "The AGENTS.md extra-kinds marker lists runbook"},
+        {"id": "schema-bullet", "text": "AGENTS.md has a new dated Local conventions bullet about runbook pages"},
         {"id": "schema-log", "text": "log.md has a new schema entry"},
-        {"id": "owner-field", "text": "Every entity page has a non-empty owner: frontmatter field"},
+        {"id": "runbook-page", "text": "A new kind: runbook page has the sections When to use, Steps and Rollback"},
+        {"id": "linked", "text": "Another wiki page links to the runbook page"},
+        {"id": "indexes-current", "text": "Indexes are regenerated: no index-stale warning"},
         {"id": "log-append-only", "text": "log.md is append-only: the fixture log is an unchanged prefix"},
         {"id": "raw-untouched", "text": "No raw file changed or was removed"},
+        {"id": "lint-clean", "text": "Mechanical lint reports zero errors (an unregistered kind fails lint)"}
+      ]
+    },
+    {
+      "id": 6,
+      "name": "research-preapproved",
+      "fixture": "fixtures/wiki-base",
+      "web": true,
+      "prompt": "Add our SCP rollout notes to my wiki at {WIKI_ROOT}, under aws/organizations. I already decided the domain, no need to confirm: {SOURCES}/scp-rollout-notes.md",
+      "expected_output": "A source page and an updated SCP page. Background research checks the claims; the false management-account claim is flagged with a dated web citation. Web findings stay out of raw/. Lint clean, ingest logged.",
+      "files": ["fixtures/sources/scp-rollout-notes.md"],
+      "assertions": [
+        {"id": "source-page", "text": "A new kind: source page in aws/organizations has a summary with no placeholder"},
+        {"id": "raw-only-source", "text": "raw/ gains exactly one new file: a byte-identical copy of the notes (no web findings)"},
+        {"id": "web-citation", "text": "A new or changed page cites a web finding as an https link with 'retrieved YYYY-MM-DD'"},
+        {"id": "management-account", "text": "The source page flags the claim that SCPs restrict the management account (review by hand)"},
+        {"id": "scp-updated", "text": "scp.md changed and links to the new source page"},
+        {"id": "ingest-log", "text": "log.md has a new ingest entry that names the new source page"},
+        {"id": "log-append-only", "text": "log.md is append-only: the fixture log is an unchanged prefix"},
         {"id": "lint-clean", "text": "Mechanical lint reports zero errors"}
       ]
     }

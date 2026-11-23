@@ -84,7 +84,7 @@ class WikiTestCase(unittest.TestCase):
     def log_text(self) -> str:
         return (self.root / "wiki" / "log.md").read_text()
 
-    def write_page(self, rel: str, **fields: str) -> Path:
+    def write_page(self, rel: str, root: Path | None = None, **fields: str) -> Path:
         body = fields.pop("body", "Body text.\n")
         meta = {
             "title": "Page",
@@ -96,7 +96,7 @@ class WikiTestCase(unittest.TestCase):
         }
         meta.update(fields)
         front = "\n".join(f"{k}: {v}" for k, v in meta.items())
-        path = self.root / "wiki" / rel
+        path = (root or self.root) / "wiki" / rel
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(f"---\n{front}\n---\n\n{body}")
         return path
@@ -309,6 +309,72 @@ class IngestTests(WikiTestCase):
         src.write_text("x\n")
         data = self.run_cli("ingest", str(src), "--domain", "AWS/IAM", ok=False)
         self.assertEqual(data["error"]["code"], "domain-invalid")
+
+
+class NewPageTests(WikiTestCase):
+    def test_new_writes_kind_scaffold_without_log_entry(self) -> None:
+        self.init()
+        before = self.log_text()
+        data = self.run_cli(
+            "new", "decision", "--domain", "team/db", "--title", "Use Postgres"
+        )
+        self.assertEqual(data["page"], "wiki/team/db/use-postgres.md")
+        page = (self.root / data["page"]).read_text()
+        for line in ("title: Use Postgres", "kind: decision", "domain: team/db"):
+            self.assertIn(line, page)
+        for section in ("## Context", "## Options", "## Rationale", "## Status"):
+            self.assertIn(section, page)
+        self.assertGreater(data["placeholders"], 0)
+        self.assertEqual(self.log_text(), before)
+        self.assertIn(
+            "placeholder", self.codes(self.run_cli("lint", ok=False), "errors")
+        )
+
+    def test_new_takes_custom_sections_tags_and_sources(self) -> None:
+        self.init()
+        data = self.run_cli(
+            "new",
+            "practice",
+            "--domain",
+            "x",
+            "--title",
+            "Restart",
+            "--section",
+            "When to use",
+            "--section",
+            "Rollback",
+            "--tags",
+            "ops, y/z",
+            "--source",
+            "raw/x/a.md",
+        )
+        page = (self.root / data["page"]).read_text()
+        self.assertIn("## When to use", page)
+        self.assertIn("## Rollback", page)
+        self.assertNotIn("## Pitfalls", page)
+        self.assertIn("tags: [ops, y/z]", page)
+        self.assertIn("sources: [raw/x/a.md]", page)
+
+    def test_new_accepts_extra_kinds_from_the_schema_marker(self) -> None:
+        self.init()
+        data = self.run_cli("new", "runbook", "--domain", "x", "--title", "R", ok=False)
+        self.assertEqual(data["error"]["code"], "kind-unknown")
+        schema = self.root / "AGENTS.md"
+        schema.write_text(
+            schema.read_text().replace(
+                "llm-wiki:extra-kinds: ", "llm-wiki:extra-kinds: runbook"
+            )
+        )
+        data = self.run_cli("new", "runbook", "--domain", "x", "--title", "R")
+        self.assertIn("## Steps", (self.root / data["page"]).read_text())
+
+    def test_new_refuses_source_kind_and_existing_pages(self) -> None:
+        self.init()
+        data = self.run_cli("new", "source", "--domain", "x", "--title", "S", ok=False)
+        self.assertEqual(data["error"]["code"], "kind-source")
+        self.run_cli("new", "concept", "--domain", "x", "--title", "C")
+        data = self.run_cli("new", "concept", "--domain", "x", "--title", "C", ok=False)
+        self.assertEqual(data["error"]["code"], "page-exists")
 
 
 class LintTests(WikiTestCase):
@@ -620,6 +686,95 @@ class GitTests(WikiTestCase):
         data = self.run_cli("sync")
         self.assertTrue(data["pulled"] and data["pushed"])
         self.assertTrue((self.root / "remote.txt").is_file())
+
+    def ignore_schema_globally(self) -> None:
+        excludes = self.home / "global-ignore"
+        excludes.write_text("AGENTS.md\n")
+        (self.home / ".gitconfig").write_text(f"[core]\n\texcludesFile = {excludes}\n")
+
+    def remote_files(self, remote: Path) -> list[str]:
+        return self.git(remote, "ls-tree", "-r", "--name-only", "main").splitlines()
+
+    def test_init_gitignore_keeps_schema_tracked(self) -> None:
+        self.ignore_schema_globally()
+        remote = self.bare()
+        self.run_cli("setup", "--remote", str(remote))
+        self.init()
+        self.assertIn("!AGENTS.md", (self.root / ".gitignore").read_text())
+        self.run_cli("sync", "-m", "first")
+        self.assertIn("AGENTS.md", self.remote_files(remote))
+
+    def test_sync_commits_schema_that_git_ignores(self) -> None:
+        self.ignore_schema_globally()
+        remote = self.bare()
+        self.run_cli("setup", "--remote", str(remote))
+        self.init()
+        (self.root / ".gitignore").write_text(".DS_Store\n")
+        self.run_cli("sync", "-m", "first")
+        self.assertIn("AGENTS.md", self.remote_files(remote))
+        (self.root / "AGENTS.md").write_text("changed schema\n")
+        self.run_cli("sync", "-m", "second")
+        self.assertEqual(self.git(remote, "show", "main:AGENTS.md"), "changed schema")
+
+    def two_clones(self) -> tuple[Path, Path]:
+        remote = self.bare()
+        self.run_cli("setup", "--remote", str(remote))
+        self.init()
+        self.run_cli("sync", "-m", "base")
+        other = self.tmp / "clone"
+        self.run_cli("setup", "--remote", str(remote), root=other)
+        return remote, other
+
+    def test_sync_merges_log_entries_from_both_sides_in_time_order(self) -> None:
+        remote, other = self.two_clones()
+        self.run_cli("log", "query", "Remote Q", "--at", "2099-01-01 10:00", root=other)
+        self.run_cli("sync", "-m", "remote", root=other)
+        self.run_cli("log", "query", "Local early", "--at", "2099-01-01 09:00")
+        self.run_cli("log", "query", "Local late", "--at", "2099-01-01 11:00")
+        data = self.run_cli("sync", "-m", "local")
+        self.assertTrue(data["pulled"] and data["pushed"])
+        self.assertEqual(data["resolved"], ["wiki/log.md"])
+        log = self.git(remote, "show", "main:wiki/log.md")
+        self.assertNotIn("<<<<<<<", log)
+        titles = re.findall(r"(?m)^## \[[^\]]+\] query \| (.+)$", log)
+        self.assertEqual(titles, ["Local early", "Remote Q", "Local late"])
+        self.assertEqual(log.count("] bootstrap |"), 1)
+        report = self.run_cli("lint")
+        self.assertNotIn("log-order", self.codes(report, "warnings"))
+
+    def test_sync_regenerates_conflicting_indexes(self) -> None:
+        remote, other = self.two_clones()
+        self.write_page("x/remote.md", root=other, title="Remote page")
+        self.run_cli("index", root=other)
+        self.run_cli("log", "query", "Remote", "--at", "2099-01-01 10:00", root=other)
+        self.run_cli("sync", "-m", "remote", root=other)
+        self.write_page("x/local.md", title="Local page")
+        self.run_cli("index")
+        self.run_cli("log", "query", "Local", "--at", "2099-01-01 11:00")
+        data = self.run_cli("sync", "-m", "local")
+        self.assertTrue(data["pushed"])
+        self.assertIn("wiki/x/index.md", data["resolved"])
+        index = self.git(remote, "show", "main:wiki/x/index.md")
+        self.assertIn("[Local page](local.md)", index)
+        self.assertIn("[Remote page](remote.md)", index)
+        self.assertNotIn("<<<<<<<", index)
+        self.assertNotIn("index-stale", self.codes(self.run_cli("lint"), "warnings"))
+
+    def test_sync_aborts_when_a_page_or_schema_also_conflicts(self) -> None:
+        remote, other = self.two_clones()
+        (other / "AGENTS.md").write_text("remote edit\n")
+        self.run_cli("log", "schema", "Remote", "--at", "2099-01-01 10:00", root=other)
+        self.run_cli("sync", "-m", "remote", root=other)
+        remote_head = self.git(remote, "rev-parse", "main")
+        (self.root / "AGENTS.md").write_text("local edit\n")
+        self.run_cli("log", "schema", "Local", "--at", "2099-01-01 11:00")
+        data = self.run_cli("sync", "-m", "local", ok=False)
+        self.assertEqual(data["error"]["code"], "rebase-conflict")
+        self.assertEqual(sorted(data["conflicts"]), ["AGENTS.md", "wiki/log.md"])
+        self.assertFalse((self.root / ".git/rebase-merge").exists())
+        self.assertEqual(self.git(self.root, "log", "-1", "--format=%s"), "local")
+        self.assertIn("Local", self.log_text())
+        self.assertEqual(self.git(remote, "rev-parse", "main"), remote_head)
 
     def test_sync_never_force_pushes(self) -> None:
         source = SCRIPT.read_text()

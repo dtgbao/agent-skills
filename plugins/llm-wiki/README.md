@@ -58,11 +58,12 @@ instructions file.
 | `setup --remote URL` | Connect the root to an existing repository. Refuses credentials in the URL. |
 | `init [--preset P] [--domain D]` | Create the layout and AGENTS.md. Logs `bootstrap`. |
 | `ingest SRC --domain D [--snapshot] [--asset F]` | Copy or snapshot into `raw/`, scaffold a source page |
+| `new KIND --domain D --title T [--section S]` | Scaffold any other page kind with its sections. No log entry. |
 | `index` | Rebuild every `index.md` from the `summary:` fields. No log entry. |
 | `search "Q"` | BM25 search, title ×3, summary ×2, tags ×2 |
 | `log OP "TITLE"` | Append a log entry (bootstrap, ingest, query, lint, schema) |
 | `lint [--strict]` | Placeholders, frontmatter, summaries, links in `wiki/`, orphans, log, raw refs |
-| `sync [-m MSG]` | Commit, `pull --rebase`, push. Aborts the rebase on conflict. Never forces. |
+| `sync [-m MSG]` | Commit, `pull --rebase`, push. Resolves `log.md` and `index.md` conflicts; aborts on others. Never forces. |
 | `status` | Root, remote, counts, recent log, lint totals |
 
 Config: `~/.config/llm-wiki/config.json`. Default root: `~/.llm-wiki`.
@@ -80,3 +81,6 @@ They make no network calls.
 
 Evals live in `skills/llm-wiki/evals/`: `evals.json` lists the prompts and assertions;
 `fixtures/` holds the fixture wikis and sources; `grade.py` grades a finished run directory.
+The fixture `AGENTS.md` files are minimal schemas without a workflow recipe, so a run
+without the skill cannot copy the workflow from them. An eval with `"web": true` allows
+web access; the others block it.
