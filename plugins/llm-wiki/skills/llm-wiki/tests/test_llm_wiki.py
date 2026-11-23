@@ -695,21 +695,11 @@ class GitTests(WikiTestCase):
     def remote_files(self, remote: Path) -> list[str]:
         return self.git(remote, "ls-tree", "-r", "--name-only", "main").splitlines()
 
-    def test_init_gitignore_keeps_schema_tracked(self) -> None:
-        self.ignore_schema_globally()
-        remote = self.bare()
-        self.run_cli("setup", "--remote", str(remote))
-        self.init()
-        self.assertIn("!AGENTS.md", (self.root / ".gitignore").read_text())
-        self.run_cli("sync", "-m", "first")
-        self.assertIn("AGENTS.md", self.remote_files(remote))
-
     def test_sync_commits_schema_that_git_ignores(self) -> None:
         self.ignore_schema_globally()
         remote = self.bare()
         self.run_cli("setup", "--remote", str(remote))
         self.init()
-        (self.root / ".gitignore").write_text(".DS_Store\n")
         self.run_cli("sync", "-m", "first")
         self.assertIn("AGENTS.md", self.remote_files(remote))
         (self.root / "AGENTS.md").write_text("changed schema\n")

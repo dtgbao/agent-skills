@@ -36,8 +36,8 @@ It never force-pushes.
 
 ## The schema is always tracked
 
-`init` writes `!AGENTS.md` into `.gitignore`. `sync` also adds `AGENTS.md` with
-`git update-index`. So a global ignore file that lists `AGENTS.md` cannot drop the schema.
+`sync` adds `AGENTS.md` with `git update-index`, which bypasses ignore rules. So a
+global ignore file that lists `AGENTS.md` cannot drop the schema.
 
 ## Conflicts
 

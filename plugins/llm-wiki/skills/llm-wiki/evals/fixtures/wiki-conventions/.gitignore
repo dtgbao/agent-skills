@@ -1,4 +1,2 @@
 .DS_Store
 *.swp
-# Keep the schema tracked, also when a global ignore file lists AGENTS.md.
-!AGENTS.md

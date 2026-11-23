@@ -27,7 +27,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-VERSION = "1.1.0"
+VERSION = "1.1.1"
 GENERIC_KINDS = (
     "overview",
     "source",
@@ -46,11 +46,6 @@ SUMMARY_PLACEHOLDER = (
 )
 DEFAULT_BRANCH = "main"
 LOG_REL = "wiki/log.md"
-GITIGNORE = (
-    ".DS_Store\n*.swp\n"
-    "# Keep the schema tracked, also when a global ignore file lists AGENTS.md.\n"
-    "!AGENTS.md\n"
-)
 KIND_SECTIONS: dict[str, tuple[str, ...]] = {
     "overview": ("Current picture", "Key pages", "Open questions"),
     "entity": ("What it is", "Facts", "Relations", "History"),
@@ -1460,7 +1455,7 @@ def cmd_init(args: argparse.Namespace) -> tuple[dict[str, Any], str]:
             summary_max=SUMMARY_MAX,
         ),
     )
-    ensure_file(root / ".gitignore", GITIGNORE)
+    ensure_file(root / ".gitignore", ".DS_Store\n*.swp\n")
     ensure_file(wiki.raw / ".gitkeep", "")
     ensure_file(wiki.log, LOG_HEADER)
     for domain in args.domain or []:
