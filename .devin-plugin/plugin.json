@@ -21,7 +21,7 @@
 		{
 			"source": "git-subdir",
 			"url": "https://github.com/dtgbao/agent-skills.git",
-			"path": "plugins/swe-wiki"
+			"path": "plugins/llm-wiki"
 		}
 	]
 }

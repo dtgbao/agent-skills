@@ -1,4 +1,0 @@
-Files <workspace>/fixtures/lint-wiki/wiki/backend/caching/cache-invalidation.md and <workspace>/iteration-1/eval-lint-repair-with-gaps/old_skill/run-1/wiki-root/wiki/backend/caching/cache-invalidation.md differ
-Files <workspace>/fixtures/lint-wiki/wiki/backend/caching/cdn-caching.md and <workspace>/iteration-1/eval-lint-repair-with-gaps/old_skill/run-1/wiki-root/wiki/backend/caching/cdn-caching.md differ
-Files <workspace>/fixtures/lint-wiki/wiki/backend/caching/index.md and <workspace>/iteration-1/eval-lint-repair-with-gaps/old_skill/run-1/wiki-root/wiki/backend/caching/index.md differ
-Files <workspace>/fixtures/lint-wiki/wiki/log.md and <workspace>/iteration-1/eval-lint-repair-with-gaps/old_skill/run-1/wiki-root/wiki/log.md differ

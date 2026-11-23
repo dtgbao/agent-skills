@@ -1,0 +1,21 @@
+Payments weekly sync — 2026-11-18
+Attendees: Mai (payments lead), Omar (SRE), Lena (gateway team), Priya (finance ops)
+
+1. Gateway timeouts during the 2026-11-11 sale
+   - 2.4% of charge calls timed out at peak; 0.3% failed after all retries.
+   - Omar: most timeouts recover within 2 seconds.
+   - DECISION: raise the max retries for gateway timeouts from 3 to 5, and add full jitter
+     to the exponential backoff (base 200 ms, cap 5 s). Applies only to timeouts, not to
+     4xx responses.
+   - Idempotency keys stay mandatory; Lena confirmed the gateway dedupes on the key for 24 h.
+
+2. Duplicate charge reports
+   - Priya: 3 customer reports of double charges in November. All 3 came from the legacy
+     mobile client, which does not send idempotency keys.
+   - Action: Lena to block charge requests without an idempotency key at the gateway client (due 2026-11-25).
+
+3. Alerting
+   - New alert: page SRE when the timeout rate is above 1% for 5 minutes.
+   - Action: Omar to add the alert and a runbook link (due 2026-11-21).
+
+Next sync: 2026-11-25

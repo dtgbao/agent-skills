@@ -1,0 +1,5 @@
+interface:
+  display_name: "Refine Prompt"
+  short_description: "Refine a draft prompt with the eight components and a base framework."
+policy:
+  allow_implicit_invocation: false

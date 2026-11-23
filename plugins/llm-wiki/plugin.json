@@ -1,0 +1,35 @@
+{
+	"$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+	"name": "llm-wiki",
+	"version": "1.0.0",
+	"description": "Extract knowledge from any source into a persistent, interlinked Markdown wiki in a Git repository.",
+	"author": {
+		"name": "Bao Dang",
+		"url": "https://github.com/dtgbao"
+	},
+	"repository": "https://github.com/dtgbao/agent-skills",
+	"extensions": {
+		"com.openai.codex": {
+			"interface": {
+				"displayName": "LLM Wiki",
+				"shortDescription": "Build and sync a Git-backed Markdown wiki.",
+				"longDescription": "Ingest articles, URLs, papers, transcripts, and notes into a persistent, interlinked Markdown wiki with generated indexes, search, lint, and safe Git sync.",
+				"developerName": "dtgbao",
+				"category": "Productivity",
+				"capabilities": [
+					"Interactive",
+					"Read",
+					"Write"
+				],
+				"websiteURL": "https://github.com/dtgbao/agent-skills",
+				"composerIcon": "./assets/composer-icon.png",
+				"logo": "./assets/logo.png",
+				"defaultPrompt": [
+					"Set up my LLM wiki and connect it to my Git repository.",
+					"Ingest this source into my wiki: [URL or file path]",
+					"Search my wiki for [topic] and cite the relevant pages."
+				]
+			}
+		}
+	}
+}

@@ -12,8 +12,8 @@
 			"source": "./plugins/fullstack-dev"
 		},
 		{
-			"name": "swe-wiki",
-			"source": "./plugins/swe-wiki"
+			"name": "llm-wiki",
+			"source": "./plugins/llm-wiki"
 		}
 	]
 }

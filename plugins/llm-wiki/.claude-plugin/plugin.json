@@ -1,0 +1,18 @@
+{
+	"$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+	"name": "llm-wiki",
+	"displayName": "LLM Wiki",
+	"version": "1.0.0",
+	"description": "Extract knowledge from any source into a persistent, interlinked Markdown wiki in a Git repository.",
+	"author": {
+		"name": "Bao Dang",
+		"url": "https://github.com/dtgbao"
+	},
+	"repository": "https://github.com/dtgbao/agent-skills",
+	"keywords": [
+		"knowledge-base",
+		"wiki",
+		"markdown",
+		"git"
+	]
+}

@@ -1,0 +1,90 @@
+{
+  "skill_name": "llm-wiki",
+  "notes": "Placeholders: {WIKI_ROOT} is a fresh copy of the fixture wiki for one run; {SOURCES} is evals/fixtures/sources. Grade with: python3 evals/grade.py --run-dir <run-dir> --eval <name>. Each assertion checks behavior that only this skill's design produces.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "url-snapshot-preapproved",
+      "fixture": "fixtures/wiki-base",
+      "prompt": "Add this article to my wiki at {WIKI_ROOT}: file://{SOURCES}/permission-boundaries-explained.html — file it under aws/iam, I already decided the domain, no need to confirm.",
+      "expected_output": "A byte-identical snapshot in raw/aws/iam/, a finished source page with a summary field, the policy-types contradiction recorded, indexes rebuilt, lint clean, and an ingest log entry.",
+      "files": ["fixtures/sources/permission-boundaries-explained.html"],
+      "assertions": [
+        {"id": "snapshot", "text": "raw/ holds a new byte-identical local snapshot of the URL source"},
+        {"id": "source-page-summary", "text": "A new kind: source page has a summary: field of 1-160 characters with no placeholder"},
+        {"id": "sources-field", "text": "The new source page lists the raw snapshot path in its sources: field"},
+        {"id": "index-uses-summary", "text": "wiki/aws/iam/index.md lists the new page with its summary text"},
+        {"id": "contradiction", "text": "policy-types.md records the contradiction about resource-based policies (not a silent overwrite)"},
+        {"id": "ingest-log", "text": "log.md has a new ingest entry that names the new source page"},
+        {"id": "log-append-only", "text": "log.md is append-only: the fixture log is an unchanged prefix"},
+        {"id": "lint-clean", "text": "Mechanical lint reports zero errors"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "approval-gate",
+      "fixture": "fixtures/wiki-base",
+      "prompt": "Please file my meeting notes into my knowledge wiki at {WIKI_ROOT}. Notes: {SOURCES}/payments-sync-2026-11-18.txt",
+      "expected_output": "No writes. A proposal with one kebab-case domain path plus alternatives, 3-5 takeaways, the related retry-policy page, the 3-to-5 retries contradiction, and a question about emphasis.",
+      "files": ["fixtures/sources/payments-sync-2026-11-18.txt"],
+      "assertions": [
+        {"id": "no-writes", "text": "No file under raw/, wiki/ or AGENTS.md changed before approval"},
+        {"id": "domain-path", "text": "The response proposes a lowercase kebab-case domain path such as `team/payments`"},
+        {"id": "alternatives", "text": "The response offers alternative domains"},
+        {"id": "takeaways", "text": "The response lists 3-5 key takeaways"},
+        {"id": "related-page", "text": "The response names the existing retry-policy page as related"},
+        {"id": "contradiction", "text": "The response flags the conflict with the existing 3-retry decision"},
+        {"id": "emphasis", "text": "The response asks what to emphasize"}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "local-convention-query",
+      "fixture": "fixtures/wiki-conventions",
+      "prompt": "Using my wiki at {WIKI_ROOT}: what is the difference between an SCP and a permissions boundary, and can either one grant access on its own? I'd like this comparison kept in the wiki.",
+      "expected_output": "A cited answer, filed as a question page that follows the AGENTS.md conventions (q- prefix, Confidence section) even though no existing page shows them, linked, indexed, linted and logged.",
+      "files": [],
+      "assertions": [
+        {"id": "question-page", "text": "A new page with kind: question exists"},
+        {"id": "q-prefix", "text": "The question page file name starts with q- (local convention)"},
+        {"id": "confidence", "text": "The question page ends with a ## Confidence section that says high, medium or low (local convention)"},
+        {"id": "linked", "text": "Another wiki page links to the question page"},
+        {"id": "query-log", "text": "log.md has a new query entry that names the question page"},
+        {"id": "lint-clean", "text": "Mechanical lint reports zero errors"}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "lint-follow-ups",
+      "fixture": "fixtures/wiki-messy",
+      "prompt": "My wiki at {WIKI_ROOT} feels messy. Health-check it, fix what's safe, and tell me what I should read or ask next.",
+      "expected_output": "Placeholder and broken link fixed, indexes regenerated, missing ingest entry added, raw untouched, and a lint log entry with a Follow-ups section of questions and sources.",
+      "files": [],
+      "assertions": [
+        {"id": "lint-clean", "text": "Mechanical lint reports zero errors (placeholder and broken link fixed)"},
+        {"id": "raw-untouched", "text": "No raw file changed or was removed"},
+        {"id": "log-append-only", "text": "log.md is append-only: the fixture log is an unchanged prefix"},
+        {"id": "lint-log-follow-ups", "text": "A new lint log entry has a ### Follow-ups section with 2 or more items"},
+        {"id": "follow-up-kinds", "text": "The follow-ups include at least one question and one source to look for"},
+        {"id": "indexes-current", "text": "Indexes are regenerated: no index-stale warning and the hand edit is gone"},
+        {"id": "ingest-log-fixed", "text": "The source page without an ingest log entry now has one"}
+      ]
+    },
+    {
+      "id": 5,
+      "name": "schema-co-evolution",
+      "fixture": "fixtures/wiki-base",
+      "prompt": "New rule for my wiki at {WIKI_ROOT}: from now on every entity page must have an `owner:` frontmatter field naming the responsible team. Apply it to the existing entity pages too.",
+      "expected_output": "AGENTS.md gets a dated Local conventions bullet, a schema log entry is appended, both entity pages get owner:, lint is clean.",
+      "files": [],
+      "assertions": [
+        {"id": "schema-updated", "text": "AGENTS.md has a new Local conventions bullet about the owner: field"},
+        {"id": "schema-log", "text": "log.md has a new schema entry"},
+        {"id": "owner-field", "text": "Every entity page has a non-empty owner: frontmatter field"},
+        {"id": "log-append-only", "text": "log.md is append-only: the fixture log is an unchanged prefix"},
+        {"id": "raw-untouched", "text": "No raw file changed or was removed"},
+        {"id": "lint-clean", "text": "Mechanical lint reports zero errors"}
+      ]
+    }
+  ]
+}

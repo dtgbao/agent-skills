@@ -36,8 +36,8 @@ flowchart LR
         FIndex --> FOther
     end
 
-    subgraph Wiki["plugins/swe-wiki/skills/"]
-        SWiki["swe-wiki (self-contained)"]
+    subgraph Wiki["plugins/llm-wiki/skills/"]
+        SWiki["llm-wiki (self-contained)"]
     end
 
     SDesign -. "bundled variant" .-> FDesign

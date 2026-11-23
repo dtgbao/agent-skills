@@ -14,13 +14,14 @@ This repo is a source tree for reusable instruction bundles. Standalone skills l
 | `code-explore`            | Trace feature execution paths, architecture layers, dependencies, and implementation details.        |
 | `frontend-ui-engineering` | Build accessible, responsive, production-quality interfaces and components.                          |
 | `react-best-practices`    | Provide focused React and TypeScript architecture, state, composition, and testing guidance.         |
+| `refine-prompt`           | Refine a draft prompt with the eight components and a base framework.                                |
 
 ## Plugins
 
 | Plugin                                             | Purpose                                                                                                                  | Bundled skills                                    |
 | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------- |
 | [`fullstack-dev`](plugins/fullstack-dev/README.md) | Coordinate full-stack work from focused context and requirements through implementation, review, operations, and launch. | `index` router plus focused engineering workflows |
-| [`swe-wiki`](plugins/swe-wiki/README.md)           | Maintain a domain-first, Git-synced software engineering knowledge base across computers.                                | `swe-wiki`                                        |
+| [`llm-wiki`](plugins/llm-wiki/README.md)           | Turn sources into a persistent, interlinked Markdown wiki in a Git repository.                                           | `llm-wiki`                                        |
 
 ## Install plugins with Claude Code
 
@@ -34,7 +35,7 @@ Then install any bundled plugin:
 
 ```text
 /plugin install fullstack-dev@bao-plugins
-/plugin install swe-wiki@bao-plugins
+/plugin install llm-wiki@bao-plugins
 ```
 
 ## Install plugins with GitHub Copilot
@@ -49,7 +50,7 @@ Then install any bundled plugin:
 
 ```bash
 copilot plugin install fullstack-dev@bao-plugins
-copilot plugin install swe-wiki@bao-plugins
+copilot plugin install llm-wiki@bao-plugins
 ```
 
 ## Use plugins with Cursor

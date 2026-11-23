@@ -1,0 +1,37 @@
+{
+  "skill_name": "refine-prompt",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Refine this prompt: \"Turn this meeting transcript into Jira tickets.\" We push the result into Jira through the REST API.",
+      "expected_output": "Eight-row decision table with reasons; RTF or RISEN base with Format added; JSON ticket schema; transcript as input variable first; constraint against invented assignees/dates; questions only for unfillable included components, recommended option first.",
+      "files": [],
+      "assertions": [
+        "all-eight-components-decided: the decisions table has a row for each of role, context, audience, instructions, examples, constraints, format, input",
+        "every-decision-has-because: every row of the decisions table has a non-empty reason",
+        "composition-block-present: SELECT, KEEP/ADD and DROP lines are present, and SELECT names a framework with a reason",
+        "recommended-option-first: every question lists the recommended option first, labeled (Recommended)",
+        "no-question-for-excluded: no question is asked about a component the table leaves out",
+        "xml-tagged-prompt: the refined prompt wraps components in XML tags",
+        "jira-json-format: the format defines a JSON structure with named ticket fields",
+        "jira-no-invented-data: a constraint stops the model inventing assignees or due dates"
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Refine this prompt: \"You are a helpful assistant. Write a LinkedIn post about our new product launch. Make it engaging.\"",
+      "expected_output": "CO-STAR base; audience and tone included; vague 'engaging' replaced with concrete tone/style; generic role dropped or replaced; questions for product facts.",
+      "files": [],
+      "assertions": [
+        "all-eight-components-decided: the decisions table has a row for each of the eight components",
+        "every-decision-has-because: every row of the decisions table has a non-empty reason",
+        "composition-block-present: SELECT, KEEP/ADD and DROP lines are present",
+        "recommended-option-first: every question lists the recommended option first, labeled (Recommended)",
+        "no-question-for-excluded: no question is asked about a component the table leaves out",
+        "xml-tagged-prompt: the refined prompt wraps components in XML tags",
+        "linkedin-costar-base: SELECT names CO-STAR",
+        "linkedin-vague-engaging-fixed: 'engaging' is replaced by a concrete tone, style or length instruction"
+      ]
+    }
+  ]
+}

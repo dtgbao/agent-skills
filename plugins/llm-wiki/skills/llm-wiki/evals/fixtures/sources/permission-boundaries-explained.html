@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Permission Boundaries Explained: What They Cap and What They Do Not</title>
+<style>body{font-family:sans-serif;max-width:40em}</style>
+<script>window.analytics=[];</script>
+</head>
+<body>
+<nav><a href="/">Cloud Notes</a> · <a href="/archive">Archive</a></nav>
+<article>
+<h1>Permission Boundaries Explained: What They Cap and What They Do Not</h1>
+<p><em>Published 2026-11-02 by the Cloud Notes team.</em></p>
+
+<p>A permissions boundary is a managed policy that you attach to an IAM user or role.
+It sets the maximum permissions that the identity-based policies of that principal can grant.
+A boundary never grants a permission by itself.</p>
+
+<h2>The effective permissions</h2>
+<p>For a request from a principal with a boundary, the effective permissions are the
+intersection of the identity-based policy and the boundary. An action that the identity
+policy allows but the boundary does not is denied.</p>
+
+<h2>Resource-based policies are a different case</h2>
+<p>A common belief is that a boundary also limits resource-based policies. That is only
+partly true. In the same account, if a resource-based policy (for example an S3 bucket
+policy) names the <strong>IAM user</strong> directly as the principal, the boundary does
+<strong>not</strong> limit that grant. The request is allowed even if the boundary does not
+allow the action.</p>
+<p>If the resource-based policy names an <strong>IAM role session</strong>, the boundary
+does apply. If it names the role ARN itself, the boundary applies too.</p>
+
+<h2>Explicit deny still wins</h2>
+<p>An explicit deny in any policy, including the boundary or an SCP, overrides every allow.</p>
+
+<h2>Why teams use boundaries</h2>
+<ul>
+<li>Delegate role creation to developers without privilege escalation.</li>
+<li>Require that every new role created by a pipeline carries the same boundary.</li>
+<li>Cap blast radius for automation users.</li>
+</ul>
+
+<h2>Checklist</h2>
+<ol>
+<li>Create one boundary policy per trust level.</li>
+<li>Add an <code>iam:PermissionsBoundary</code> condition to the policy that allows <code>iam:CreateRole</code>.</li>
+<li>Test with the IAM policy simulator, including bucket policies that name users directly.</li>
+</ol>
+</article>
+<footer>© 2026 Cloud Notes</footer>
+</body>
+</html>

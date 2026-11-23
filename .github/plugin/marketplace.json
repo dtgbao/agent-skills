@@ -15,10 +15,10 @@
 			"source": "./plugins/fullstack-dev"
 		},
 		{
-			"name": "swe-wiki",
-			"description": "Domain-first, Git-synced software engineering knowledge base for coding agents.",
-			"version": "0.4.0",
-			"source": "./plugins/swe-wiki"
+			"name": "llm-wiki",
+			"description": "Extract knowledge from any source into a persistent, interlinked Markdown wiki in a Git repository.",
+			"version": "1.0.0",
+			"source": "./plugins/llm-wiki"
 		}
 	]
 }
